@@ -250,3 +250,74 @@ export const captureScreenshot = async (options: CaptureScreenshotOptions = {}) 
 // 截图模块已不再需要文件管理功能
 // 所有截图直接保存在内存Buffer中进行OCR识别
 // 如需调试保存截图，可在调用方自行处理
+
+// ---------------------------------------------------------------------------
+// 手动刷新：只截一次游戏窗口
+
+export const MANUAL_CAPTURE_THUMBNAIL_SIZE = { width: 1920, height: 1080 }
+let cachedGameWindowSource: { id: string; name: string } | null = null
+
+export function resetCachedGameWindowSource(): void {
+    cachedGameWindowSource = null
+}
+
+/**
+ * 手动刷新用的单次截图：只枚举 window 源（不截全屏）；
+ * 找不到游戏窗口时才退回整屏截图。返回完整窗口图像（OCR 的标题区域按整图比例裁剪，
+ * 由 analyzeScreenshot 内部完成），不落盘。
+ *
+ * 注意：desktopCapturer 每次调用仍会为所有枚举到的窗口生成缩略图，这是 Electron API 的限制；
+ * 相比自动模式的持续轮询，这里只在用户按下刷新时执行一次。
+ */
+export const captureGameWindowOnce = async (options: { timeoutMs?: number; thumbnailSize?: Size } = {}) => {
+    const {
+        timeoutMs = DEFAULT_CAPTURE_TIMEOUT_MS,
+        thumbnailSize = MANUAL_CAPTURE_THUMBNAIL_SIZE,
+    } = options
+    const timestamp = Date.now()
+
+    try {
+        const sources = await withTimeout(
+            desktopCapturer.getSources({
+                types: ['window'],
+                thumbnailSize,
+                fetchWindowIcons: false,
+            }),
+            timeoutMs,
+            'desktopCapturer.getSources(window)'
+        )
+
+        // 选择逻辑与自动模式一致（游戏内窗口 "League of Legends (TM) Client" 得分最高）。
+        // 缓存仅用于识别「窗口是否换了」并记录日志：desktopCapturer 无法只截单个已知窗口。
+        const gameWindow = findGameWindow(sources)
+
+        if (gameWindow && gameWindow.thumbnail && !gameWindow.thumbnail.isEmpty()) {
+            if (cachedGameWindowSource?.id !== gameWindow.id) {
+                logger.info(`Manual capture: using game window "${gameWindow.name}"`)
+            }
+            cachedGameWindowSource = { id: gameWindow.id, name: gameWindow.name }
+            const size = gameWindow.thumbnail.getSize()
+            return {
+                success: true,
+                buffer: gameWindow.thumbnail.toPNG(),
+                timestamp,
+                hasLolWindow: true,
+                captureMode: 'window' as const,
+                windowName: gameWindow.name,
+                width: size.width,
+                height: size.height,
+            }
+        }
+
+        cachedGameWindowSource = null
+        logger.warn('Manual capture: LoL game window not found, falling back to screen capture')
+        const fallback = await captureScreenshot({ preferScreen: true, timeoutMs, thumbnailSize })
+        return { ...fallback, hasLolWindow: false }
+    } catch (error) {
+        logger.error('Manual capture failed:', error)
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : String(error),
+        }
+    }
+}

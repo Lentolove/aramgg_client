@@ -73,6 +73,19 @@ export const electronAPI: ElectronAPI = {
   feedback: {
     submit: (...args) => requireElectronAPI().feedback.submit(...args),
   },
+  manualOverlay: {
+    getState: (...args) => requireElectronAPI().manualOverlay.getState(...args),
+    refresh: (...args) => requireElectronAPI().manualOverlay.refresh(...args),
+    pick: (...args) => requireElectronAPI().manualOverlay.pick(...args),
+    unpick: (...args) => requireElectronAPI().manualOverlay.unpick(...args),
+    clearCandidates: (...args) => requireElectronAPI().manualOverlay.clearCandidates(...args),
+    resetGame: (...args) => requireElectronAPI().manualOverlay.resetGame(...args),
+    getLiveData: (...args) => requireElectronAPI().manualOverlay.getLiveData(...args),
+    getSettings: (...args) => requireElectronAPI().manualOverlay.getSettings(...args),
+    setSettings: (...args) => requireElectronAPI().manualOverlay.setSettings(...args),
+    show: (...args) => requireElectronAPI().manualOverlay.show(...args),
+    hide: (...args) => requireElectronAPI().manualOverlay.hide(...args),
+  },
   lcu: {
     getChampionMonitorState: () => requireElectronAPI().lcu.getChampionMonitorState(),
     getChampionId: (...args) => requireElectronAPI().lcu.getChampionId(...args),

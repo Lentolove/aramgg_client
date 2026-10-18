@@ -13,6 +13,10 @@ const mocks = vi.hoisted(() => ({
   notify: vi.fn(),
   applyPopupPreferences: vi.fn(),
   logError: vi.fn(),
+  autoStart: vi.fn(async () => true),
+  autoScreenshotEnabled: false,
+  overlayPhase: vi.fn(),
+  registerHotkey: vi.fn(),
   popup: { show: vi.fn(), isVisible: () => false, isDestroyed: () => false, webContents: { send: vi.fn() } },
 }))
 vi.mock('electron', () => ({
@@ -41,8 +45,16 @@ vi.mock('../../src/main/screenshot.ts', () => ({ getLolGameStatus: async () => (
 vi.mock('../../src/main/modules/ipc-handlers.ts', () => ({ registerIpcHandlers: vi.fn() }))
 vi.mock('../../src/main/auto-screenshot-service.ts', () => ({ default: {
   isRunning: false, setGameflowPhase: vi.fn(), clearAugmentState: vi.fn(),
-  setConfig: vi.fn(), start: vi.fn(async () => true),
+  setConfig: vi.fn(), start: mocks.autoStart,
 } }))
+vi.mock('../../src/main/services/manual-overlay/manual-overlay-runtime.ts', () => ({
+  getManualOverlayService: () => ({
+    isAutoScreenshotEnabled: () => mocks.autoScreenshotEnabled,
+    setPhase: mocks.overlayPhase,
+    registerHotkey: mocks.registerHotkey,
+    dispose: vi.fn(),
+  }),
+}))
 vi.mock('../../src/main/services/lcu/lcu-service.ts', () => ({ getLCUServiceInstance: () => ({
   getAuthToken: async () => ({ url: 'https://127.0.0.1:2999' }),
   getUrl: () => 'https://127.0.0.1:2999', isActive: () => true,
@@ -90,6 +102,10 @@ beforeEach(() => {
   mocks.ensurePopup.mockResolvedValue(mocks.popup)
   mocks.ensureFloating.mockResolvedValue({})
   mocks.ensureSidePanel.mockResolvedValue({})
+  mocks.autoStart.mockClear()
+  mocks.overlayPhase.mockClear()
+  mocks.registerHotkey.mockClear()
+  mocks.autoScreenshotEnabled = false
 })
 afterEach(async () => {
   await vi.dynamicImportSettled()
@@ -179,5 +195,22 @@ describe('main-process monitoring ownership', () => {
     expect(mocks.popup.webContents.send).not.toHaveBeenCalled()
     const { getChampionMonitorState } = await import('../../src/main/modules/champion-monitor-state.ts')
     expect(getChampionMonitorState()).toMatchObject({ phase: 'EndOfGame', selectedChampionId: null, lastChampionId: 22 })
+  })
+
+  it('does not start continuous auto screenshots in game unless autoScreenshot is enabled', async () => {
+    await start()
+    expect(mocks.registerHotkey).toHaveBeenCalledOnce()
+    const phaseChanged = mocks.subscribe.mock.calls[0][0]
+    await phaseChanged('InProgress')
+    expect(mocks.overlayPhase).toHaveBeenLastCalledWith('InProgress')
+    expect(mocks.autoStart).not.toHaveBeenCalled()
+  })
+
+  it('keeps the legacy auto screenshot path when autoScreenshot is enabled', async () => {
+    mocks.autoScreenshotEnabled = true
+    await start()
+    const phaseChanged = mocks.subscribe.mock.calls[0][0]
+    await phaseChanged('InProgress')
+    expect(mocks.autoStart).toHaveBeenCalledWith(expect.any(Number), 'gameflow')
   })
 })

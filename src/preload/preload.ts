@@ -28,6 +28,7 @@ const validEvents = new Set<ElectronEventChannel>([
   'app-update-status-changed',
   'locale-changed',
   'match-history-updated',
+  'manual-overlay-state',
 ])
 
 function assertValidEvent(channel: string): asserts channel is ElectronEventChannel {
@@ -120,6 +121,19 @@ const electronAPI: ElectronAPI = {
   },
   feedback: {
     submit: (payload) => ipcRenderer.invoke('feedback-submit', payload),
+  },
+  manualOverlay: {
+    getState: () => ipcRenderer.invoke('manual-overlay-get-state'),
+    refresh: () => ipcRenderer.invoke('manual-overlay-refresh'),
+    pick: (augment) => ipcRenderer.invoke('manual-overlay-pick', augment),
+    unpick: (augmentId) => ipcRenderer.invoke('manual-overlay-unpick', augmentId),
+    clearCandidates: () => ipcRenderer.invoke('manual-overlay-clear-candidates'),
+    resetGame: () => ipcRenderer.invoke('manual-overlay-reset-game'),
+    getLiveData: () => ipcRenderer.invoke('manual-overlay-get-live-data'),
+    getSettings: () => ipcRenderer.invoke('manual-overlay-get-settings'),
+    setSettings: (patch) => ipcRenderer.invoke('manual-overlay-set-settings', patch),
+    show: () => ipcRenderer.send('manual-overlay-show'),
+    hide: () => ipcRenderer.send('manual-overlay-hide'),
   },
   lcu: {
     getChampionMonitorState: () => ipcRenderer.invoke('lcu-get-champion-monitor-state'),

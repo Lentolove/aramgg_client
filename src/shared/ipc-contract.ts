@@ -340,6 +340,71 @@ export interface MatchHistoryUpdatedPayload {
   updatedAt: number
 }
 
+export interface ManualOverlaySettings {
+  /** 旧版持续自动截图（默认关闭；关闭后只在手动刷新/快捷键时截一次图） */
+  autoScreenshot: boolean
+  /** Electron accelerator，例如 CommandOrControl+Shift+R / F8 */
+  hotkey: string
+  /** 选人阶段也显示浮窗 */
+  showInChampSelect: boolean
+  /** 经验贝叶斯收缩强度（先验场次） */
+  shrinkageAlpha: number
+  /** 浮窗是否可获得焦点（默认 false：不抢游戏焦点；修改后重启生效） */
+  focusable: boolean
+}
+
+export interface ManualOverlayAugmentRef {
+  id: number | string
+  name: string
+  rarity?: number | string | null
+  iconPath?: string | null
+}
+
+export interface ManualOverlayCandidate extends ManualOverlayAugmentRef {
+  slot: number
+  ocrText?: string | null
+}
+
+export interface ManualOverlayPickedAugment extends ManualOverlayAugmentRef {
+  pickedAt: number
+}
+
+export interface ManualOverlayCaptureInfo {
+  captureMode: 'window' | 'screen' | null
+  windowName: string | null
+  width: number | null
+  height: number | null
+  captureMs: number
+  analyzeMs: number
+  recognizedCount: number
+}
+
+export interface ManualOverlayState {
+  phase: GameflowPhase | null
+  /** 每开始一局新游戏 +1，用于渲染端判断是否换局 */
+  gameRevision: number
+  candidates: ManualOverlayCandidate[]
+  picked: ManualOverlayPickedAugment[]
+  refreshing: boolean
+  lastRefreshAt: number | null
+  lastError: string | null
+  lastCapture: ManualOverlayCaptureInfo | null
+  hotkey: string
+  hotkeyRegistered: boolean
+  hotkeyError: string | null
+  revision: number
+}
+
+export interface ManualOverlayLiveData {
+  available: boolean
+  found: boolean
+  championName: string | null
+  ownedItemIds: number[]
+  enemyItemIds: number[]
+  enemyChampionNames: string[]
+  error?: string
+}
+
 export interface ElectronEventMap {
   fromMain: [payload?: unknown]
   'for-popup': [payload: OverlayPayload]
@@ -363,6 +428,7 @@ export interface ElectronEventMap {
   'app-update-status-changed': [payload: AppUpdateState]
   'locale-changed': [payload: LocaleChangedPayload]
   'match-history-updated': [payload: MatchHistoryUpdatedPayload]
+  'manual-overlay-state': [payload: ManualOverlayState]
 }
 
 export type ElectronEventChannel = keyof ElectronEventMap
@@ -427,6 +493,19 @@ export interface ElectronAPI {
   }
   feedback: {
     submit(payload: FeedbackSubmissionPayload): Promise<FeedbackSubmissionResult>
+  }
+  manualOverlay: {
+    getState(): Promise<ManualOverlayState>
+    refresh(): Promise<ManualOverlayState>
+    pick(augment: ManualOverlayAugmentRef): Promise<ManualOverlayState>
+    unpick(augmentId: number | string): Promise<ManualOverlayState>
+    clearCandidates(): Promise<ManualOverlayState>
+    resetGame(): Promise<ManualOverlayState>
+    getLiveData(): Promise<ManualOverlayLiveData>
+    getSettings(): Promise<ManualOverlaySettings>
+    setSettings(patch: Partial<ManualOverlaySettings>): Promise<ManualOverlaySettings>
+    show(): void
+    hide(): void
   }
   lcu: {
     getChampionMonitorState(): Promise<ChampionMonitorState>

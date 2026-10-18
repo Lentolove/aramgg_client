@@ -24,6 +24,7 @@ import {
     getPopupWindow,
     raiseOverlayWindow,
 } from './window-manager.ts'
+import { registerManualOverlayIpcHandlers } from '../ipc/manual-overlay-handlers.ts'
 import logger from './logger.ts'
 import { markRendererReady } from './renderer-ready.ts'
 import store from './app-store.ts'
@@ -360,6 +361,7 @@ export function registerIpcHandlers(isDev: boolean): void {
     registerPreferencesIpcHandlers()
     registerSystemIpcHandlers()
     registerFeedbackIpcHandlers()
+    registerManualOverlayIpcHandlers()
 
     ipcMain.on('renderer-ready', (event) => markRendererReady(event.sender))
 

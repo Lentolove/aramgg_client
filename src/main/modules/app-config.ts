@@ -18,6 +18,7 @@ import {
     applyPopupWindowPreferences,
 } from './window-manager.ts'
 import autoScreenshotService from '../auto-screenshot-service.ts'
+import { getManualOverlayService } from '../services/manual-overlay/manual-overlay-runtime.ts'
 import { getLCUServiceInstance } from '../services/lcu/lcu-service.ts'
 import {
     requestLocalMatchHistoryBackgroundSync,
@@ -191,6 +192,13 @@ export async function init({ startBackgroundServices = true } = {}) {
     }
     startPerformanceMonitor()
 
+    // 手动刷新浮窗：注册全局快捷键（失败只记录，不影响启动）
+    try {
+        getManualOverlayService().registerHotkey()
+    } catch (error) {
+        logger.warn('[manual-overlay] hotkey setup failed:', error?.message || error)
+    }
+
     initializeAppUpdateService({ isDev })
     setAppUpdateInstallCleanup(() => ensureQuitCleanup('app update install'))
     refreshAppUpdateConfig({ reason: 'startup' }).catch((error) => {
@@ -229,6 +237,13 @@ export async function init({ startBackgroundServices = true } = {}) {
 }
 
 async function startAutoScreenshotForGame(reason) {
+    // 默认关闭持续自动截图；改为浮窗里手动刷新 / 快捷键单次截图。
+    // 只有用户在设置里打开 autoScreenshot 才恢复旧行为。
+    if (!getManualOverlayService().isAutoScreenshotEnabled()) {
+        logger.debug(`Auto screenshot gameflow start skipped: autoScreenshot disabled (${reason})`)
+        return false
+    }
+
     if (store.get('autoScreenshotGameflowControl') === false) {
         logger.info(`Auto screenshot gameflow start skipped: disabled by config (${reason})`)
         return false
@@ -1200,6 +1215,11 @@ async function initGameFlowMonitor() {
             autoScreenshotService.setGameflowPhase(phase)
             setAppUpdateGamePhase(phase)
             setChampionMonitorPhase(phase)
+            try {
+                getManualOverlayService().setPhase(phase)
+            } catch (error) {
+                logger.warn('[manual-overlay] phase update failed:', error?.message || error)
+            }
 
             const transition = gameSessionCoordinator.transition(phase, source)
             if (transition.changed) {
@@ -1430,6 +1450,12 @@ async function runQuitCleanup(reason = 'app quit') {
     if (autoScreenshotService && autoScreenshotService.isRunning) {
         autoScreenshotService.stop()
         logger.info('自动截图服务已停止')
+    }
+
+    try {
+        getManualOverlayService().dispose()
+    } catch {
+        // ignore
     }
 
     await logger.cleanupOldLogs(7)

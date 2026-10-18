@@ -82,3 +82,44 @@ describe('captureScreenshot', () => {
     })
   })
 })
+
+describe('captureGameWindowOnce', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('captures only window sources and picks the in-game window', async () => {
+    mocks.getSources.mockResolvedValue([
+      { id: 'window:1:0', name: 'League of Legends', thumbnail: createThumbnail(1280, 720) },
+      { id: 'window:2:0', name: 'League of Legends (TM) Client', thumbnail: createThumbnail(1920, 1080) },
+    ])
+
+    const { captureGameWindowOnce } = await import('../../src/main/screenshot.ts')
+    const result = await captureGameWindowOnce()
+
+    expect(result.success).toBe(true)
+    expect(result.captureMode).toBe('window')
+    expect(result.windowName).toBe('League of Legends (TM) Client')
+    expect(result.width).toBe(1920)
+    expect(mocks.getSources).toHaveBeenCalledTimes(1)
+    expect(mocks.getSources).toHaveBeenCalledWith({
+      types: ['window'],
+      thumbnailSize: { width: 1920, height: 1080 },
+      fetchWindowIcons: false,
+    })
+  })
+
+  it('falls back to a screen capture when no game window exists', async () => {
+    mocks.getSources
+      .mockResolvedValueOnce([{ id: 'window:9:0', name: 'Notepad', thumbnail: createThumbnail() }])
+      .mockResolvedValueOnce([{ id: 'screen:0:0', name: 'Entire Screen', thumbnail: createThumbnail() }])
+
+    const { captureGameWindowOnce } = await import('../../src/main/screenshot.ts')
+    const result = await captureGameWindowOnce()
+
+    expect(result.success).toBe(true)
+    expect(result.hasLolWindow).toBe(false)
+    expect(result.captureMode).toBe('screen')
+    expect(mocks.getSources).toHaveBeenLastCalledWith(expect.objectContaining({ types: ['screen'] }))
+  })
+})

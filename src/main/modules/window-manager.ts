@@ -53,6 +53,7 @@ let popupWindow: BrowserWindow | null = null
 let popupGameflowPhase: GameflowPhase | null = null
 let floatingWindow: BrowserWindow | null = null
 let augmentSidePanelWindow: BrowserWindow | null = null
+let manualOverlayWindow: BrowserWindow | null = null
 let mainWindowCloseAllowed = false
 let rendererServerPromise: Promise<string> | null = null
 
@@ -61,6 +62,8 @@ const POPUP_WINDOW_SIZE = { width: 360, height: 640 }
 const POPUP_WINDOW_POSITION_KEY = 'windows.championInsightPosition'
 const FLOATING_WINDOW_SIZE = { width: 760, height: 170 }
 const AUGMENT_SIDE_PANEL_WINDOW_SIZE = { width: 360, height: 640 }
+const MANUAL_OVERLAY_WINDOW_SIZE = { width: 340, height: 560 }
+const MANUAL_OVERLAY_WINDOW_POSITION_KEY = 'windows.manualOverlayPosition'
 const OVERLAY_ALWAYS_ON_TOP_LEVEL = process.platform === 'win32' ? 'screen-saver' : 'floating'
 const MIME_TYPES: Record<string, string> = {
     '.html': 'text/html; charset=utf-8',
@@ -162,6 +165,37 @@ function getAugmentSidePanelBounds(): Rectangle {
         x: area.x + area.width - width - 16,
         y: area.y + Math.max(16, Math.round((area.height - height) / 2)),
     }
+}
+
+function getManualOverlayBounds(): Rectangle {
+    const savedPosition = parseWindowPosition(store.get(MANUAL_OVERLAY_WINDOW_POSITION_KEY))
+    const display = savedPosition
+        ? screen.getDisplayNearestPoint(savedPosition)
+        : screen.getPrimaryDisplay()
+    const area = display.workArea || display.bounds
+    const width = Math.min(MANUAL_OVERLAY_WINDOW_SIZE.width, area.width)
+    const height = Math.min(MANUAL_OVERLAY_WINDOW_SIZE.height, area.height)
+    // 默认放在左侧中部：避开顶部计分板、底部技能栏和三选一卡片区域
+    const defaultPosition = {
+        x: area.x + 16,
+        y: area.y + Math.max(16, Math.round((area.height - height) / 2)),
+    }
+    const position = fitWindowPositionToWorkArea(
+        savedPosition || defaultPosition,
+        { width, height },
+        area,
+    )
+
+    return { width, height, ...position }
+}
+
+function saveManualOverlayWindowPosition(): void {
+    if (!manualOverlayWindow || manualOverlayWindow.isDestroyed()) {
+        return
+    }
+
+    const [x, y] = manualOverlayWindow.getPosition()
+    store.set(MANUAL_OVERLAY_WINDOW_POSITION_KEY, { x, y })
 }
 
 export function applyPopupWindowLayout() {
@@ -558,6 +592,9 @@ export const createMainWindow = async (
             logger.info('Closing augment side panel window...')
             augmentSidePanelWindow.close()
         }
+        if (manualOverlayWindow && !manualOverlayWindow.isDestroyed()) {
+            manualOverlayWindow.close()
+        }
     })
 
     window.on('closed', () => {
@@ -725,6 +762,83 @@ export const createFloatingWindow = async (
 }
 
 /**
+ * 创建「手动刷新」常驻浮窗：可拖动、始终置顶、不抢游戏焦点。
+ * focusable:false 时 Windows 下仍可点击按钮（WS_EX_NOACTIVATE），不会把焦点从游戏抢走；
+ * 该行为需在真实对局（建议无边框窗口模式）中验证。
+ */
+export const createManualOverlayWindow = async (
+    isDev: boolean,
+    devServerUrl: string
+): Promise<BrowserWindow> => {
+    const webPreferences = getWebPreferences(isDev)
+    const bounds = getManualOverlayBounds()
+
+    manualOverlayWindow = new BrowserWindow({
+        show: false,
+        frame: false,
+        transparent: false,
+        backgroundColor: '#10141c',
+        skipTaskbar: true,
+        resizable: true,
+        minimizable: false,
+        maximizable: false,
+        fullscreenable: false,
+        alwaysOnTop: true,
+        focusable: store.get('manualOverlay.focusable') === true,
+        minWidth: 280,
+        minHeight: 260,
+        ...bounds,
+        webPreferences,
+    })
+    setOverlayAlwaysOnTop(manualOverlayWindow, true, 'manual-overlay')
+    attachWindowDiagnostics('manual-overlay', manualOverlayWindow)
+
+    if (process.platform === 'linux') {
+        manualOverlayWindow.on('move', saveManualOverlayWindowPosition)
+    } else {
+        manualOverlayWindow.on('moved', saveManualOverlayWindowPosition)
+    }
+
+    manualOverlayWindow.on('closed', () => {
+        logger.info('Manual overlay window closed')
+        manualOverlayWindow = null
+    })
+
+    await loadRendererRoute(
+        manualOverlayWindow,
+        'manual-overlay',
+        isDev,
+        devServerUrl,
+        '/manual-overlay',
+        webPreferences.preload
+    )
+
+    if (isDev && OPEN_OVERLAY_DEVTOOLS) {
+        manualOverlayWindow.webContents.openDevTools({ mode: 'detach' })
+    }
+
+    logger.info('手动刷新浮窗已创建', { ...bounds })
+    return manualOverlayWindow
+}
+
+export function showManualOverlayWindow(window: BrowserWindow | null = manualOverlayWindow): void {
+    if (!window || window.isDestroyed()) {
+        return
+    }
+    setOverlayAlwaysOnTop(window, true, 'manual-overlay')
+    if (!window.isVisible()) {
+        window.showInactive()
+    }
+    window.moveTop()
+}
+
+export function hideManualOverlayWindow(): void {
+    if (manualOverlayWindow && !manualOverlayWindow.isDestroyed() && manualOverlayWindow.isVisible()) {
+        manualOverlayWindow.hide()
+    }
+}
+
+/**
  * 获取主窗口实例
  */
 export const getMainWindow = () => mainWindow
@@ -740,6 +854,8 @@ export const getPopupWindow = () => popupWindow
 export const getFloatingWindow = () => floatingWindow
 
 export const getAugmentSidePanelWindow = () => augmentSidePanelWindow
+
+export const getManualOverlayWindow = () => manualOverlayWindow
 
 function getRendererRuntime(): [boolean, string] {
     const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged
@@ -757,6 +873,11 @@ export const ensureFloatingWindow = createWindowLoader(
 export const ensureAugmentSidePanelWindow = createWindowLoader(
     getAugmentSidePanelWindow,
     () => createAugmentSidePanelWindow(...getRendererRuntime()),
+)
+
+export const ensureManualOverlayWindow = createWindowLoader(
+    getManualOverlayWindow,
+    () => createManualOverlayWindow(...getRendererRuntime()),
 )
 
 export function ensureAugmentOverlayWindows(): Promise<[BrowserWindow | null, BrowserWindow | null]> {

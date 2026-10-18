@@ -182,6 +182,11 @@ const router = createRouter({
       name: 'AugmentSidePanel',
       component: () => import('./components/AugmentSidePanelView.vue'),
     },
+    {
+      path: '/manual-overlay',
+      name: 'ManualOverlay',
+      component: () => import('./components/ManualOverlay.vue'),
+    },
   ],
 })
 
