@@ -168,6 +168,19 @@ function setupMainProcessErrorHandling(): void {
 setupMainProcessErrorHandling()
 
 const SHOW_MANUAL_OVERLAY_FLAG = '--show-manual-overlay'
+/** 测试用：让正在运行的实例执行一次手动刷新（等同按刷新按钮） */
+const MANUAL_REFRESH_FLAG = '--manual-refresh'
+
+async function manualRefreshFromCli(): Promise<void> {
+    try {
+        const { getManualOverlayService } = await import('./services/manual-overlay/manual-overlay-runtime.ts')
+        const service = getManualOverlayService()
+        service.showOverlay('cli:refresh')
+        await service.refresh('button')
+    } catch (error) {
+        logger.warn('[app] manual refresh from command line failed', error)
+    }
+}
 
 async function showManualOverlayFromCli(reason: string): Promise<void> {
     try {
@@ -190,6 +203,10 @@ if (!gotSingleInstanceLock) {
             workingDirectory,
         })
 
+        if (commandLine.includes(MANUAL_REFRESH_FLAG)) {
+            void manualRefreshFromCli()
+            return
+        }
         if (commandLine.includes(SHOW_MANUAL_OVERLAY_FLAG)) {
             // 桌面快捷方式「显示浮窗」：已在运行时直接显示手动刷新浮窗，不弹主窗口
             void showManualOverlayFromCli('second-instance')

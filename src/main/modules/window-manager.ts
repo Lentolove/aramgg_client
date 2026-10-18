@@ -791,6 +791,8 @@ export const createManualOverlayWindow = async (
         webPreferences,
     })
     setOverlayAlwaysOnTop(manualOverlayWindow, true, 'manual-overlay')
+    // 截图时排除浮窗本身（Windows WDA_EXCLUDEFROMCAPTURE）：整屏截图不会拍到浮窗，也不需要先隐藏浮窗
+    manualOverlayWindow.setContentProtection(true)
     attachWindowDiagnostics('manual-overlay', manualOverlayWindow)
 
     if (process.platform === 'linux') {

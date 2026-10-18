@@ -1,7 +1,7 @@
 /**
  * 把 ManualOverlayService 接到真实的 Electron / OCR / LCU 依赖上（单例）。
  */
-import { appendFile } from 'node:fs/promises'
+import { appendFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { globalShortcut, net } from 'electron'
 import logger from '../../modules/logger.ts'
@@ -45,7 +45,15 @@ function appendRefreshLog(record: Record<string, unknown>): void {
 
 export function getManualOverlayService(): ManualOverlayService {
     instance ??= new ManualOverlayService({
-        capture: () => captureGameWindowOnce({ raw: true }),
+        capture: async () => {
+            const result = await captureGameWindowOnce({ raw: true })
+            if (result.success && 'debugPng' in result && result.debugPng) {
+                // ARAMGG_MANUAL_CAPTURE_DEBUG=1：保存最近一次截图，便于核对裁剪区域
+                void writeFile(path.join(getLogDir(), 'manual-capture-last.png'), result.debugPng())
+                    .catch((error) => logger.debug('[manual-overlay] save debug capture failed', error))
+            }
+            return result
+        },
         analyze: (image) => analyzeScreenshot(image),
         warmup: () => warmupImageAnalyzer(),
         matchIcons: async (image) => {

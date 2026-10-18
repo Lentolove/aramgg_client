@@ -681,9 +681,6 @@ export class ManualOverlayService {
       } else if (candidates.length < 3) {
         lastError = `只识别到 ${candidates.length} 张，可再刷新一次或点卡名手动选择`
       }
-      if (capture.hasLolWindow === false && !lastError) {
-        lastError = '未找到游戏窗口，已改为整屏截图'
-      }
 
       this.deps.logger?.info('[manual-overlay] refresh completed', {
         source,

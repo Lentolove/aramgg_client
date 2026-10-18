@@ -325,22 +325,15 @@ export async function nativeImageToRawRgba(image: NativeImage): Promise<RawCaptu
     return { buffer, width, height, channels: 4 }
 }
 
-function pickGameWindow(sources: DesktopCapturerSource[]): DesktopCapturerSource | null {
-    // 优先复用上次的游戏内窗口（同时开着客户端和游戏时，避免在两者间跳来跳去）
-    if (cachedGameWindowSource) {
-        const cached = sources.find((source) => source.id === cachedGameWindowSource?.id)
-        if (cached) return cached
-    }
-    return findGameWindow(sources)
-}
-
 /**
- * 手动刷新用的单次截图：只枚举 window 源（不截全屏）；找不到游戏窗口时才退回整屏截图。
- * raw=true 时直接返回 RGBA 像素（不做 PNG 编码/解码，省掉 1080p 下约 100ms）。
- * OCR 标题区域与图标区域都按整图比例裁剪，与分辨率无关。
+ * 手动刷新用的单次截图：截**整个屏幕**（与原项目自动模式默认的 preferScreenCapture 一致）。
  *
- * 注意：desktopCapturer 每次调用仍会为所有枚举到的窗口生成缩略图，这是 Electron API 的限制
- * （没有「只截某个已知窗口」的主进程接口）；这里缓存游戏窗口 id 只用于在多个候选窗口中稳定选择。
+ * 不再枚举 window 源：Windows 上 desktopCapturer 为窗口生成缩略图会走 WGC，
+ * 遇到不可捕获的窗口（"Source is not capturable"）时会让主进程 ACCESS_VIOLATION 崩溃（实机复现）。
+ * 游戏使用无边框窗口时，整屏就是游戏画面，OCR / 图标的按比例裁剪不受影响。
+ * 浮窗本身通过 setContentProtection 排除在截图之外，截图时不需要隐藏浮窗。
+ *
+ * raw=true 时直接返回 RGBA 像素（不做 PNG 编码/解码）；环境变量 ARAMGG_MANUAL_CAPTURE_PNG=1 可强制走 PNG。
  */
 export const captureGameWindowOnce = async (
     options: { timeoutMs?: number; thumbnailSize?: Size; raw?: boolean } = {}
@@ -351,62 +344,57 @@ export const captureGameWindowOnce = async (
         raw = false,
     } = options
     const timestamp = Date.now()
+    const useRaw = raw && process.env.ARAMGG_MANUAL_CAPTURE_PNG !== '1'
 
     try {
         const enumerateStartedAt = performance.now()
         const sources = await withTimeout(
             desktopCapturer.getSources({
-                types: ['window'],
+                types: ['screen'],
                 thumbnailSize,
                 fetchWindowIcons: false,
             }),
             timeoutMs,
-            'desktopCapturer.getSources(window)'
+            'desktopCapturer.getSources(screen)'
         )
         const enumerateMs = Math.round(performance.now() - enumerateStartedAt)
-
-        const gameWindow = pickGameWindow(sources)
-
-        if (gameWindow && gameWindow.thumbnail && !gameWindow.thumbnail.isEmpty()) {
-            if (cachedGameWindowSource?.id !== gameWindow.id) {
-                logger.info(`Manual capture: using game window "${gameWindow.name}"`)
-            }
-            // 只缓存游戏内窗口（"League of Legends (TM) Client"），不缓存客户端大厅
-            cachedGameWindowSource = gameWindow.name.toLowerCase().includes('(tm) client')
-                ? { id: gameWindow.id, name: gameWindow.name }
-                : null
-            const size = gameWindow.thumbnail.getSize()
-            const convertStartedAt = performance.now()
-            let rawImage: RawCaptureImage | null = null
-            if (raw) {
-                try {
-                    rawImage = await nativeImageToRawRgba(gameWindow.thumbnail)
-                } catch (error) {
-                    logger.warn('Manual capture: raw bitmap conversion failed, using PNG', error)
-                }
-            }
-            const buffer = rawImage ? undefined : gameWindow.thumbnail.toPNG()
-            const convertMs = Math.round(performance.now() - convertStartedAt)
-            return {
-                success: true,
-                buffer,
-                raw: rawImage ?? undefined,
-                timestamp,
-                hasLolWindow: true,
-                captureMode: 'window' as const,
-                windowName: gameWindow.name,
-                width: size.width,
-                height: size.height,
-                enumerateMs,
-                convertMs,
-                sourceCount: sources.length,
-            }
+        const screenSource = findScreenSource(sources)
+        if (!screenSource || !screenSource.thumbnail || screenSource.thumbnail.isEmpty()) {
+            throw new Error('无法获取屏幕截图')
         }
 
-        cachedGameWindowSource = null
-        logger.warn('Manual capture: LoL game window not found, falling back to screen capture')
-        const fallback = await captureScreenshot({ preferScreen: true, timeoutMs, thumbnailSize })
-        return { ...fallback, hasLolWindow: false, enumerateMs }
+        const size = screenSource.thumbnail.getSize()
+        const convertStartedAt = performance.now()
+        let rawImage: RawCaptureImage | null = null
+        if (useRaw) {
+            try {
+                rawImage = await nativeImageToRawRgba(screenSource.thumbnail)
+            } catch (error) {
+                logger.warn('Manual capture: raw bitmap conversion failed, using PNG', error)
+            }
+        }
+        const buffer = rawImage ? undefined : screenSource.thumbnail.toPNG()
+        const convertMs = Math.round(performance.now() - convertStartedAt)
+        const sourceKey = `${screenSource.id}:${size.width}x${size.height}:${rawImage ? 'raw' : 'png'}`
+        if (cachedGameWindowSource?.id !== sourceKey) {
+            cachedGameWindowSource = { id: sourceKey, name: screenSource.name }
+            logger.info(`Manual capture: screen "${screenSource.name}" ${size.width}x${size.height} (${rawImage ? 'raw' : 'png'})`)
+        }
+        return {
+            success: true,
+            buffer,
+            raw: rawImage ?? undefined,
+            timestamp,
+            captureMode: 'screen' as const,
+            windowName: screenSource.name,
+            width: size.width,
+            height: size.height,
+            enumerateMs,
+            convertMs,
+            sourceCount: sources.length,
+            /** 调试用：保存截图 */
+            debugPng: process.env.ARAMGG_MANUAL_CAPTURE_DEBUG === '1' ? () => screenSource.thumbnail.toPNG() : undefined,
+        }
     } catch (error) {
         logger.error('Manual capture failed:', error)
         return {
