@@ -362,3 +362,89 @@ describe('ManualOverlayService recognition, correction and reminder', () => {
     expect(await new ManualOverlayService(deps).listAugments()).toEqual([{ id: 1, name: 'A', rarity: null, iconPath: null }])
   })
 })
+
+describe('ManualOverlayService 2999 live-game watch (LCU independent)', () => {
+  function liveDeps() {
+    let alive = true
+    const getLiveClientAllGameData = vi.fn(async () => (alive
+      ? { status: 200, data: { gameData: { gameTime: 5 }, activePlayer: { level: 1 }, allPlayers: [] } }
+      : null))
+    const created = createDeps({ getLiveClientAllGameData })
+    return { ...created, setAlive: (value: boolean) => { alive = value } }
+  }
+
+  it('shows the overlay when 2999 responds even without any LCU phase', async () => {
+    const { deps } = liveDeps()
+    const service = new ManualOverlayService(deps)
+    expect(await service.checkLiveGame()).toBe(true)
+    expect(deps.showWindow).toHaveBeenCalledWith('2999')
+    expect(service.getState().liveGame).toBe(true)
+    // 已经显示过，不会重复触发
+    await service.checkLiveGame()
+    expect(deps.showWindow).toHaveBeenCalledTimes(1)
+  })
+
+  it('starts a new game (clears picks) when LCU did not report one', async () => {
+    const { deps } = liveDeps()
+    const service = new ManualOverlayService(deps)
+    service.pick({ id: 1, name: 'old' })
+    await service.checkLiveGame()
+    expect(service.getState().picked).toEqual([])
+  })
+
+  it('keeps picks when LCU already reported the game', async () => {
+    const { deps } = liveDeps()
+    const service = new ManualOverlayService(deps)
+    service.setPhase('InProgress')
+    service.pick({ id: 1, name: 'A' })
+    await service.checkLiveGame()
+    expect(service.getState().picked.map((augment) => augment.id)).toEqual([1])
+  })
+
+  it('does not hide on an LCU hide phase while 2999 is alive, hides after repeated misses', async () => {
+    const { deps, setAlive } = liveDeps()
+    const service = new ManualOverlayService(deps)
+    await service.checkLiveGame()
+    service.setPhase('None')
+    expect(deps.hideWindow).not.toHaveBeenCalled()
+    setAlive(false)
+    for (let i = 0; i < ManualOverlayService.LIVE_GAME_MISS_LIMIT - 1; i++) await service.checkLiveGame()
+    expect(deps.hideWindow).not.toHaveBeenCalled()
+    await service.checkLiveGame()
+    expect(service.getState().liveGame).toBe(false)
+    expect(deps.hideWindow).toHaveBeenCalledWith('2999-gone')
+  })
+
+  it('stays visible after 2999 disappears if LCU still says InProgress', async () => {
+    const { deps, setAlive } = liveDeps()
+    const service = new ManualOverlayService(deps)
+    service.setPhase('InProgress')
+    await service.checkLiveGame()
+    setAlive(false)
+    for (let i = 0; i < ManualOverlayService.LIVE_GAME_MISS_LIMIT; i++) await service.checkLiveGame()
+    expect(deps.hideWindow).not.toHaveBeenCalled()
+  })
+
+  it('showOverlay shows on demand (tray)', () => {
+    const { deps } = liveDeps()
+    new ManualOverlayService(deps).showOverlay('tray')
+    expect(deps.showWindow).toHaveBeenCalledWith('tray')
+  })
+
+  it('startLiveGameWatch polls and dispose stops it', async () => {
+    vi.useFakeTimers()
+    try {
+      const { deps } = liveDeps()
+      const service = new ManualOverlayService(deps)
+      service.startLiveGameWatch(1000)
+      await vi.advanceTimersByTimeAsync(3100)
+      const calls = (deps.getLiveClientAllGameData as any).mock.calls.length
+      expect(calls).toBeGreaterThanOrEqual(3)
+      service.dispose()
+      await vi.advanceTimersByTimeAsync(5000)
+      expect((deps.getLiveClientAllGameData as any).mock.calls.length).toBe(calls)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})

@@ -332,6 +332,7 @@ const state = ref<ManualOverlayState>({
   hotkeyError: null,
   acknowledgedStage: 0,
   iconIndex: { ready: false, count: 0, error: null },
+  liveGame: false,
   revision: 0,
 })
 const settings = reactive<ManualOverlaySettings>({
@@ -385,7 +386,8 @@ const phaseLabel = computed(() => {
     Reconnect: '重连中',
     EndOfGame: '已结束',
   }
-  return labels[String(state.value.phase)] || String(state.value.phase || '未连接客户端')
+  const label = labels[String(state.value.phase)] || String(state.value.phase || '未连接客户端')
+  return state.value.liveGame && state.value.phase !== 'InProgress' ? `对局中（2999）· ${label}` : label
 })
 
 const championLabel = computed(() => {
@@ -720,7 +722,7 @@ function applyChampionMonitor(monitor: ChampionMonitorState | null | undefined) 
 }
 
 async function pollLive() {
-  if (!['InProgress', 'Reconnect'].includes(String(state.value.phase))) {
+  if (!state.value.liveGame && !['InProgress', 'Reconnect'].includes(String(state.value.phase))) {
     return
   }
   try {

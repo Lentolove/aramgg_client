@@ -167,6 +167,17 @@ function setupMainProcessErrorHandling(): void {
 // 设置主进程错误处理
 setupMainProcessErrorHandling()
 
+const SHOW_MANUAL_OVERLAY_FLAG = '--show-manual-overlay'
+
+async function showManualOverlayFromCli(reason: string): Promise<void> {
+    try {
+        const { getManualOverlayService } = await import('./services/manual-overlay/manual-overlay-runtime.ts')
+        getManualOverlayService().showOverlay(`cli:${reason}`)
+    } catch (error) {
+        logger.warn('[app] failed to show manual overlay from command line', error)
+    }
+}
+
 const gotSingleInstanceLock = app.requestSingleInstanceLock()
 
 if (!gotSingleInstanceLock) {
@@ -178,6 +189,12 @@ if (!gotSingleInstanceLock) {
             commandLine,
             workingDirectory,
         })
+
+        if (commandLine.includes(SHOW_MANUAL_OVERLAY_FLAG)) {
+            // 桌面快捷方式「显示浮窗」：已在运行时直接显示手动刷新浮窗，不弹主窗口
+            void showManualOverlayFromCli('second-instance')
+            return
+        }
 
         const mainWindow = getMainWindow()
         if (mainWindow && !mainWindow.isDestroyed()) {
@@ -197,6 +214,9 @@ if (!gotSingleInstanceLock) {
             await releaseSmoke.run(() => init({ startBackgroundServices: false }))
         } else {
             await init()
+            if (process.argv.includes(SHOW_MANUAL_OVERLAY_FLAG)) {
+                void showManualOverlayFromCli('startup')
+            }
         }
     }).catch((error) => {
         writeBootstrapError('app initialization failed', error)

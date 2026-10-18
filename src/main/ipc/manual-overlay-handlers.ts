@@ -27,9 +27,9 @@ export function registerManualOverlayIpcHandlers(): void {
     ipcMain.handle('manual-overlay-set-focusable', (_event, focusable: unknown) =>
         setManualOverlayFocusable(focusable === true))
     ipcMain.on('manual-overlay-show', async () => {
-        showManualOverlayWindow(await ensureManualOverlayWindow())
+        showManualOverlayWindow(await ensureManualOverlayWindow(), 'ipc')
     })
     ipcMain.on('manual-overlay-hide', () => {
-        hideManualOverlayWindow()
+        hideManualOverlayWindow('ipc')
     })
 }

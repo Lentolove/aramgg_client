@@ -195,6 +195,8 @@ export async function init({ startBackgroundServices = true } = {}) {
     // 手动刷新浮窗：注册全局快捷键（失败只记录，不影响启动）
     try {
         getManualOverlayService().registerHotkey()
+        // 不依赖 LCU：2999 有响应就显示浮窗
+        getManualOverlayService().startLiveGameWatch()
     } catch (error) {
         logger.warn('[manual-overlay] hotkey setup failed:', error?.message || error)
     }

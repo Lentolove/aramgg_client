@@ -76,11 +76,11 @@ export function getManualOverlayService(): ManualOverlayService {
             unregister: (accelerator) => globalShortcut.unregister(accelerator),
             isRegistered: (accelerator) => globalShortcut.isRegistered(accelerator),
         },
-        showWindow: async () => {
+        showWindow: async (reason) => {
             const window = await ensureManualOverlayWindow()
-            showManualOverlayWindow(window)
+            showManualOverlayWindow(window, reason)
         },
-        hideWindow: () => hideManualOverlayWindow(),
+        hideWindow: (reason) => hideManualOverlayWindow(reason),
         broadcast: (state) => notifyAllWindows('manual-overlay-state', state),
         logger,
     })

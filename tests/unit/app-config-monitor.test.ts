@@ -52,6 +52,7 @@ vi.mock('../../src/main/services/manual-overlay/manual-overlay-runtime.ts', () =
     isAutoScreenshotEnabled: () => mocks.autoScreenshotEnabled,
     setPhase: mocks.overlayPhase,
     registerHotkey: mocks.registerHotkey,
+    startLiveGameWatch: vi.fn(),
     dispose: vi.fn(),
   }),
 }))

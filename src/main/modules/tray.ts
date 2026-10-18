@@ -2,6 +2,8 @@ import { app, Menu, nativeImage, Tray } from 'electron'
 import { existsSync } from 'fs'
 import path from 'path'
 import logger from './logger.ts'
+import { getManualOverlayService } from '../services/manual-overlay/manual-overlay-runtime.ts'
+import { hideManualOverlayWindow } from './window-manager.ts'
 import {
     getMainWindow,
     hideMainWindow,
@@ -80,6 +82,19 @@ function buildTrayMenu() {
             label: '隐藏主窗口',
             click: () => {
                 hideMainWindow()
+            },
+        },
+        { type: 'separator' },
+        {
+            label: '显示手动浮窗',
+            click: () => {
+                getManualOverlayService().showOverlay('tray')
+            },
+        },
+        {
+            label: '隐藏手动浮窗',
+            click: () => {
+                hideManualOverlayWindow('tray')
             },
         },
         { type: 'separator' },

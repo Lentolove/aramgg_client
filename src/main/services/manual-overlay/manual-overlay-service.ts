@@ -116,8 +116,8 @@ export interface ManualOverlayDeps {
     unregister: (accelerator: string) => void
     isRegistered?: (accelerator: string) => boolean
   }
-  showWindow: () => Promise<void> | void
-  hideWindow: () => void
+  showWindow: (reason?: string) => Promise<void> | void
+  hideWindow: (reason?: string) => void
   broadcast: (state: ManualOverlayState) => void
   now?: () => number
   logger?: { info: (...args: any[]) => void; warn: (...args: any[]) => void; debug: (...args: any[]) => void }
@@ -282,9 +282,16 @@ export class ManualOverlayService {
       hotkeyError: null,
       acknowledgedStage: 0,
       iconIndex: { ready: false, count: 0, error: null },
+      liveGame: false,
       revision: 0,
     }
   }
+
+  private liveWatchTimer: ReturnType<typeof setInterval> | null = null
+  private liveWatchBusy = false
+  private liveMisses = 0
+  /** 连续这么多次 2999 无响应才认为对局结束（避免偶发超时把浮窗藏掉） */
+  static readonly LIVE_GAME_MISS_LIMIT = 5
 
   private lastTiming: ReturnType<typeof parseLiveTiming> | null = null
   private lastReminder: ManualOverlayReminder | null = null
@@ -393,7 +400,111 @@ export class ManualOverlayService {
     return ok
   }
 
+  // ------------------------------------------------------------------ 2999 watch
+
+  /**
+   * 不依赖 LCU：周期性探测游戏内 2999 接口，只要有响应就认为正在对局 → 显示浮窗。
+   * LCU 没连上、阶段事件漏掉、或客户端权限问题时，浮窗仍然会出现。
+   */
+  startLiveGameWatch(intervalMs = 3000): void {
+    if (this.liveWatchTimer) return
+    this.liveWatchTimer = setInterval(() => {
+      void this.checkLiveGame()
+    }, intervalMs)
+    void this.checkLiveGame()
+  }
+
+  stopLiveGameWatch(): void {
+    if (this.liveWatchTimer) {
+      clearInterval(this.liveWatchTimer)
+      this.liveWatchTimer = null
+    }
+  }
+
+  async checkLiveGame(): Promise<boolean> {
+    if (this.liveWatchBusy) return this.state.liveGame
+    this.liveWatchBusy = true
+    try {
+      let ok = false
+      try {
+        const response = await this.deps.getLiveClientAllGameData()
+        ok = !!response && response.status === 200 && !!response.data
+      } catch {
+        ok = false
+      }
+      if (ok) {
+        this.liveMisses = 0
+        if (!this.state.liveGame) {
+          const phaseKnown = !!this.state.phase && IN_GAME_PHASES.has(this.state.phase)
+          this.deps.logger?.info('[manual-overlay] live game detected via 2999', { phase: this.state.phase })
+          const patch: Partial<ManualOverlayState> = { liveGame: true }
+          if (!phaseKnown && this.state.gameRevision === this.lastLiveGameRevision) {
+            // LCU 没报告新的一局：按新局处理，清掉上一局的已选
+            Object.assign(patch, {
+              gameRevision: this.state.gameRevision + 1,
+              candidates: [],
+              picked: [],
+              lastError: null,
+              lastCapture: null,
+              acknowledgedStage: 0,
+            })
+            this.lastReminder = null
+          }
+          this.update(patch)
+          this.lastLiveGameRevision = this.state.gameRevision
+          this.showFor('2999')
+          this.warmupOnce()
+          this.prepareIconIndex()
+        }
+      } else if (this.state.liveGame) {
+        this.liveMisses++
+        if (this.liveMisses >= ManualOverlayService.LIVE_GAME_MISS_LIMIT) {
+          this.deps.logger?.info('[manual-overlay] live game ended (2999 unavailable)', { phase: this.state.phase })
+          this.update({ liveGame: false })
+          if (!this.state.phase || !IN_GAME_PHASES.has(this.state.phase)) {
+            this.hideFor('2999-gone')
+          }
+        }
+      }
+      return this.state.liveGame
+    } finally {
+      this.liveWatchBusy = false
+    }
+  }
+
+  private lastLiveGameRevision = 0
+
+  /** 托盘「显示手动浮窗」等：随时显示 */
+  showOverlay(reason = 'manual'): void {
+    this.showFor(reason)
+  }
+
+  private showFor(reason: string): void {
+    void Promise.resolve(this.deps.showWindow(reason)).catch((error) => {
+      this.deps.logger?.warn('[manual-overlay] show window failed', error)
+    })
+  }
+
+  private hideFor(reason: string): void {
+    try {
+      this.deps.hideWindow(reason)
+    } catch (error) {
+      this.deps.logger?.warn('[manual-overlay] hide window failed', error)
+    }
+  }
+
+  private warmupOnce(): void {
+    if (this.warmedUp || !this.deps.warmup) return
+    this.warmedUp = true
+    // 进入对局后预热 OCR，让第一次手动刷新不用等模型加载
+    void Promise.resolve(this.deps.warmup()).catch((error) => {
+      this.warmedUp = false
+      this.deps.logger?.warn('[manual-overlay] OCR warmup failed', error)
+    })
+  }
+
   dispose(): void {
+    this.stopLiveGameWatch()
     if (this.registeredHotkey) {
       try {
         this.deps.shortcuts.unregister(this.registeredHotkey)
@@ -434,13 +545,11 @@ export class ManualOverlayService {
     this.update(patch)
     this.applyVisibility(phase)
 
-    if (phase === 'InProgress' && !this.warmedUp && this.deps.warmup) {
-      this.warmedUp = true
-      // 进入对局后预热 OCR，让第一次手动刷新不用等模型加载
-      void Promise.resolve(this.deps.warmup()).catch((error) => {
-        this.warmedUp = false
-        this.deps.logger?.warn('[manual-overlay] OCR warmup failed', error)
-      })
+    if (phase === 'InProgress') {
+      this.warmupOnce()
+    }
+    if (startsNewGame) {
+      this.lastLiveGameRevision = this.state.gameRevision
     }
     if (IN_GAME_PHASES.has(phase)) {
       this.prepareIconIndex()
@@ -458,16 +567,13 @@ export class ManualOverlayService {
   private applyVisibility(phase: GameflowPhase): void {
     const shouldShow = IN_GAME_PHASES.has(phase) ||
       (phase === 'ChampSelect' && this.settings.showInChampSelect)
-    try {
-      if (shouldShow) {
-        void Promise.resolve(this.deps.showWindow()).catch((error) => {
-          this.deps.logger?.warn('[manual-overlay] show window failed', error)
-        })
-      } else if (HIDE_PHASES.has(phase) || phase === 'ChampSelect') {
-        this.deps.hideWindow()
-      }
-    } catch (error) {
-      this.deps.logger?.warn('[manual-overlay] visibility update failed', error)
+    if (shouldShow) {
+      this.showFor(`phase:${phase}`)
+    } else if (this.state.liveGame) {
+      // 2999 仍有响应 = 游戏还在进行（LCU 阶段可能不准），不隐藏
+      return
+    } else if (HIDE_PHASES.has(phase) || phase === 'ChampSelect') {
+      this.hideFor(`phase:${phase}`)
     }
   }
 
@@ -486,7 +592,7 @@ export class ManualOverlayService {
   private async runRefresh(source: string): Promise<ManualOverlayState> {
     this.update({ refreshing: true, lastError: null })
     if (source === 'hotkey') {
-      void Promise.resolve(this.deps.showWindow()).catch(() => {})
+      this.showFor('hotkey')
     }
 
     const startedAt = this.now()

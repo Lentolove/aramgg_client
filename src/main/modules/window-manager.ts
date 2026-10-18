@@ -801,6 +801,7 @@ export const createManualOverlayWindow = async (
 
     manualOverlayWindow.on('closed', () => {
         logger.info('Manual overlay window closed')
+        stopManualOverlayKeepOnTop()
         manualOverlayWindow = null
     })
 
@@ -821,15 +822,84 @@ export const createManualOverlayWindow = async (
     return manualOverlayWindow
 }
 
-export function showManualOverlayWindow(window: BrowserWindow | null = manualOverlayWindow): void {
-    if (!window || window.isDestroyed()) {
+const MANUAL_OVERLAY_KEEP_ON_TOP_MS = 1500
+let manualOverlayKeepOnTopTimer: ReturnType<typeof setInterval> | null = null
+
+/**
+ * 重新把浮窗压到置顶层最上面（不抢焦点）。游戏窗口（无边框模式）获得前台后会盖住
+ * 之前置顶的窗口，只在显示时设置一次置顶不够，需要周期性重申。
+ */
+export function reassertManualOverlayTopmost(window: BrowserWindow | null = manualOverlayWindow): void {
+    if (!window || window.isDestroyed() || !window.isVisible()) {
         return
     }
     setOverlayAlwaysOnTop(window, true, 'manual-overlay')
-    if (!window.isVisible()) {
+    window.moveTop()
+}
+
+function startManualOverlayKeepOnTop(): void {
+    if (manualOverlayKeepOnTopTimer) {
+        return
+    }
+    manualOverlayKeepOnTopTimer = setInterval(() => {
+        try {
+            reassertManualOverlayTopmost()
+        } catch (error) {
+            logger.debug('[window:manual-overlay] keep-on-top failed', error)
+        }
+    }, MANUAL_OVERLAY_KEEP_ON_TOP_MS)
+}
+
+function stopManualOverlayKeepOnTop(): void {
+    if (manualOverlayKeepOnTopTimer) {
+        clearInterval(manualOverlayKeepOnTopTimer)
+        manualOverlayKeepOnTopTimer = null
+    }
+}
+
+/** 确保浮窗在当前某个显示器的可见区域内（分辨率/显示器变化后可能跑到屏幕外） */
+function ensureManualOverlayOnScreen(window: BrowserWindow): void {
+    const bounds = window.getBounds()
+    const display = screen.getDisplayMatching(bounds)
+    const area = display.workArea || display.bounds
+    const width = Math.min(bounds.width, area.width)
+    const height = Math.min(bounds.height, area.height)
+    const position = fitWindowPositionToWorkArea({ x: bounds.x, y: bounds.y }, { width, height }, area)
+    if (position.x !== bounds.x || position.y !== bounds.y || width !== bounds.width || height !== bounds.height) {
+        window.setBounds({ ...position, width, height })
+        logger.info('[window:manual-overlay] moved back on screen', { from: bounds, to: { ...position, width, height } })
+    }
+}
+
+export function showManualOverlayWindow(
+    window: BrowserWindow | null = manualOverlayWindow,
+    reason: string = 'show'
+): void {
+    if (!window || window.isDestroyed()) {
+        return
+    }
+    const wasVisible = window.isVisible()
+    ensureManualOverlayOnScreen(window)
+    setOverlayAlwaysOnTop(window, true, 'manual-overlay')
+    if (window.isMinimized()) {
+        window.restore()
+    }
+    if (!wasVisible) {
         window.showInactive()
     }
     window.moveTop()
+    startManualOverlayKeepOnTop()
+    if (!wasVisible) {
+        logger.info('手动刷新浮窗已显示', { reason, ...window.getBounds(), visible: window.isVisible() })
+    }
+}
+
+export function hideManualOverlayWindow(reason: string = 'hide'): void {
+    stopManualOverlayKeepOnTop()
+    if (manualOverlayWindow && !manualOverlayWindow.isDestroyed() && manualOverlayWindow.isVisible()) {
+        manualOverlayWindow.hide()
+        logger.info('手动刷新浮窗已隐藏', { reason })
+    }
 }
 
 /**
@@ -854,11 +924,6 @@ export function setManualOverlayFocusable(focusable: boolean): boolean {
     return keepFocusable
 }
 
-export function hideManualOverlayWindow(): void {
-    if (manualOverlayWindow && !manualOverlayWindow.isDestroyed() && manualOverlayWindow.isVisible()) {
-        manualOverlayWindow.hide()
-    }
-}
 
 /**
  * 获取主窗口实例

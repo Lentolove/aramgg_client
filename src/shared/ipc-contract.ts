@@ -425,6 +425,8 @@ export interface ManualOverlayState {
   acknowledgedStage: number
   /** 图标库状态 */
   iconIndex: { ready: boolean; count: number; error: string | null }
+  /** 2999 游戏内接口有响应（不依赖 LCU 判断对局中） */
+  liveGame: boolean
   revision: number
 }
 
