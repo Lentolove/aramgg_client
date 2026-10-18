@@ -461,7 +461,7 @@ export class ManualOverlayService {
         if (this.liveMisses >= ManualOverlayService.LIVE_GAME_MISS_LIMIT) {
           this.deps.logger?.info('[manual-overlay] live game ended (2999 unavailable)', { phase: this.state.phase })
           this.update({ liveGame: false })
-          if (!this.state.phase || !IN_GAME_PHASES.has(this.state.phase)) {
+          if (!this.pinned && (!this.state.phase || !IN_GAME_PHASES.has(this.state.phase))) {
             this.hideFor('2999-gone')
           }
         }
@@ -474,9 +474,23 @@ export class ManualOverlayService {
 
   private lastLiveGameRevision = 0
 
+  /** 用户主动显示（托盘 / 命令行 / 快捷键）后，阶段事件不再自动隐藏，直到用户自己关掉 */
+  private pinned = false
+
   /** 托盘「显示手动浮窗」等：随时显示 */
   showOverlay(reason = 'manual'): void {
+    this.pinned = true
     this.showFor(reason)
+  }
+
+  /** 用户主动隐藏（浮窗 × / 托盘），解除固定 */
+  hideOverlay(reason = 'manual'): void {
+    this.pinned = false
+    this.hideFor(reason)
+  }
+
+  isPinned(): boolean {
+    return this.pinned
   }
 
   private showFor(reason: string): void {
@@ -569,8 +583,8 @@ export class ManualOverlayService {
       (phase === 'ChampSelect' && this.settings.showInChampSelect)
     if (shouldShow) {
       this.showFor(`phase:${phase}`)
-    } else if (this.state.liveGame) {
-      // 2999 仍有响应 = 游戏还在进行（LCU 阶段可能不准），不隐藏
+    } else if (this.state.liveGame || this.pinned) {
+      // 2999 仍有响应 = 游戏还在进行（LCU 阶段可能不准）；或用户手动打开的 → 不隐藏
       return
     } else if (HIDE_PHASES.has(phase) || phase === 'ChampSelect') {
       this.hideFor(`phase:${phase}`)
@@ -592,6 +606,7 @@ export class ManualOverlayService {
   private async runRefresh(source: string): Promise<ManualOverlayState> {
     this.update({ refreshing: true, lastError: null })
     if (source === 'hotkey') {
+      this.pinned = true
       this.showFor('hotkey')
     }
 

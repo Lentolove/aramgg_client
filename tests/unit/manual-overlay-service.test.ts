@@ -448,3 +448,25 @@ describe('ManualOverlayService 2999 live-game watch (LCU independent)', () => {
     }
   })
 })
+
+describe('ManualOverlayService pinned (user-shown) overlay', () => {
+  it('is not hidden by phase events after a manual show, until the user hides it', () => {
+    const { deps } = createDeps()
+    const service = new ManualOverlayService(deps)
+    service.showOverlay('tray')
+    service.setPhase('EndOfGame')
+    expect(deps.hideWindow).not.toHaveBeenCalled()
+    service.hideOverlay('tray')
+    expect(deps.hideWindow).toHaveBeenCalledWith('tray')
+    service.setPhase('Lobby')
+    expect(deps.hideWindow).toHaveBeenLastCalledWith('phase:Lobby')
+  })
+
+  it('pins the overlay when the refresh hotkey is used', async () => {
+    const { deps } = createDeps()
+    const service = new ManualOverlayService(deps)
+    await service.refresh('hotkey')
+    expect(service.isPinned()).toBe(true)
+    expect(deps.showWindow).toHaveBeenCalledWith('hotkey')
+  })
+})

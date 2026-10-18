@@ -1,10 +1,7 @@
 import { trustedIpcMain as ipcMain } from '../security/trusted-ipc.ts'
 import { getManualOverlayService } from '../services/manual-overlay/manual-overlay-runtime.ts'
 import {
-    ensureManualOverlayWindow,
-    hideManualOverlayWindow,
     setManualOverlayFocusable,
-    showManualOverlayWindow,
 } from '../modules/window-manager.ts'
 
 export function registerManualOverlayIpcHandlers(): void {
@@ -26,10 +23,10 @@ export function registerManualOverlayIpcHandlers(): void {
     ipcMain.handle('manual-overlay-list-augments', () => service().listAugments())
     ipcMain.handle('manual-overlay-set-focusable', (_event, focusable: unknown) =>
         setManualOverlayFocusable(focusable === true))
-    ipcMain.on('manual-overlay-show', async () => {
-        showManualOverlayWindow(await ensureManualOverlayWindow(), 'ipc')
+    ipcMain.on('manual-overlay-show', () => {
+        service().showOverlay('ipc')
     })
     ipcMain.on('manual-overlay-hide', () => {
-        hideManualOverlayWindow('ipc')
+        service().hideOverlay('overlay-close')
     })
 }

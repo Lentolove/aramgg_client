@@ -3,7 +3,6 @@ import { existsSync } from 'fs'
 import path from 'path'
 import logger from './logger.ts'
 import { getManualOverlayService } from '../services/manual-overlay/manual-overlay-runtime.ts'
-import { hideManualOverlayWindow } from './window-manager.ts'
 import {
     getMainWindow,
     hideMainWindow,
@@ -94,7 +93,7 @@ function buildTrayMenu() {
         {
             label: '隐藏手动浮窗',
             click: () => {
-                hideManualOverlayWindow('tray')
+                getManualOverlayService().hideOverlay('tray')
             },
         },
         { type: 'separator' },
