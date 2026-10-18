@@ -784,7 +784,7 @@ export const createManualOverlayWindow = async (
         maximizable: false,
         fullscreenable: false,
         alwaysOnTop: true,
-        focusable: store.get('manualOverlay.focusable') === true,
+        focusable: store.get('manualOverlay.settings.focusable') === true,
         minWidth: 280,
         minHeight: 260,
         ...bounds,
@@ -830,6 +830,28 @@ export function showManualOverlayWindow(window: BrowserWindow | null = manualOve
         window.showInactive()
     }
     window.moveTop()
+}
+
+/**
+ * 临时切换浮窗是否可获得焦点：搜索框需要键盘输入时打开，关闭搜索后恢复为不抢焦点
+ * （设置里勾选了「可获得焦点」时始终保持可聚焦）。
+ */
+export function setManualOverlayFocusable(focusable: boolean): boolean {
+    const window = manualOverlayWindow
+    if (!window || window.isDestroyed()) {
+        return false
+    }
+    const keepFocusable = store.get('manualOverlay.settings.focusable') === true
+    if (focusable) {
+        window.setFocusable(true)
+        window.focus()
+        return true
+    }
+    if (!keepFocusable) {
+        window.blur()
+        window.setFocusable(false)
+    }
+    return keepFocusable
 }
 
 export function hideManualOverlayWindow(): void {

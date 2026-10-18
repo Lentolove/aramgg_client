@@ -1,7 +1,9 @@
 /**
  * 把 ManualOverlayService 接到真实的 Electron / OCR / LCU 依赖上（单例）。
  */
-import { globalShortcut } from 'electron'
+import { appendFile } from 'node:fs/promises'
+import path from 'node:path'
+import { globalShortcut, net } from 'electron'
 import logger from '../../modules/logger.ts'
 import store from '../../modules/app-store.ts'
 import {
@@ -14,14 +16,56 @@ import { captureGameWindowOnce } from '../../screenshot.ts'
 import { analyzeScreenshot, warmupImageAnalyzer } from '../../image-analyzer.ts'
 import { getLCUServiceInstance } from '../lcu/lcu-service.ts'
 import { ManualOverlayService } from './manual-overlay-service.ts'
+import { AugmentIconIndex } from './augment-icon-index.ts'
+import { getDataLocale, loadAugmentBase } from '../../data-loader.ts'
+import { getAppDataDir, getLogDir } from '../../modules/app-paths.ts'
 
 let instance: ManualOverlayService | null = null
+let iconIndex: AugmentIconIndex | null = null
+
+function getIconIndex(): AugmentIconIndex {
+    iconIndex ??= new AugmentIconIndex({
+        loadAugments: () => loadAugmentBase(getDataLocale()),
+        fetch: (url, init) => net.fetch(url, init),
+        cacheDir: path.join(getAppDataDir(), 'cache', 'augment-icons'),
+        logger,
+    })
+    return iconIndex
+}
+
+/** 刷新日志：<logs>/manual-refresh.jsonl，一行一条，用于校准提醒时机 */
+let logQueue: Promise<void> = Promise.resolve()
+function appendRefreshLog(record: Record<string, unknown>): void {
+    const line = `${JSON.stringify(record)}\n`
+    const file = path.join(getLogDir(), 'manual-refresh.jsonl')
+    logQueue = logQueue
+        .then(() => appendFile(file, line, 'utf8'))
+        .catch((error) => logger.debug('[manual-overlay] write refresh log failed', error))
+}
 
 export function getManualOverlayService(): ManualOverlayService {
     instance ??= new ManualOverlayService({
-        capture: () => captureGameWindowOnce(),
-        analyze: (buffer) => analyzeScreenshot(buffer),
+        capture: () => captureGameWindowOnce({ raw: true }),
+        analyze: (image) => analyzeScreenshot(image),
         warmup: () => warmupImageAnalyzer(),
+        matchIcons: async (image) => {
+            const index = getIconIndex()
+            if (!index.ready) {
+                // 第一次刷新时图标库可能还没准备好：不等待，只用 OCR，后台继续构建
+                void index.ensureBuilt()
+                return [[], [], []]
+            }
+            return index.matchImage(image)
+        },
+        iconIndexStatus: () => getIconIndex().status(),
+        ensureIconIndex: () => getIconIndex().ensureBuilt(),
+        listAugments: async () => (await loadAugmentBase(getDataLocale())).map((augment: any) => ({
+            id: augment.id,
+            name: augment.name,
+            rarity: augment.rarity ?? null,
+            iconPath: augment.iconUrl ?? augment.iconPath ?? null,
+        })),
+        appendLog: appendRefreshLog,
         getLiveClientAllGameData: () => getLCUServiceInstance().getLiveClientAllGameData(),
         store: {
             get: (key) => store.get(key),

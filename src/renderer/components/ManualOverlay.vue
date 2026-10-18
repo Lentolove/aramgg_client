@@ -23,6 +23,19 @@
       <button class="mo-btn mo-icon-btn mo-no-drag" title="隐藏（快捷键可再次唤出）" @click="hide">×</button>
     </header>
 
+    <div
+      v-if="reminder?.active"
+      class="mo-reminder mo-no-drag"
+      :class="{ 'mo-reminder-urgent': reminder.urgent }"
+    >
+      <span class="mo-reminder-text">
+        <b v-if="reminder.urgent">可以刷新了</b>
+        <span>{{ reminder.reason }}</span>
+      </span>
+      <button class="mo-btn mo-btn-primary" :disabled="state.refreshing" @click="refresh">刷新</button>
+      <button class="mo-btn" title="本次已处理，不再提醒" @click="acknowledgeReminder">忽略</button>
+    </div>
+
     <div class="mo-body">
       <div class="mo-hint">
         <span>三选一出现时点「刷新」或按 <b>{{ hotkeyLabel }}</b></span>
@@ -57,8 +70,33 @@
           <input v-model="settings.focusable" type="checkbox" @change="saveSettings">
           <span>浮窗可获得焦点（重启生效；默认关闭以免抢游戏焦点）</span>
         </label>
+        <label class="mo-setting">
+          <input v-model="settings.iconMatchEnabled" type="checkbox" @change="saveSettings">
+          <span>卡片图标匹配（与文字识别交叉校验）</span>
+        </label>
+        <label class="mo-setting">
+          <input v-model="settings.reminderEnabled" type="checkbox" @change="saveSettings">
+          <span>「可以刷新了」提醒（读 2999 等级/阵亡状态，不截图）</span>
+        </label>
+        <label class="mo-setting">
+          <span>海克斯等级</span>
+          <select v-model="settings.augmentLevels" @change="saveSettings">
+            <option v-for="value in levelOptions" :key="value" :value="value">{{ value }}</option>
+          </select>
+        </label>
+        <label class="mo-setting">
+          <span>开局提醒窗口</span>
+          <select v-model.number="settings.startWindowSec" @change="saveSettings">
+            <option v-for="value in startWindowOptions" :key="value" :value="value">{{ value }} 秒</option>
+          </select>
+        </label>
+        <label class="mo-setting">
+          <input v-model="settings.reminderOnlyWhenDead" type="checkbox" @change="saveSettings">
+          <span>只在阵亡时提醒（关闭则有待选就常驻提示，阵亡时闪烁）</span>
+        </label>
         <div class="mo-setting">
           <button class="mo-btn" @click="resetGame">清空本局记录</button>
+          <span class="mo-muted">{{ iconIndexLabel }}</span>
         </div>
       </section>
 
@@ -69,19 +107,30 @@
           <span class="mo-muted">{{ ranking.summary }}</span>
         </div>
         <div class="mo-cards">
-          <button
-            v-for="entry in rankedCards"
-            :key="entry.card.id"
+          <template v-for="entry in rankedCards" :key="`${entry.card.slot}-${entry.card.id}`">
+          <div
             class="mo-card mo-no-drag"
             :class="cardClass(entry)"
-            title="点击标记为已选"
+            role="button"
+            tabindex="0"
+            title="点击标记为已选；点卡名可更正"
             @click="pick(entry.card)"
           >
             <img v-if="entry.card.iconPath" class="mo-card-icon" :src="getAugmentIconUrl(entry.card.iconPath)" alt="">
             <div class="mo-card-main">
               <div class="mo-card-name">
-                <span>{{ entry.card.name }}</span>
+                <span
+                  class="mo-card-title"
+                  title="识别错了？点这里更正"
+                  @click.stop="openCorrection({ kind: 'slot', slot: entry.card.slot, currentId: entry.card.id })"
+                >{{ entry.card.name }} ▾</span>
                 <span v-if="entry.relativeLabel" class="mo-badge" :class="badgeClass(entry)">{{ entry.relativeLabel }}</span>
+                <span
+                  v-if="sourceLabel(entry.card)"
+                  class="mo-source"
+                  :class="`mo-source-${entry.card.source}`"
+                  :title="sourceTitle(entry.card)"
+                >{{ sourceLabel(entry.card) }}</span>
               </div>
               <div class="mo-card-stats">
                 <template v-if="entry.method === 'shrunk'">
@@ -92,7 +141,50 @@
                 <span v-else class="mo-muted">{{ entry.note }}</span>
               </div>
             </div>
-          </button>
+          </div>
+          <div
+            v-if="correction && correction.kind === 'slot' && correction.slot === entry.card.slot"
+            class="mo-correction mo-no-drag"
+          >
+            <div class="mo-correction-title">
+              <span>更正第 {{ entry.card.slot + 1 }} 张</span>
+              <button class="mo-link" @click="closeCorrection">关闭</button>
+            </div>
+            <div v-if="(entry.card.alternatives || []).length" class="mo-alt-list">
+              <button
+                v-for="alt in entry.card.alternatives"
+                :key="`alt-${alt.source}-${alt.id}`"
+                class="mo-alt"
+                :class="{ 'mo-alt-current': String(alt.id) === String(entry.card.id) }"
+                @click="applyCorrection(alt)"
+              >
+                <img v-if="alt.iconPath" :src="getAugmentIconUrl(alt.iconPath)" alt="">
+                <span class="mo-alt-name">{{ alt.name }}</span>
+                <span class="mo-muted">{{ alt.source === 'icon' ? '图标' : '文字' }} {{ formatScore(alt.score) }}</span>
+              </button>
+            </div>
+            <input
+              ref="searchInput"
+              v-model="searchQuery"
+              class="mo-search"
+              placeholder="按名字搜索海克斯…"
+              @mousedown="onSearchFocus"
+              @keydown.esc="closeCorrection"
+              @keydown.enter="applyFirstSearchResult"
+            >
+            <div class="mo-alt-list">
+              <button
+                v-for="result in searchResults"
+                :key="`search-${result.id}`"
+                class="mo-alt"
+                @click="applyCorrection(result)"
+              >
+                <img v-if="result.iconPath" :src="getAugmentIconUrl(result.iconPath)" alt="">
+                <span class="mo-alt-name">{{ result.name }}</span>
+              </button>
+            </div>
+          </div>
+          </template>
         </div>
         <div class="mo-footnote">
           <span v-if="ranking.method === 'rank-fallback'">⚠ 无胜率数据：按热度排序，仅供参考</span>
@@ -101,6 +193,7 @@
           </span>
           <button class="mo-link mo-no-drag" @click="clearCandidates">清除</button>
         </div>
+        <div v-if="captureLabel" class="mo-timing">{{ captureLabel }}</div>
       </section>
 
       <!-- 已选海克斯 -->
@@ -112,11 +205,41 @@
         <div v-if="state.picked.length" class="mo-chips">
           <span v-for="augment in state.picked" :key="augment.id" class="mo-chip">
             <img v-if="augment.iconPath" :src="getAugmentIconUrl(augment.iconPath)" alt="">
-            <span>{{ augment.name }}</span>
+            <span
+              class="mo-chip-name mo-no-drag"
+              title="点这里换成别的海克斯"
+              @click="openCorrection({ kind: 'picked', currentId: augment.id })"
+            >{{ augment.name }}</span>
             <button class="mo-chip-x mo-no-drag" title="移除" @click="unpick(augment.id)">×</button>
           </span>
         </div>
         <div v-else class="mo-muted mo-empty">还没有记录</div>
+        <div v-if="correction && correction.kind === 'picked'" class="mo-correction mo-no-drag">
+          <div class="mo-correction-title">
+            <span>把「{{ pickedName(correction.currentId) }}」换成</span>
+            <button class="mo-link" @click="closeCorrection">关闭</button>
+          </div>
+          <input
+            ref="searchInput"
+            v-model="searchQuery"
+            class="mo-search"
+            placeholder="按名字搜索海克斯…"
+            @mousedown="onSearchFocus"
+            @keydown.esc="closeCorrection"
+            @keydown.enter="applyFirstSearchResult"
+          >
+          <div class="mo-alt-list">
+            <button
+              v-for="result in searchResults"
+              :key="`search-${result.id}`"
+              class="mo-alt"
+              @click="applyCorrection(result)"
+            >
+              <img v-if="result.iconPath" :src="getAugmentIconUrl(result.iconPath)" alt="">
+              <span class="mo-alt-name">{{ result.name }}</span>
+            </button>
+          </div>
+        </div>
       </section>
 
       <!-- 出装 -->
@@ -154,7 +277,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { electronAPI, hasElectronAPI } from '../native/electron-api.ts'
 import { getAugmentIconUrl, getChampionSquareIconUrl, getItemIconUrl } from '../service/cdn.js'
 import {
@@ -169,8 +292,10 @@ import {
   summarizeEnemyDamage,
   type StatTag,
 } from '../../shared/augment-build-heuristic.ts'
+import { AUGMENT_LEVEL_PRESETS } from '../../shared/refresh-reminder.ts'
 import type {
   ChampionMonitorState,
+  ManualOverlayAugmentRef,
   ManualOverlayCandidate,
   ManualOverlayLiveData,
   ManualOverlaySettings,
@@ -186,7 +311,12 @@ type CardInput = AugmentChoiceInput & ManualOverlayCandidate & {
   pickRate: number | null
 }
 
-const LIVE_POLL_INTERVAL_MS = 5000
+type CorrectionTarget =
+  | { kind: 'slot'; slot: number; currentId: number | string }
+  | { kind: 'picked'; currentId: number | string }
+
+const LIVE_POLL_INTERVAL_MS = 3000
+const SEARCH_RESULT_LIMIT = 8
 
 const state = ref<ManualOverlayState>({
   phase: null,
@@ -200,6 +330,8 @@ const state = ref<ManualOverlayState>({
   hotkey: 'CommandOrControl+Shift+R',
   hotkeyRegistered: false,
   hotkeyError: null,
+  acknowledgedStage: 0,
+  iconIndex: { ready: false, count: 0, error: null },
   revision: 0,
 })
 const settings = reactive<ManualOverlaySettings>({
@@ -208,6 +340,11 @@ const settings = reactive<ManualOverlaySettings>({
   showInChampSelect: false,
   shrinkageAlpha: 300,
   focusable: false,
+  reminderEnabled: true,
+  augmentLevels: '1,7,11,15',
+  reminderOnlyWhenDead: false,
+  startWindowSec: 90,
+  iconMatchEnabled: true,
 })
 const showSettings = ref(false)
 const championId = ref<number | null>(null)
@@ -225,6 +362,14 @@ const hotkeyOptions = [
   { value: 'Pause', label: 'Pause' },
 ]
 const alphaOptions = [0, 100, 300, 600, 1000, 3000]
+const levelOptions = computed(() => Array.from(new Set([...AUGMENT_LEVEL_PRESETS, settings.augmentLevels])))
+const startWindowOptions = [30, 60, 90, 120, 180]
+
+const correction = ref<CorrectionTarget | null>(null)
+const searchQuery = ref('')
+const searchInput = ref<HTMLInputElement[] | HTMLInputElement | null>(null)
+const allAugments = ref<ManualOverlayAugmentRef[]>([])
+let focusGranted = false
 
 const unsubscribers: Array<() => void> = []
 let livePollTimer: ReturnType<typeof setInterval> | null = null
@@ -313,6 +458,157 @@ const tagSummary = computed(() => Object.entries(build.value.tagWeights)
   .map(([tag, weight]) => `${STAT_TAG_LABELS[tag as StatTag]}${Number(weight) > 1 ? `×${weight}` : ''}`)
   .join('、'))
 
+const reminder = computed(() => (settings.reminderEnabled ? live.value?.reminder ?? null : null))
+
+const iconIndexLabel = computed(() => {
+  const index = state.value.iconIndex
+  if (!settings.iconMatchEnabled) return ''
+  if (index?.ready) return `图标库 ${index.count} 个`
+  return index?.error ? `图标库不可用：${index.error}` : '图标库：进入对局后自动准备'
+})
+
+const captureLabel = computed(() => {
+  const capture = state.value.lastCapture
+  if (!capture) return ''
+  const parts = [`截图 ${capture.captureMs}ms`, `识别 ${capture.analyzeMs}ms`]
+  if (capture.iconMs != null) parts.push(`图标 ${capture.iconMs}ms`)
+  if (capture.totalMs != null) parts.push(`共 ${capture.totalMs}ms`)
+  return parts.join(' · ')
+})
+
+function normalizeName(value: string) {
+  return value.toLowerCase().replace(/[\s·・:：'"“”「」()（）-]/g, '')
+}
+
+const searchPool = computed<ManualOverlayAugmentRef[]>(() => {
+  const map = new Map<string, ManualOverlayAugmentRef>()
+  for (const augment of championData.value?.augments || []) {
+    if (augment?.id != null && augment?.name) {
+      map.set(String(augment.id), {
+        id: augment.id,
+        name: augment.name,
+        rarity: augment.rarity ?? null,
+        iconPath: augment.iconPath ?? augment.iconUrl ?? null,
+      })
+    }
+  }
+  for (const augment of allAugments.value) {
+    if (!map.has(String(augment.id))) map.set(String(augment.id), augment)
+  }
+  return Array.from(map.values())
+})
+
+const searchResults = computed(() => {
+  const query = normalizeName(searchQuery.value.trim())
+  if (!query) return []
+  const games = (id: number | string) => Number(augmentStats.value[String(id)]?.num_games) || 0
+  return searchPool.value
+    .filter((augment) => normalizeName(augment.name).includes(query))
+    .sort((a, b) => {
+      const aStarts = normalizeName(a.name).startsWith(query) ? 0 : 1
+      const bStarts = normalizeName(b.name).startsWith(query) ? 0 : 1
+      return aStarts - bStarts || games(b.id) - games(a.id)
+    })
+    .slice(0, SEARCH_RESULT_LIMIT)
+})
+
+function formatScore(value: number | null | undefined) {
+  const number = Number(value)
+  return value != null && Number.isFinite(number) ? `${Math.round(number * 100)}` : ''
+}
+
+function sourceLabel(card: ManualOverlayCandidate) {
+  const labels: Record<string, string> = {
+    'icon+ocr': '✓',
+    icon: '图标',
+    ocr: '文字',
+    'icon-low': '待确认',
+    manual: '手动',
+  }
+  return card.source ? labels[card.source] || '' : ''
+}
+
+function sourceTitle(card: ManualOverlayCandidate) {
+  const score = card.iconScore != null ? `，图标相似度 ${formatScore(card.iconScore)}` : ''
+  const titles: Record<string, string> = {
+    'icon+ocr': '图标与文字识别一致',
+    icon: '按图标识别（文字识别结果不同或缺失）',
+    ocr: '按文字识别（图标无法确认）',
+    'icon-low': '只有图标匹配且把握不大，请确认',
+    manual: '手动更正',
+  }
+  return `${titles[String(card.source)] || ''}${score}`
+}
+
+function pickedName(id: number | string) {
+  return state.value.picked.find((augment) => String(augment.id) === String(id))?.name || String(id)
+}
+
+async function openCorrection(target: CorrectionTarget) {
+  correction.value = target
+  searchQuery.value = ''
+  if (allAugments.value.length === 0) {
+    try {
+      allAugments.value = await electronAPI.manualOverlay.listAugments()
+    } catch {
+      allAugments.value = []
+    }
+  }
+  await nextTick()
+}
+
+async function onSearchFocus() {
+  // 浮窗默认不可聚焦（不抢游戏焦点）；搜索时临时申请焦点，关闭后恢复
+  if (focusGranted) return
+  focusGranted = true
+  try {
+    await electronAPI.manualOverlay.setFocusable(true)
+    await nextTick()
+    const input = Array.isArray(searchInput.value) ? searchInput.value[0] : searchInput.value
+    input?.focus()
+  } catch {
+    focusGranted = false
+  }
+}
+
+function closeCorrection() {
+  correction.value = null
+  searchQuery.value = ''
+  if (focusGranted) {
+    focusGranted = false
+    void electronAPI.manualOverlay.setFocusable(false)
+  }
+}
+
+async function applyCorrection(augment: ManualOverlayAugmentRef) {
+  const target = correction.value
+  if (!target) return
+  const ref = {
+    id: augment.id,
+    name: augment.name,
+    rarity: augment.rarity ?? null,
+    iconPath: augment.iconPath ?? null,
+  }
+  if (target.kind === 'slot') {
+    applyState(await electronAPI.manualOverlay.correct(target.slot, ref))
+  } else {
+    applyState(await electronAPI.manualOverlay.replacePicked(target.currentId, ref))
+  }
+  closeCorrection()
+}
+
+function applyFirstSearchResult() {
+  const first = searchResults.value[0]
+  if (first) void applyCorrection(first)
+}
+
+async function acknowledgeReminder() {
+  applyState(await electronAPI.manualOverlay.acknowledgeReminder())
+  if (live.value?.reminder) {
+    live.value = { ...live.value, reminder: { ...live.value.reminder, active: false, urgent: false } }
+  }
+}
+
 const liveLabel = computed(() => {
   if (!live.value) return ''
   if (!live.value.available) return '未读取到游戏内数据'
@@ -361,6 +657,7 @@ async function refresh() {
 }
 
 async function pick(card: ManualOverlayCandidate) {
+  closeCorrection()
   applyState(await electronAPI.manualOverlay.pick({
     id: card.id,
     name: card.name,
@@ -439,6 +736,12 @@ watch(championId, (id) => {
 
 watch(() => state.value.gameRevision, () => {
   live.value = null
+  closeCorrection()
+})
+
+// 选了/更正之后立刻重新计算提醒，不用等下一次轮询
+watch(() => [state.value.picked.length, state.value.acknowledgedStage], () => {
+  void pollLive()
 })
 
 onMounted(async () => {
@@ -467,6 +770,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   for (const unsubscribe of unsubscribers.splice(0)) unsubscribe()
   if (livePollTimer) clearInterval(livePollTimer)
+  closeCorrection()
 })
 </script>
 
@@ -564,4 +868,30 @@ onBeforeUnmount(() => {
 .mo-item-owned { opacity: 0.5; }
 .mo-item-next { background: rgba(30, 111, 143, 0.25); border: 1px solid rgba(58, 160, 200, 0.6); }
 .mo-note { margin-top: 3px; }
+.mo-card-title { cursor: pointer; border-bottom: 1px dashed rgba(200, 170, 110, 0.5); }
+.mo-card-title:hover { color: #f0d79a; }
+.mo-source { font-size: 10px; padding: 0 3px; border-radius: 3px; background: #2b3038; color: #9aa0a6; }
+.mo-source-icon\+ocr { color: #58be78; }
+.mo-source-icon-low { background: #6b4a12; color: #ffd48a; }
+.mo-source-manual { color: #6fb3d2; }
+.mo-correction { margin: 0 0 4px 12px; padding: 5px 6px; border-left: 2px solid #c8aa6e; background: rgba(255, 255, 255, 0.05); border-radius: 0 4px 4px 0; display: flex; flex-direction: column; gap: 4px; }
+.mo-correction-title { display: flex; justify-content: space-between; color: #c8aa6e; font-size: 11px; }
+.mo-alt-list { display: flex; flex-direction: column; gap: 2px; }
+.mo-alt { display: flex; align-items: center; gap: 5px; text-align: left; padding: 2px 4px; border: 1px solid transparent; border-radius: 3px; background: rgba(255, 255, 255, 0.03); color: inherit; cursor: pointer; font-size: 12px; }
+.mo-alt:hover { border-color: rgba(200, 170, 110, 0.6); }
+.mo-alt img { width: 18px; height: 18px; border-radius: 3px; }
+.mo-alt-name { flex: 1; min-width: 0; }
+.mo-alt-current { border-color: rgba(88, 190, 120, 0.6); }
+.mo-search { background: #1b1f27; color: #e8e1cf; border: 1px solid #555; border-radius: 3px; padding: 3px 5px; font-size: 12px; user-select: text; }
+.mo-chip-name { cursor: pointer; }
+.mo-chip-name:hover { color: #f0d79a; }
+.mo-timing { color: #6c727a; font-size: 10px; margin-top: 2px; }
+.mo-reminder { display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: rgba(30, 111, 143, 0.35); border-bottom: 1px solid rgba(58, 160, 200, 0.6); }
+.mo-reminder-text { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 11px; }
+.mo-reminder-text b { font-size: 14px; color: #fff; }
+.mo-reminder-urgent { animation: mo-flash 0.9s ease-in-out infinite alternate; }
+@keyframes mo-flash {
+  from { background: rgba(30, 111, 143, 0.35); }
+  to { background: rgba(214, 150, 40, 0.75); }
+}
 </style>

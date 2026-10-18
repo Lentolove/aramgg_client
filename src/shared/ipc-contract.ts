@@ -351,6 +351,16 @@ export interface ManualOverlaySettings {
   shrinkageAlpha: number
   /** 浮窗是否可获得焦点（默认 false：不抢游戏焦点；修改后重启生效） */
   focusable: boolean
+  /** 根据 2999 等级/时间/阵亡状态提示「可以刷新了」 */
+  reminderEnabled: boolean
+  /** 海克斯选择等级表，逗号分隔，例如 "1,7,11,15" */
+  augmentLevels: string
+  /** 只在阵亡（或开局窗口内）提醒；关闭则有待选海克斯就常驻提示 */
+  reminderOnlyWhenDead: boolean
+  /** 开局第 1 次选择的提醒窗口（游戏时间秒数） */
+  startWindowSec: number
+  /** 卡片图标匹配（与 OCR 交叉校验） */
+  iconMatchEnabled: boolean
 }
 
 export interface ManualOverlayAugmentRef {
@@ -360,9 +370,23 @@ export interface ManualOverlayAugmentRef {
   iconPath?: string | null
 }
 
+export type ManualOverlayRecognitionSource = 'icon' | 'ocr' | 'icon+ocr' | 'icon-low' | 'manual'
+
+export interface ManualOverlayAlternative extends ManualOverlayAugmentRef {
+  /** 图标相似度（0..1）或 OCR 置信度；手动搜索为 null */
+  score: number | null
+  source: 'icon' | 'ocr'
+}
+
 export interface ManualOverlayCandidate extends ManualOverlayAugmentRef {
   slot: number
   ocrText?: string | null
+  /** 识别来源：icon+ocr 互相印证最可靠；icon-low 表示仅图标、待确认 */
+  source?: ManualOverlayRecognitionSource
+  confidence?: number | null
+  iconScore?: number | null
+  /** 手动更正用的候选（OCR / 图标前 N 名） */
+  alternatives?: ManualOverlayAlternative[]
 }
 
 export interface ManualOverlayPickedAugment extends ManualOverlayAugmentRef {
@@ -376,7 +400,12 @@ export interface ManualOverlayCaptureInfo {
   height: number | null
   captureMs: number
   analyzeMs: number
+  /** 图标匹配耗时（与 OCR 并行） */
+  iconMs?: number | null
+  totalMs?: number
   recognizedCount: number
+  /** 各来源数量，例如 { 'icon+ocr': 2, ocr: 1 } */
+  sources?: Record<string, number>
 }
 
 export interface ManualOverlayState {
@@ -392,7 +421,20 @@ export interface ManualOverlayState {
   hotkey: string
   hotkeyRegistered: boolean
   hotkeyError: string | null
+  /** 用户手动确认/忽略过的选择次数（用于「可以刷新了」提醒） */
+  acknowledgedStage: number
+  /** 图标库状态 */
+  iconIndex: { ready: boolean; count: number; error: string | null }
   revision: number
+}
+
+export interface ManualOverlayReminder {
+  active: boolean
+  urgent: boolean
+  stage: number | null
+  stagesReached: number
+  stagesDone: number
+  reason: string
 }
 
 export interface ManualOverlayLiveData {
@@ -402,6 +444,11 @@ export interface ManualOverlayLiveData {
   ownedItemIds: number[]
   enemyItemIds: number[]
   enemyChampionNames: string[]
+  gameTime?: number | null
+  level?: number | null
+  isDead?: boolean | null
+  respawnTimer?: number | null
+  reminder?: ManualOverlayReminder | null
   error?: string
 }
 
@@ -504,6 +551,16 @@ export interface ElectronAPI {
     getLiveData(): Promise<ManualOverlayLiveData>
     getSettings(): Promise<ManualOverlaySettings>
     setSettings(patch: Partial<ManualOverlaySettings>): Promise<ManualOverlaySettings>
+    /** 手动更正某张卡的识别结果 */
+    correct(slot: number, augment: ManualOverlayAugmentRef): Promise<ManualOverlayState>
+    /** 把已选列表中的某个海克斯换成另一个 */
+    replacePicked(oldId: number | string, augment: ManualOverlayAugmentRef): Promise<ManualOverlayState>
+    /** 忽略当前「可以刷新了」提醒（视为本次选择已处理） */
+    acknowledgeReminder(): Promise<ManualOverlayState>
+    /** 全部海克斯（用于按名字搜索更正） */
+    listAugments(): Promise<ManualOverlayAugmentRef[]>
+    /** 临时让浮窗可获得焦点（搜索框输入用），关闭搜索后恢复 */
+    setFocusable(focusable: boolean): Promise<boolean>
     show(): void
     hide(): void
   }

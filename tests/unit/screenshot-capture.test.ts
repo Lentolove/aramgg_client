@@ -123,3 +123,74 @@ describe('captureGameWindowOnce', () => {
     expect(mocks.getSources).toHaveBeenLastCalledWith(expect.objectContaining({ types: ['screen'] }))
   })
 })
+
+describe('captureGameWindowOnce raw capture', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks()
+    const { resetDetectedBitmapOrder, resetCachedGameWindowSource } = await import('../../src/main/screenshot.ts')
+    resetDetectedBitmapOrder()
+    resetCachedGameWindowSource()
+  })
+
+  async function createBitmapThumbnail(bgra: [number, number, number, number], pngRgb: [number, number, number]) {
+    const sharp = (await import('sharp')).default
+    const pixelPng = await sharp({
+      create: { width: 1, height: 1, channels: 3, background: { r: pngRgb[0], g: pngRgb[1], b: pngRgb[2] } },
+    }).png().toBuffer()
+    const width = 4
+    const height = 4
+    const bitmap = Buffer.alloc(width * height * 4)
+    for (let i = 0; i < width * height; i++) bitmap.set(bgra, i * 4)
+    return {
+      isEmpty: () => false,
+      toPNG: vi.fn(() => Buffer.from('png')),
+      toBitmap: () => Buffer.from(bitmap),
+      crop: () => ({ toPNG: () => pixelPng }),
+      getSize: () => ({ width, height }),
+    }
+  }
+
+  it('returns RGBA pixels converted from a BGRA bitmap without PNG encoding', async () => {
+    // 真实颜色 R=20 G=10 B=200，位图按 BGRA 存储
+    const thumbnail = await createBitmapThumbnail([200, 10, 20, 255], [20, 10, 200])
+    mocks.getSources.mockResolvedValue([
+      { id: 'window:2:0', name: 'League of Legends (TM) Client', thumbnail },
+    ])
+    const { captureGameWindowOnce } = await import('../../src/main/screenshot.ts')
+    const result = await captureGameWindowOnce({ raw: true })
+    expect(result.success).toBe(true)
+    expect(result.raw).toMatchObject({ width: 4, height: 4, channels: 4 })
+    expect([...result.raw!.buffer.subarray(0, 4)]).toEqual([20, 10, 200, 255])
+    expect(result.buffer).toBeUndefined()
+    expect(thumbnail.toPNG).not.toHaveBeenCalled()
+  })
+
+  it('keeps the byte order when the bitmap is already RGBA', async () => {
+    const thumbnail = await createBitmapThumbnail([200, 10, 20, 255], [200, 10, 20])
+    mocks.getSources.mockResolvedValue([
+      { id: 'window:2:0', name: 'League of Legends (TM) Client', thumbnail },
+    ])
+    const { captureGameWindowOnce } = await import('../../src/main/screenshot.ts')
+    const result = await captureGameWindowOnce({ raw: true })
+    expect([...result.raw!.buffer.subarray(0, 4)]).toEqual([200, 10, 20, 255])
+  })
+
+  it('reuses the cached in-game window id when several candidates exist', async () => {
+    mocks.getSources.mockResolvedValueOnce([
+      { id: 'window:2:0', name: 'League of Legends (TM) Client', thumbnail: createThumbnail(1920, 1080) },
+    ])
+    const { captureGameWindowOnce } = await import('../../src/main/screenshot.ts')
+    await captureGameWindowOnce()
+    mocks.getSources.mockResolvedValueOnce([
+      { id: 'window:3:0', name: 'League of Legends (TM) Client', thumbnail: createThumbnail(1280, 720) },
+      { id: 'window:2:0', name: 'League of Legends (TM) Client', thumbnail: createThumbnail(1600, 900) },
+    ])
+    const second = await captureGameWindowOnce()
+    expect(second.width).toBe(1600)
+  })
+
+  it('swapRedBlueInPlace swaps R and B channels', async () => {
+    const { swapRedBlueInPlace } = await import('../../src/main/screenshot.ts')
+    expect([...swapRedBlueInPlace(Buffer.from([1, 2, 3, 4, 5, 6, 7, 8]))]).toEqual([3, 2, 1, 4, 7, 6, 5, 8])
+  })
+})

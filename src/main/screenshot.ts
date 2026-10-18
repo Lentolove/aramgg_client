@@ -1,5 +1,6 @@
 import { execFile } from 'child_process'
-import { desktopCapturer, type DesktopCapturerSource, type Size } from 'electron'
+import { desktopCapturer, type DesktopCapturerSource, type NativeImage, type Size } from 'electron'
+import sharp from 'sharp'
 import logger from './modules/logger.ts'
 
 let lastCaptureSourceKey: string | null = null
@@ -256,27 +257,103 @@ export const captureScreenshot = async (options: CaptureScreenshotOptions = {}) 
 
 export const MANUAL_CAPTURE_THUMBNAIL_SIZE = { width: 1920, height: 1080 }
 let cachedGameWindowSource: { id: string; name: string } | null = null
+let detectedBitmapOrder: 'bgra' | 'rgba' | null = null
 
 export function resetCachedGameWindowSource(): void {
     cachedGameWindowSource = null
 }
 
+export function resetDetectedBitmapOrder(): void {
+    detectedBitmapOrder = null
+}
+
+export interface RawCaptureImage {
+    buffer: Buffer
+    width: number
+    height: number
+    channels: 4
+}
+
+/** BGRA → RGBA（原地交换 R/B，返回同一个 Buffer） */
+export function swapRedBlueInPlace(buffer: Buffer): Buffer {
+    for (let i = 0; i + 3 < buffer.length; i += 4) {
+        const blue = buffer[i]
+        buffer[i] = buffer[i + 2]
+        buffer[i + 2] = blue
+    }
+    return buffer
+}
+
 /**
- * 手动刷新用的单次截图：只枚举 window 源（不截全屏）；
- * 找不到游戏窗口时才退回整屏截图。返回完整窗口图像（OCR 的标题区域按整图比例裁剪，
- * 由 analyzeScreenshot 内部完成），不落盘。
- *
- * 注意：desktopCapturer 每次调用仍会为所有枚举到的窗口生成缩略图，这是 Electron API 的限制；
- * 相比自动模式的持续轮询，这里只在用户按下刷新时执行一次。
+ * NativeImage.toBitmap() 的通道顺序随平台而定（Windows 上通常是 Skia 的 BGRA）。
+ * 只判断一次：找一个 R≠B 的像素，裁 1×1 转 PNG 解码后对比，成本可以忽略。
  */
-export const captureGameWindowOnce = async (options: { timeoutMs?: number; thumbnailSize?: Size } = {}) => {
+async function detectBitmapOrder(image: NativeImage, bitmap: Buffer, width: number, height: number): Promise<'bgra' | 'rgba'> {
+    if (detectedBitmapOrder) return detectedBitmapOrder
+    const fallback: 'bgra' | 'rgba' = process.platform === 'win32' ? 'bgra' : 'rgba'
+    try {
+        const step = Math.max(1, Math.floor(Math.min(width, height) / 16))
+        for (let y = Math.floor(step / 2); y < height; y += step) {
+            for (let x = Math.floor(step / 2); x < width; x += step) {
+                const offset = (y * width + x) * 4
+                const c0 = bitmap[offset]
+                const c2 = bitmap[offset + 2]
+                if (Math.abs(c0 - c2) < 40) continue
+                const pixel = image.crop({ x, y, width: 1, height: 1 })
+                const { data } = await sharp(pixel.toPNG()).removeAlpha().raw().toBuffer({ resolveWithObject: true })
+                const red = data[0]
+                detectedBitmapOrder = Math.abs(red - c2) < Math.abs(red - c0) ? 'bgra' : 'rgba'
+                logger.info(`Manual capture: bitmap channel order detected as ${detectedBitmapOrder}`)
+                return detectedBitmapOrder
+            }
+        }
+    } catch (error) {
+        logger.warn('Manual capture: bitmap channel order detection failed, assuming platform default', error)
+    }
+    return fallback
+}
+
+/** 把 thumbnail 转成 RGBA 原始像素，避免 PNG 编码 + 解码；失败返回 null（调用方改用 PNG） */
+export async function nativeImageToRawRgba(image: NativeImage): Promise<RawCaptureImage | null> {
+    if (typeof image.toBitmap !== 'function') return null
+    const { width, height } = image.getSize()
+    const bitmap = image.toBitmap()
+    if (!bitmap || bitmap.length !== width * height * 4) return null
+    const order = await detectBitmapOrder(image, bitmap, width, height)
+    const buffer = Buffer.from(bitmap)
+    if (order === 'bgra') swapRedBlueInPlace(buffer)
+    return { buffer, width, height, channels: 4 }
+}
+
+function pickGameWindow(sources: DesktopCapturerSource[]): DesktopCapturerSource | null {
+    // 优先复用上次的游戏内窗口（同时开着客户端和游戏时，避免在两者间跳来跳去）
+    if (cachedGameWindowSource) {
+        const cached = sources.find((source) => source.id === cachedGameWindowSource?.id)
+        if (cached) return cached
+    }
+    return findGameWindow(sources)
+}
+
+/**
+ * 手动刷新用的单次截图：只枚举 window 源（不截全屏）；找不到游戏窗口时才退回整屏截图。
+ * raw=true 时直接返回 RGBA 像素（不做 PNG 编码/解码，省掉 1080p 下约 100ms）。
+ * OCR 标题区域与图标区域都按整图比例裁剪，与分辨率无关。
+ *
+ * 注意：desktopCapturer 每次调用仍会为所有枚举到的窗口生成缩略图，这是 Electron API 的限制
+ * （没有「只截某个已知窗口」的主进程接口）；这里缓存游戏窗口 id 只用于在多个候选窗口中稳定选择。
+ */
+export const captureGameWindowOnce = async (
+    options: { timeoutMs?: number; thumbnailSize?: Size; raw?: boolean } = {}
+) => {
     const {
         timeoutMs = DEFAULT_CAPTURE_TIMEOUT_MS,
         thumbnailSize = MANUAL_CAPTURE_THUMBNAIL_SIZE,
+        raw = false,
     } = options
     const timestamp = Date.now()
 
     try {
+        const enumerateStartedAt = performance.now()
         const sources = await withTimeout(
             desktopCapturer.getSources({
                 types: ['window'],
@@ -286,33 +363,50 @@ export const captureGameWindowOnce = async (options: { timeoutMs?: number; thumb
             timeoutMs,
             'desktopCapturer.getSources(window)'
         )
+        const enumerateMs = Math.round(performance.now() - enumerateStartedAt)
 
-        // 选择逻辑与自动模式一致（游戏内窗口 "League of Legends (TM) Client" 得分最高）。
-        // 缓存仅用于识别「窗口是否换了」并记录日志：desktopCapturer 无法只截单个已知窗口。
-        const gameWindow = findGameWindow(sources)
+        const gameWindow = pickGameWindow(sources)
 
         if (gameWindow && gameWindow.thumbnail && !gameWindow.thumbnail.isEmpty()) {
             if (cachedGameWindowSource?.id !== gameWindow.id) {
                 logger.info(`Manual capture: using game window "${gameWindow.name}"`)
             }
-            cachedGameWindowSource = { id: gameWindow.id, name: gameWindow.name }
+            // 只缓存游戏内窗口（"League of Legends (TM) Client"），不缓存客户端大厅
+            cachedGameWindowSource = gameWindow.name.toLowerCase().includes('(tm) client')
+                ? { id: gameWindow.id, name: gameWindow.name }
+                : null
             const size = gameWindow.thumbnail.getSize()
+            const convertStartedAt = performance.now()
+            let rawImage: RawCaptureImage | null = null
+            if (raw) {
+                try {
+                    rawImage = await nativeImageToRawRgba(gameWindow.thumbnail)
+                } catch (error) {
+                    logger.warn('Manual capture: raw bitmap conversion failed, using PNG', error)
+                }
+            }
+            const buffer = rawImage ? undefined : gameWindow.thumbnail.toPNG()
+            const convertMs = Math.round(performance.now() - convertStartedAt)
             return {
                 success: true,
-                buffer: gameWindow.thumbnail.toPNG(),
+                buffer,
+                raw: rawImage ?? undefined,
                 timestamp,
                 hasLolWindow: true,
                 captureMode: 'window' as const,
                 windowName: gameWindow.name,
                 width: size.width,
                 height: size.height,
+                enumerateMs,
+                convertMs,
+                sourceCount: sources.length,
             }
         }
 
         cachedGameWindowSource = null
         logger.warn('Manual capture: LoL game window not found, falling back to screen capture')
         const fallback = await captureScreenshot({ preferScreen: true, timeoutMs, thumbnailSize })
-        return { ...fallback, hasLolWindow: false }
+        return { ...fallback, hasLolWindow: false, enumerateMs }
     } catch (error) {
         logger.error('Manual capture failed:', error)
         return {

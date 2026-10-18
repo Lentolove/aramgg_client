@@ -663,6 +663,15 @@ async function performPaddleOCR(imageBuffer) {
  * 运行时截图传 Buffer，IPC 和测试脚本通常传图片路径。
  */
 function resolveImageBuffer(imageInput) {
+    // 手动刷新直接传入 RGBA 原始像素（{ buffer, width, height, channels }），跳过 PNG 编解码
+    if (isRawImageInput(imageInput)) {
+        return {
+            buffer: imageInput,
+            sourceType: 'raw',
+            sourcePath: null,
+        }
+    }
+
     if (Buffer.isBuffer(imageInput)) {
         return {
             buffer: imageInput,
@@ -709,7 +718,12 @@ function sharpFromImage(imageInput) {
 }
 
 async function decodeImageToRaw(imageBuffer) {
-    const { data, info } = await sharp(imageBuffer)
+    if (isRawImageInput(imageBuffer) && imageBuffer.channels === 4 &&
+        imageBuffer.buffer.length === imageBuffer.width * imageBuffer.height * 4) {
+        return imageBuffer
+    }
+
+    const { data, info } = await sharpFromImage(imageBuffer)
         .ensureAlpha()
         .raw()
         .toBuffer({ resolveWithObject: true })
@@ -2290,9 +2304,11 @@ export const analyzeScreenshot = async (imageInput) => {
     try {
         const startTime = performance.now()
         const { buffer: imageBuffer, sourceType, sourcePath } = resolveImageBuffer(imageInput)
+        const isRawInput = isRawImageInput(imageBuffer)
+        const byteLength = isRawInput ? imageBuffer.buffer.length : (Buffer.isBuffer(imageBuffer) ? imageBuffer.length : 0)
 
         // 验证图片数据有效性
-        if (!imageBuffer || !Buffer.isBuffer(imageBuffer) || imageBuffer.length === 0) {
+        if (!imageBuffer || (!isRawInput && !Buffer.isBuffer(imageBuffer)) || byteLength === 0) {
             return {
                 success: false,
                 error: '截图数据无效',
@@ -2300,7 +2316,7 @@ export const analyzeScreenshot = async (imageInput) => {
         }
 
         const timestamp = Date.now()
-        logger.debug(`Screenshot analysis started: source=${sourceType}${sourcePath ? `, path=${sourcePath}` : ''}, buffer=${(imageBuffer.length / 1024).toFixed(1)}KB`)
+        logger.debug(`Screenshot analysis started: source=${sourceType}${sourcePath ? `, path=${sourcePath}` : ''}, buffer=${(byteLength / 1024).toFixed(1)}KB`)
 
         // 【新方案】使用OCR识别海克斯名称
         const recognition = await recognizeAugmentsFromImage(imageBuffer)
@@ -2332,10 +2348,10 @@ export const analyzeScreenshot = async (imageInput) => {
                 augmentGate,
             },
             metadata: {
-                bufferSize: imageBuffer.length,
+                bufferSize: byteLength,
                 sourceType,
                 sourcePath,
-                format: 'png',
+                format: isRawInput ? 'raw' : 'png',
                 detectionMethod: 'ocr',
                 rerollButtons,
                 augmentGate,

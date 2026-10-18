@@ -188,6 +188,11 @@ describe('ManualOverlayService', () => {
       showInChampSelect: false,
       shrinkageAlpha: 300,
       focusable: false,
+      reminderEnabled: true,
+      augmentLevels: '1,7,11,15',
+      reminderOnlyWhenDead: false,
+      startWindowSec: 90,
+      iconMatchEnabled: true,
     })
     expect(service.isAutoScreenshotEnabled()).toBe(true)
   })
@@ -214,5 +219,146 @@ describe('ManualOverlayService', () => {
     const live = await new ManualOverlayService(deps).getLiveData()
     expect(live.available).toBe(false)
     expect(live.error).toBeTruthy()
+  })
+})
+
+describe('ManualOverlayService recognition, correction and reminder', () => {
+  const iconMatch = (id: number, score: number) => ({
+    id, name: `icon${id}`, score, ncc: score, colorSimilarity: score, hamming: 8, iconPath: `${id}.png`, rarity: 1,
+  })
+
+  it('passes raw capture pixels to OCR and icon matching and merges the results', async () => {
+    const raw = { buffer: Buffer.alloc(16), width: 2, height: 2, channels: 4 }
+    const matchIcons = vi.fn(async () => [
+      [iconMatch(1, 0.9), iconMatch(7, 0.7)],
+      [iconMatch(8, 0.9), iconMatch(2, 0.75)],
+      [iconMatch(9, 0.81), iconMatch(3, 0.6)],
+    ])
+    const appendLog = vi.fn()
+    const { deps } = createDeps({
+      capture: vi.fn(async () => ({ success: true, raw, captureMode: 'window' as const, width: 2, height: 2, hasLolWindow: true })),
+      matchIcons,
+      appendLog,
+      getLiveClientAllGameData: vi.fn(async () => ({
+        status: 200,
+        data: {
+          gameData: { gameTime: 33.3 },
+          activePlayer: { riotId: 'Me#1', level: 3 },
+          allPlayers: [{ riotId: 'Me#1', isDead: false, respawnTimer: 0, level: 3 }],
+        },
+      })),
+    })
+    const service = new ManualOverlayService(deps)
+    const state = await service.refresh()
+    expect(deps.analyze).toHaveBeenCalledWith(raw)
+    expect(matchIcons).toHaveBeenCalledWith(raw)
+    expect(state.candidates.map((candidate) => [candidate.slot, candidate.id, candidate.source])).toEqual([
+      [0, 1, 'icon+ocr'],
+      [1, 8, 'icon'], // 图标高置信且领先 → 覆盖 OCR 的 2
+      [2, 3, 'ocr'], // 图标 0.81 不够 → 用 OCR
+    ])
+    expect(state.candidates[1].alternatives?.map((alt) => alt.id)).toEqual([2, 8])
+    expect(state.lastCapture?.sources).toEqual({ 'icon+ocr': 1, icon: 1, ocr: 1 })
+    await vi.waitFor(() => expect(appendLog).toHaveBeenCalled())
+    expect(appendLog.mock.calls[0][0]).toMatchObject({
+      type: 'refresh', trigger: 'button', gameTime: 33.3, level: 3, isDead: false, stagesReached: 1,
+    })
+  })
+
+  it('does not trust icon-only matches when the screen does not look like a selection', async () => {
+    const { deps } = createDeps({
+      analyze: vi.fn(async () => ({ success: true, analysis: { augments: [], rerollButtons: { visible: false } } })),
+      matchIcons: vi.fn(async () => [[iconMatch(1, 0.8)], [], []]),
+    })
+    const state = await new ManualOverlayService(deps).refresh()
+    expect(state.candidates).toEqual([])
+    expect(state.lastError).toContain('没有识别到')
+  })
+
+  it('accepts tentative icon-only matches when reroll buttons are visible', async () => {
+    const { deps } = createDeps({
+      analyze: vi.fn(async () => ({ success: true, analysis: { augments: [], rerollButtons: { visible: true } } })),
+      matchIcons: vi.fn(async () => [[iconMatch(1, 0.8)], [iconMatch(2, 0.9), iconMatch(3, 0.7)], []]),
+    })
+    const state = await new ManualOverlayService(deps).refresh()
+    expect(state.candidates.map((candidate) => [candidate.id, candidate.source])).toEqual([[1, 'icon-low'], [2, 'icon']])
+  })
+
+  it('skips icon matching when disabled', async () => {
+    const matchIcons = vi.fn(async () => [[], [], []])
+    const { deps } = createDeps({ matchIcons })
+    const service = new ManualOverlayService(deps)
+    service.setSettings({ iconMatchEnabled: false })
+    await service.refresh()
+    expect(matchIcons).not.toHaveBeenCalled()
+  })
+
+  it('corrects a card and the matching picked augment', async () => {
+    const appendLog = vi.fn()
+    const { deps } = createDeps({ appendLog })
+    const service = new ManualOverlayService(deps)
+    await service.refresh()
+    service.pick({ id: 2, name: 'B' })
+    // pick 会清空候选；重新识别后更正第 2 张
+    await service.refresh()
+    const state = service.correct(1, { id: 42, name: 'Fixed', iconPath: 'f.png' })
+    expect(state.candidates.find((candidate) => candidate.slot === 1)).toMatchObject({ id: 42, name: 'Fixed', source: 'manual' })
+    expect(state.picked.map((augment) => augment.id)).toEqual([42])
+    expect(appendLog).toHaveBeenCalledWith(expect.objectContaining({ type: 'correct', slot: 1, fromId: 2, toId: 42 }))
+    expect(service.correct(5, { id: 1, name: 'x' }).revision).toBe(state.revision) // 非法卡位忽略
+  })
+
+  it('replaces a picked augment without creating duplicates', () => {
+    const { deps } = createDeps()
+    const service = new ManualOverlayService(deps)
+    service.pick({ id: 1, name: 'A' })
+    service.pick({ id: 2, name: 'B' })
+    expect(service.replacePicked(1, { id: 3, name: 'C' }).picked.map((augment) => augment.id)).toEqual([3, 2])
+    expect(service.replacePicked(3, { id: 2, name: 'B' }).picked.map((augment) => augment.id)).toEqual([2])
+    expect(service.replacePicked(99, { id: 5, name: 'E' }).picked.map((augment) => augment.id)).toEqual([2])
+  })
+
+  it('computes the refresh reminder from live data and supports acknowledging it', async () => {
+    let level = 3
+    let isDead = false
+    const { deps } = createDeps({
+      getLiveClientAllGameData: vi.fn(async () => ({
+        status: 200,
+        data: {
+          gameData: { gameTime: level === 3 ? 10 : 500 },
+          activePlayer: { riotId: 'Me#1', level },
+          allPlayers: [{ riotId: 'Me#1', team: 'ORDER', isDead, respawnTimer: isDead ? 12 : 0 }],
+        },
+      })),
+    })
+    const service = new ManualOverlayService(deps)
+    expect((await service.getLiveData()).reminder).toMatchObject({ active: true, urgent: true, stage: 1 })
+    service.pick({ id: 1, name: 'A' })
+    level = 7
+    const pending = await service.getLiveData()
+    expect(pending).toMatchObject({ level: 7, isDead: false, gameTime: 500 })
+    expect(pending.reminder).toMatchObject({ active: true, urgent: false, stage: 2 })
+    isDead = true
+    expect((await service.getLiveData()).reminder).toMatchObject({ urgent: true })
+    expect(service.acknowledgeReminder().acknowledgedStage).toBe(2)
+    expect((await service.getLiveData()).reminder?.active).toBe(false)
+    service.setSettings({ reminderEnabled: false })
+    expect((await service.getLiveData()).reminder).toBeNull()
+    expect(service.resetGame().acknowledgedStage).toBe(0)
+  })
+
+  it('builds the icon index when the game starts', async () => {
+    const ensureIconIndex = vi.fn(async () => {})
+    const iconIndexStatus = vi.fn(() => ({ ready: true, count: 200, error: null }))
+    const { deps } = createDeps({ ensureIconIndex, iconIndexStatus })
+    const service = new ManualOverlayService(deps)
+    service.setPhase('InProgress')
+    expect(ensureIconIndex).toHaveBeenCalledTimes(1)
+    await vi.waitFor(() => expect(service.getState().iconIndex).toEqual({ ready: true, count: 200, error: null }))
+  })
+
+  it('lists augments for search, dropping invalid entries', async () => {
+    const { deps } = createDeps({ listAugments: vi.fn(async () => [{ id: 1, name: 'A' }, { name: 'no id' } as any]) })
+    expect(await new ManualOverlayService(deps).listAugments()).toEqual([{ id: 1, name: 'A', rarity: null, iconPath: null }])
   })
 })
