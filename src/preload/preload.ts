@@ -138,6 +138,7 @@ const electronAPI: ElectronAPI = {
     replacePicked: (oldId, augment) => ipcRenderer.invoke('manual-overlay-replace-picked', oldId, augment),
     acknowledgeReminder: () => ipcRenderer.invoke('manual-overlay-acknowledge-reminder'),
     listAugments: () => ipcRenderer.invoke('manual-overlay-list-augments'),
+    getArammeta: (championId) => ipcRenderer.invoke('manual-overlay-get-arammeta', championId),
     setFocusable: (focusable) => ipcRenderer.invoke('manual-overlay-set-focusable', focusable),
     show: () => ipcRenderer.send('manual-overlay-show'),
     hide: () => ipcRenderer.send('manual-overlay-hide'),

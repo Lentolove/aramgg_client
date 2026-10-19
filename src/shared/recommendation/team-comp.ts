@@ -95,7 +95,17 @@ export interface TeamCompInput {
   /** 数据来源：live = 2999 对局中；champ-select = 选人阶段（只有我方） */
   source?: 'live' | 'champ-select'
   itemIndex?: Map<number, ItemProfile>
+  /** 实测伤害构成（arammeta 英雄 comp 的局均物理/魔法/真实伤害占比）；没有时用整理的画像 */
+  measuredDamage?: (championId: number) => { ap: number; ad: number; true: number } | null
+  /**
+   * 实测阵容表：我去当前排时队伍胜率修正的变化（arammeta recommendation_composition）。
+   * 有它时「缺前排」需求由它决定，没有时用规则（队友前排值之和）。
+   */
+  measuredFrontline?: { delta: number } | null
 }
+
+/** 实测阵容表里 +1.5% 的队伍胜率修正视为「完全缺前排」 */
+export const MEASURED_FRONTLINE_FULL = 0.015
 
 export interface TeamNeeds {
   mr: number
@@ -153,6 +163,12 @@ export interface TeamAnalysis {
   /** 一句话：对面 4 法系 1 物理，2 个回复英雄 */
   enemyLine: string
   allyLine: string
+  /** 「缺前排」来自 arammeta 实测阵容表 */
+  frontlineMeasured?: boolean
+  /** 实测阵容表：我当前排的队伍胜率修正变化 */
+  frontlineDelta?: number | null
+  /** 用了实测伤害构成的英雄数 */
+  measuredDamageCount?: number
 }
 
 export interface TeamAdvice {
@@ -196,6 +212,7 @@ function itemDamage(itemIds: number[], itemIndex?: Map<number, ItemProfile>) {
 interface PlayerModel {
   input: TeamPlayerInput
   profile: ChampionProfile | null
+  measured: boolean
   ap: number
   ad: number
   trueDmg: number
@@ -210,14 +227,16 @@ interface PlayerModel {
   weight: number
 }
 
-function modelPlayer(input: TeamPlayerInput, itemIndex?: Map<number, ItemProfile>): PlayerModel {
+function modelPlayer(input: TeamPlayerInput, itemIndex?: Map<number, ItemProfile>, measuredDamage?: TeamCompInput['measuredDamage']): PlayerModel {
   const profile = findChampionProfile(input)
   const items = (input.itemIds ?? []).map(toId).filter((id): id is number => id != null)
   const fromItems = itemDamage(items, itemIndex)
   const base = profile ?? null
-  let ap = base?.damage.ap ?? 0.5
-  let ad = base?.damage.ad ?? 0.5
-  const trueDmg = base?.damage.true ?? 0
+  const id = profile?.id ?? toId(input.championId)
+  const measured = id != null && measuredDamage ? measuredDamage(id) : null
+  let ap = measured?.ap ?? base?.damage.ap ?? 0.5
+  let ad = measured?.ad ?? base?.damage.ad ?? 0.5
+  const trueDmg = measured?.true ?? base?.damage.true ?? 0
   let frontline = base?.frontline ?? 0.3
   let sustain = base?.sustain ?? 0.1
   // 装备越多越信装备（最多 0.7）
@@ -240,6 +259,7 @@ function modelPlayer(input: TeamPlayerInput, itemIndex?: Map<number, ItemProfile
   return {
     input,
     profile,
+    measured: Boolean(measured),
     ap,
     ad,
     trueDmg,
@@ -315,8 +335,8 @@ function sideLine(side: TeamSideSummary, prefix: string): string {
 }
 
 export function analyzeTeamComp(input: TeamCompInput): TeamAnalysis {
-  const allyModels = input.allies.map((player) => modelPlayer(player, input.itemIndex))
-  const enemyModels = input.enemies.map((player) => modelPlayer(player, input.itemIndex))
+  const allyModels = input.allies.map((player) => modelPlayer(player, input.itemIndex, input.measuredDamage))
+  const enemyModels = input.enemies.map((player) => modelPlayer(player, input.itemIndex, input.measuredDamage))
   const enemy = summarize(enemyModels)
   const ally = summarize(allyModels)
   const others = allyModels.filter((m) => !m.input.isSelf)
@@ -345,6 +365,8 @@ export function analyzeTeamComp(input: TeamCompInput): TeamAnalysis {
     const damageScore = others.reduce((sum, m) => sum + Math.max(m.burst, m.dps) * (1 - 0.6 * m.frontline), 0)
     needs.damage = clamp01((1.6 - damageScore) / 1.4) * coverage
   }
+  const frontlineMeasured = input.measuredFrontline != null && Number.isFinite(input.measuredFrontline.delta)
+  if (frontlineMeasured) needs.frontline = clamp01(input.measuredFrontline!.delta / MEASURED_FRONTLINE_FULL)
   for (const key of Object.keys(needs) as Array<keyof TeamNeeds>) needs[key] = round2(needs[key])
 
   const all = [...allyModels, ...enemyModels]
@@ -362,6 +384,9 @@ export function analyzeTeamComp(input: TeamCompInput): TeamAnalysis {
     confidence,
     enemyLine: sideLine(enemy, '对面'),
     allyLine: sideLine(allyOthers, '队友'),
+    frontlineMeasured,
+    frontlineDelta: frontlineMeasured ? input.measuredFrontline!.delta : null,
+    measuredDamageCount: all.filter((m) => m.measured).length,
   }
 }
 
@@ -391,7 +416,8 @@ export function adviseTeamComp(analysis: TeamAnalysis, flex: { canTank: boolean;
   if (analysis.enemyLine) segments.push(analysis.enemyLine)
   else if (analysis.source === 'champ-select') segments.push('选人阶段看不到对面')
   // 只有自己能补的时候才提我方缺什么（安妮补不了前排）
-  const allyNote = needs.frontline >= 0.5 && flex.canTank ? '我方缺前排' : needs.damage >= 0.5 && flex.canDamage && flex.canTank ? '我方缺输出' : ''
+  const allyNote = needs.frontline >= 0.5 && flex.canTank
+    ? (analysis.frontlineMeasured && analysis.frontlineDelta != null ? `我方缺前排（实测阵容表：你当前排 +${(analysis.frontlineDelta * 100).toFixed(1)}%）` : '我方缺前排') : needs.damage >= 0.5 && flex.canDamage && flex.canTank ? '我方缺输出' : ''
   const advice: string[] = []
   if (lean === 'tank') advice.push('建议偏肉')
   else if (lean === 'damage') advice.push('建议偏输出')

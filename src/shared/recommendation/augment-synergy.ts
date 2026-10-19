@@ -167,7 +167,8 @@ export function applyCardSynergy<T extends AugmentChoiceInput>(
     const adjust = synergy
       ? Math.max(-SYNERGY_PARAMS.maxAdjust, Math.min(SYNERGY_PARAMS.maxAdjust, synergy.score * SYNERGY_PARAMS.lambda))
       : 0
-    const combinedWinRate = choice.shrunkWinRate != null ? choice.shrunkWinRate + adjust : null
+    const sortBase = choice.sortWinRate ?? choice.shrunkWinRate
+    const combinedWinRate = sortBase != null ? sortBase + adjust : null
     return { ...choice, synergy, combinedWinRate, reordered: false }
   })
   if (ranking.method !== 'shrunk') {

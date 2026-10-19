@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node scripts/dev-electron.mjs",
     "prepare:client-data": "node scripts/fetch-client-data.mjs",
+    "prepare:arammeta": "node scripts/build-arammeta-snapshot.mjs",
     "build": "electron-vite build",
     "pack": "node scripts/pack-electron.mjs",
     "start": "electron .",
@@ -69,6 +70,13 @@
       {
         "to": "client-data",
         "from": "resources/client-data",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "to": "arammeta",
+        "from": "resources/arammeta",
         "filter": [
           "**/*"
         ]

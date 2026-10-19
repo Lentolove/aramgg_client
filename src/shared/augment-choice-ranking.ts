@@ -57,6 +57,8 @@ export interface RankedAugmentChoice<T extends AugmentChoiceInput = AugmentChoic
   order: number
   relativeLabel: ChoiceRelativeLabel | null
   note: string
+  /** 排序用的胜率（arammeta：基线 + 保守下界分）；没有时用 shrunkWinRate */
+  sortWinRate?: number | null
 }
 
 export interface AugmentChoiceRanking<T extends AugmentChoiceInput = AugmentChoiceInput> {

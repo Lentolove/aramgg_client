@@ -89,6 +89,7 @@ export const electronAPI: ElectronAPI = {
     replacePicked: (...args) => requireElectronAPI().manualOverlay.replacePicked(...args),
     acknowledgeReminder: (...args) => requireElectronAPI().manualOverlay.acknowledgeReminder(...args),
     listAugments: (...args) => requireElectronAPI().manualOverlay.listAugments(...args),
+    getArammeta: (...args) => requireElectronAPI().manualOverlay.getArammeta(...args),
     setFocusable: (...args) => requireElectronAPI().manualOverlay.setFocusable(...args),
     show: (...args) => requireElectronAPI().manualOverlay.show(...args),
     hide: (...args) => requireElectronAPI().manualOverlay.hide(...args),

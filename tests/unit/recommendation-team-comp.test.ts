@@ -120,7 +120,7 @@ describe('engine comp term', () => {
     // 每件装备的阵容项都有上限
     for (const item of [...vsAp.items, ...vsAd.items]) expect(item.score.comp).toBeLessThanOrEqual(3.5)
     expect(vsAp.contributions.comp).toBeGreaterThan(0)
-    expect(vsAp.items.some((item) => item.reasons.some((reason) => reason.startsWith('阵容：')))).toBe(true)
+    expect(vsAp.items.some((item) => item.reasons.some((reason) => reason.startsWith('规则·阵容：')))).toBe(true)
   })
 
   it('only takes one anti-heal item', () => {

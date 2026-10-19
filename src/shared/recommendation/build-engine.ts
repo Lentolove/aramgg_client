@@ -56,6 +56,10 @@ export interface ChampionBuildLike {
   fullItems?: BuildRecordLike[]
   itemExtensions?: BuildRecordLike[]
   situationalItems?: BuildRecordLike[]
+  /** 统计来源：'arammeta'（ARAM 海克斯大乱斗实测）或 dtodo（默认） */
+  source?: string
+  /** 出鞋比例（有的数据源直接提供） */
+  bootsShare?: number
   [key: string]: unknown
 }
 
@@ -78,6 +82,10 @@ export interface EngineInput {
   swaps?: ItemSwap[]
   /** 对局阵容分析（analyzeTeamComp）；有它时代替「敌方装备」项 */
   team?: TeamAnalysis | null
+  /** 实测装备组合（arammeta items：两件同出的场次、胜率、相对英雄基线的提升） */
+  itemPairs?: Array<{ ids: number[]; g: number; wr: number; lift: number }>
+  /** 实测单件提升（把组合效应与单件效应分开） */
+  itemSingles?: Array<{ ids: number[]; g: number; lift: number }>
 }
 
 export interface ItemSwap {
@@ -95,6 +103,8 @@ export interface ScoreBreakdown {
   enemy: number
   /** 阵容项（有上限） */
   comp: number
+  /** 实测组合项（与已选装备同出的额外胜率） */
+  pair: number
   total: number
 }
 
@@ -238,6 +248,11 @@ export const ENGINE_PARAMS = {
   compFloor: -2,
   /** 同一需求每多一件满足：抗性/穿透 ×0.7，补前排/补输出 ×0.85（一件就够的需求只给第一件） */
   compResistDecay: 0.7,
+  /** 实测组合：收缩强度（场次）、每 1% 组合效应的分数、封顶、最少场次 */
+  pairAlpha: 300,
+  pairWeight: 0.25,
+  pairCap: 1.0,
+  pairMinGames: 60,
   compGeneralDecay: 0.85,
   /** 阵容对流派选择：缺前排/缺输出 × 流派坦度差 */
   compRouteWeight: 6,
@@ -348,6 +363,13 @@ function buildGames(build: ChampionBuildLike): { games: number; wins: number; wi
   const wins = Number(build.wins ?? build.stats?.wins) || (winRate != null ? winRate * games : 0)
   return { games, wins, winRate: games > 0 ? wins / games : winRate }
 }
+
+/** 统计来源标签：理由行开头标「实测」（有场次）还是「规则」 */
+export function sourceLabel(build: ChampionBuildLike | null | undefined): string {
+  return build?.source === 'arammeta' ? '实测·arammeta' : '实测·dtodo'
+}
+/** 阵容 → 装备的映射是规则（需求本身可能来自实测阵容表，见 TeamAnalysis.frontlineMeasured） */
+export const COMP_REASON_PREFIX = '规则·阵容：'
 
 interface ItemPrior {
   value: number
@@ -526,7 +548,7 @@ function compPartsFor(
   if (needs.frontline > 0 && ctx.flex.canTank && !item.boots) {
     const tank = (s.HP ?? 0) + (s.ARMOR ?? 0) + (s.MR ?? 0)
     const scale = ctx.chosenTank >= 0.35 ? 1 : 0.5
-    push('frontline', needs.frontline * (tank + (item.tags.includes('tank') ? 0.3 : 0)) * ENGINE_PARAMS.compFrontlineWeight * scale, '我方缺前排 → 坦度')
+    push('frontline', needs.frontline * (tank + (item.tags.includes('tank') ? 0.3 : 0)) * ENGINE_PARAMS.compFrontlineWeight * scale, team.frontlineMeasured ? '我方缺前排（实测阵容表）→ 坦度' : '我方缺前排 → 坦度')
   }
   if (needs.damage > 0 && ctx.flex.canDamage && !item.boots) {
     push('damage', needs.damage * damageShareOf(s, ctx.damageType) * ENGINE_PARAMS.compDamageWeight, '我方缺输出 → 输出属性')
@@ -696,6 +718,8 @@ interface Candidate {
   /** 组装时（考虑边际递减后）的分数 */
   effective?: number
   compEffective?: number
+  pairEffective?: number
+  pairReason?: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -754,9 +778,9 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
     const teamTerm = routeLean !== 0 && (champGames <= 0 || entry.games >= champGames * ENGINE_PARAMS.compRouteMinShare)
       ? ENGINE_PARAMS.compRouteWeight * routeLean * (tankShareOf(entry.vector) - meanTank)
       : 0
-    const reasons = [`${entry.games} 场，收缩胜率 ${pct(shrunk)}`]
-    if (Math.abs(statTerm + mechanicTerm) >= 0.3) reasons.push(`海克斯倾向 ${signed(statTerm + mechanicTerm)}`)
-    if (Math.abs(teamTerm) >= 0.3) reasons.push(`阵容${routeLean > 0 ? '缺前排' : '缺输出'} ${signed(teamTerm)}`)
+    const reasons = [`${sourceLabel(entry.build)}：${entry.games} 场，收缩胜率 ${pct(shrunk)}`]
+    if (Math.abs(statTerm + mechanicTerm) >= 0.3) reasons.push(`规则：海克斯倾向 ${signed(statTerm + mechanicTerm)}`)
+    if (Math.abs(teamTerm) >= 0.3) reasons.push(`${team?.frontlineMeasured ? '实测阵容表' : '规则'}：阵容${routeLean > 0 ? '缺前排' : '缺输出'} ${signed(teamTerm)}`)
     return {
       index: entry.index,
       label: entry.label,
@@ -809,7 +833,7 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
     const archetypeName = chosen ? localizeArchetype(chosen.label) : ''
     if (prior) {
       priorValue = prior.value
-      priorReason = `数据：${archetypeName}流派 ${pct(prior.share)} 场出这件，收缩胜率 ${pct(prior.shrunk)}（${signed(prior.delta * 100)}%）`
+      priorReason = `${sourceLabel(chosen!.build)}（n=${prior.games}）：${archetypeName}流派 ${pct(prior.share)} 场出这件，收缩胜率 ${pct(prior.shrunk)}（${signed(prior.delta * 100)}%）`
     } else {
       const other = perBuild
         .filter((entry) => entry !== chosen && entry.priors.has(id))
@@ -819,10 +843,10 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
         prior = other.prior
         // 高胜率方案只看所选路线自己的统计：别的路线的装备罚得更重
         priorValue = other.prior.value - (input.priorMode === 'winrate' ? ENGINE_PARAMS.winrateOffRoutePenalty : ENGINE_PARAMS.offArchetypePenalty)
-        priorReason = `数据：${localizeArchetype(other.entry.label)}流派 ${pct(other.prior.share)} 场出（非当前流派，打折）`
+        priorReason = `${sourceLabel(other.entry.build)}（n=${other.prior.games}）：${localizeArchetype(other.entry.label)}流派 ${pct(other.prior.share)} 场出（非当前流派，打折）`
       } else {
         priorValue = ENGINE_PARAMS.unseenPrior - (input.priorMode === 'winrate' ? 1.5 : 0)
-        priorReason = '该英雄统计里很少出现（纯模型推荐）'
+        priorReason = '规则：该英雄统计里很少出现（纯模型推荐）'
       }
     }
 
@@ -910,16 +934,49 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
     }
     return capComp(value)
   }
+  // 实测组合：与已选装备同出的「组合效应」= 组合提升（收缩）− 两件单件提升的平均
+  const singleLift = new Map<number, number>()
+  for (const single of input.itemSingles ?? []) {
+    if (single.ids.length === 1 && single.g > 0) singleLift.set(single.ids[0], single.lift * single.g / (single.g + ENGINE_PARAMS.pairAlpha))
+  }
+  const pairInfo = new Map<string, { interaction: number; g: number; wr: number }>()
+  for (const pair of input.itemPairs ?? []) {
+    if (pair.ids.length !== 2 || pair.g < ENGINE_PARAMS.pairMinGames) continue
+    const shrunkLift = pair.lift * pair.g / (pair.g + ENGINE_PARAMS.pairAlpha)
+    const singles = pair.ids.map((id) => singleLift.get(id)).filter((value): value is number => value != null)
+    const interaction = singles.length ? shrunkLift - singles.reduce((a, b) => a + b, 0) / singles.length : shrunkLift * 0.5
+    pairInfo.set([...pair.ids].sort((a, b) => a - b).join('-'), { interaction, g: pair.g, wr: pair.wr })
+  }
+  const pairTerm = (candidate: Candidate): { value: number; reason: string | null } => {
+    if (!pairInfo.size) return { value: 0, reason: null }
+    let value = 0
+    let best: { abs: number; text: string } | null = null
+    for (const id of chosenIds) {
+      const info = pairInfo.get([id, candidate.item.id].sort((a, b) => a - b).join('-'))
+      if (!info) continue
+      const part = info.interaction * 100 * ENGINE_PARAMS.pairWeight
+      value += part
+      if (!best || Math.abs(part) > best.abs) {
+        best = { abs: Math.abs(part), text: `实测·arammeta（n=${info.g}）：与「${itemIndex.get(id)?.name ?? id}」同出胜率 ${pct(info.wr)}，组合效应 ${signed(info.interaction * 100)}%（${signed(part)}）` }
+      }
+    }
+    value = Math.max(-ENGINE_PARAMS.pairCap, Math.min(ENGINE_PARAMS.pairCap, value))
+    return { value, reason: best && best.abs >= 0.1 ? best.text : null }
+  }
   const effectiveTotal = (candidate: Candidate) => {
     let synergy = 0
     for (const { index, value } of candidate.perAugment) {
       synergy += value > 0 ? value * ENGINE_PARAMS.synergyDecay ** augmentUses[index] : value
     }
-    return candidate.total - candidate.synergy + synergy - candidate.comp + effectiveComp(candidate)
+    return candidate.total - candidate.synergy + synergy - candidate.comp + effectiveComp(candidate) + pairTerm(candidate).value
   }
   const accept = (candidate: Candidate) => {
-    chosenIds.push(candidate.item.id)
+    // 先按「放进去之前」的状态算有效分，再登记
+    const pair = pairTerm(candidate)
     candidate.effective = effectiveTotal(candidate)
+    chosenIds.push(candidate.item.id)
+    candidate.pairEffective = pair.value
+    candidate.pairReason = pair.reason
     candidate.compEffective = effectiveComp(candidate)
     for (const part of candidate.compParts) {
       if (part.value >= 0.6) needUses.set(part.need, (needUses.get(part.need) ?? 0) + 1)
@@ -939,7 +996,10 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
   // 该流派里鞋子出场率 → 是否需要鞋
   // 该流派核心三件里带鞋的场次占比 → 是否需要鞋
   let bootsShare = 0.7
-  if (chosen) {
+  if (chosen && typeof chosen.build.bootsShare === 'number') {
+    // 数据源直接给了出鞋比例（arammeta：该英雄各鞋子的出场率之和）
+    bootsShare = chosen.build.bootsShare
+  } else if (chosen) {
     let coreGames = 0
     let bootsGames = 0
     for (const record of chosen.build.coreItems ?? []) {
@@ -1033,9 +1093,9 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
       .map(({ candidate, total }) => {
         const synergy = [...candidate.synergyReasons].sort((a, b) => b.value - a.value)[0]
         const compPart = [...candidate.compParts].sort((a, b) => b.value - a.value)[0]
-        let reason = candidate.priorReason.replace(/^数据：/, '')
-        if (compPart && compPart.value >= 0.8 && (!synergy || compPart.value > synergy.value)) reason = `阵容：${compPart.reason}`
-        else if (synergy && synergy.value > 0) reason = `「${synergy.augment}」${synergy.reason}`
+        let reason = candidate.priorReason
+        if (compPart && compPart.value >= 0.8 && (!synergy || compPart.value > synergy.value)) reason = `${COMP_REASON_PREFIX}${compPart.reason}`
+        else if (synergy && synergy.value > 0) reason = `规则：「${synergy.augment}」${synergy.reason}`
         return {
           itemId: candidate.item.id,
           name: candidate.item.name,
@@ -1054,17 +1114,18 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
     if (originalId != null) reasons.unshift(`你手动换上（原推荐：${itemIndex.get(originalId)?.name ?? originalId}）`)
     const sortedSynergy = [...candidate.synergyReasons].sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
     for (const entry of sortedSynergy.slice(0, 3)) {
-      reasons.push(`「${entry.augment}」${entry.reason}（${signed(entry.value)}）`)
+      reasons.push(`规则：「${entry.augment}」${entry.reason}（${signed(entry.value)}）`)
     }
-    if (candidate.fitReason) reasons.push(`${candidate.fitReason}（${signed(candidate.fit)}）`)
-    if (candidate.progressNames.length) reasons.push(`已有组件：${candidate.progressNames.join('、')}（${signed(candidate.progress)}）`)
-    if (candidate.enemyReason) reasons.push(`${candidate.enemyReason}（${signed(candidate.enemy)}）`)
+    if (candidate.fitReason) reasons.push(`规则：${candidate.fitReason}（${signed(candidate.fit)}）`)
+    if (candidate.pairReason) reasons.push(candidate.pairReason)
+    if (candidate.progressNames.length) reasons.push(`实时：已有组件 ${candidate.progressNames.join('、')}（${signed(candidate.progress)}）`)
+    if (candidate.enemyReason) reasons.push(`规则：${candidate.enemyReason}（${signed(candidate.enemy)}）`)
     const compValue = candidate.compEffective ?? candidate.comp
     for (const part of [...candidate.compParts].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, 2)) {
-      if (Math.abs(part.value) >= 0.3) reasons.push(`阵容：${part.reason}（${signed(part.value)}）`)
+      if (Math.abs(part.value) >= 0.3) reasons.push(`${COMP_REASON_PREFIX}${part.reason}（${signed(part.value)}）`)
     }
     if (candidate.compParts.length && Math.abs(compValue - candidate.compParts.reduce((sum, part) => sum + part.value, 0)) >= 0.3) {
-      reasons.push(`阵容项合计 ${signed(compValue)}（同类需求已有装备满足 / 封顶）`)
+      reasons.push(`规则：阵容项合计 ${signed(compValue)}（同类需求已有装备满足 / 封顶）`)
     }
     return {
       itemId: id,
@@ -1072,10 +1133,11 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
       score: {
         prior: round1(candidate.priorValue),
         // 有效海克斯分（含同一海克斯多件装备的边际递减）
-        synergy: round1((candidate.effective ?? candidate.total) - candidate.priorValue - candidate.progress - candidate.enemy - compValue),
+        synergy: round1((candidate.effective ?? candidate.total) - candidate.priorValue - candidate.progress - candidate.enemy - compValue - (candidate.pairEffective ?? 0)),
         progress: round1(candidate.progress),
         enemy: round1(candidate.enemy),
         comp: round1(compValue),
+        pair: round1(candidate.pairEffective ?? 0),
         total: round1(candidate.effective ?? candidate.total),
       },
       reasons,

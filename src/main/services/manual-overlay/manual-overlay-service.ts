@@ -58,6 +58,7 @@ export const DEFAULT_MANUAL_OVERLAY_SETTINGS: ManualOverlaySettings = {
   opacity: 0.92,
   scale: 1,
   collapsedSections: [],
+  hideWinRates: false,
 }
 
 function clampNumber(value: unknown, min: number, max: number, fallback: number, step = 0.01): number {
@@ -180,6 +181,7 @@ function sanitizeSettings(raw: unknown, legacyAutoScreenshot: unknown): ManualOv
     collapsedSections: Array.isArray(value.collapsedSections)
       ? SECTIONS.filter((section) => (value.collapsedSections as unknown[]).includes(section))
       : [],
+    hideWinRates: value.hideWinRates === true,
   }
 }
 

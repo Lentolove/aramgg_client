@@ -201,6 +201,7 @@ describe('ManualOverlayService', () => {
       opacity: 0.92,
       scale: 1,
       collapsedSections: [],
+      hideWinRates: false,
     })
     expect(service.isAutoScreenshotEnabled()).toBe(true)
   })

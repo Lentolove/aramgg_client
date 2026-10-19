@@ -1,4 +1,6 @@
 import { trustedIpcMain as ipcMain } from '../security/trusted-ipc.ts'
+import { getArammetaService } from '../services/arammeta/arammeta-service.ts'
+import type { ManualOverlayArammetaResult } from '../../shared/ipc-contract.ts'
 import { getManualOverlayService } from '../services/manual-overlay/manual-overlay-runtime.ts'
 import {
     fitManualOverlayToContent,
@@ -24,6 +26,22 @@ export function registerManualOverlayIpcHandlers(): void {
         service().replacePicked(oldId, augment))
     ipcMain.handle('manual-overlay-acknowledge-reminder', () => service().acknowledgeReminder())
     ipcMain.handle('manual-overlay-list-augments', () => service().listAugments())
+    ipcMain.handle('manual-overlay-get-arammeta', async (_event, championId: unknown): Promise<ManualOverlayArammetaResult> => {
+        try {
+            const result = await (await getArammetaService()).getChampion(Number(championId))
+            return {
+                champion: result.data,
+                meta: result.meta.data,
+                source: result.source,
+                metaSource: result.meta.source,
+                mirror: result.mirror,
+                fetchedAt: result.fetchedAt,
+                error: result.error ?? result.meta.error,
+            }
+        } catch (error) {
+            return { champion: null, meta: null, source: 'none', metaSource: 'none', mirror: null, fetchedAt: null, error: error instanceof Error ? error.message : String(error) }
+        }
+    })
     ipcMain.handle('manual-overlay-set-focusable', (_event, focusable: unknown) =>
         setManualOverlayFocusable(focusable === true))
     ipcMain.on('manual-overlay-show', () => {

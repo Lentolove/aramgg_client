@@ -132,6 +132,10 @@
             </label>
           </div>
           <label class="mo-check">
+            <input v-model="settings.hideWinRates" type="checkbox" @change="saveSettings">
+            <span>隐藏胜率数字（只看排序、样本量与标签）</span>
+          </label>
+          <label class="mo-check">
             <input v-model="settings.minimalMode" type="checkbox" @change="saveSettings">
             <span>极简模式：识别到三选一自动展开，关闭后自动收起</span>
           </label>
@@ -202,8 +206,11 @@
                   </div>
                   <div class="mo-card-stats">
                     <template v-if="entry.method === 'shrunk'">
-                      <span class="mo-wr">{{ formatPercent(entry.shrunkWinRate) }}</span>
-                      <span class="mo-delta" :class="deltaClass(entry.delta)">{{ formatDelta(entry.delta) }}</span>
+                      <template v-if="!settings.hideWinRates">
+                        <span class="mo-wr">{{ formatPercent(entry.shrunkWinRate) }}</span>
+                        <span class="mo-delta" :class="deltaClass(entry.delta)">{{ formatDelta(entry.delta) }}</span>
+                      </template>
+                      <span class="mo-card-n" :title="cardSourceTitle(entry)">{{ cardSampleText(entry) }}</span>
                       <span
                         v-if="synergyText(entry)"
                         class="mo-synergy"
@@ -213,7 +220,7 @@
                     <span v-else class="mo-muted">{{ entry.note }}</span>
                   </div>
                   <div v-if="cardDetails" class="mo-card-detail">
-                    <div v-if="entry.method === 'shrunk'">{{ entry.games }} 场 · 原始胜率 {{ formatPercent(entry.rawWinRate) }}</div>
+                    <div v-if="entry.method === 'shrunk'">{{ cardDetailText(entry) }}</div>
                     <div v-if="entry.card.source && entry.card.source !== 'icon+ocr'">识别：{{ sourceTitle(entry.card) }}</div>
                     <div v-if="entry.synergy?.reasons?.length" class="mo-card-detail-synergy">{{ entry.synergy.reasons.join('；') }}</div>
                   </div>
@@ -265,10 +272,14 @@
             </template>
             <div v-if="cardDetails" class="mo-footnote">
               <div v-if="ranking.method === 'rank-fallback'">无胜率数据：按热度排序，仅供参考</div>
+              <div v-else-if="cardRankingSource !== 'dtodo'">
+                arammeta 方法：胜率向英雄基线 {{ settings.hideWinRates ? '' : formatPercent(ranking.baselineWinRate) }} 收缩（先验 {{ ranking.alpha }} 场），按 10% 保守下界 − 基线排序、同稀有度内比较；arammeta 没有的卡用 dtodo 胜率（同样收缩）；契合度（规则）最多调整 ±2 个百分点
+              </div>
               <div v-else-if="ranking.baselineWinRate != null">
                 收缩胜率 = (胜场 + α×{{ ranking.baselineSource === 'cards' ? '三卡平均' : '英雄平均' }}) / (场次 + α)，α={{ ranking.alpha }}，基准 {{ formatPercent(ranking.baselineWinRate) }}；契合度最多调整 ±2 个百分点
               </div>
               <div>{{ ranking.summary }}</div>
+              <div v-if="arammetaLine" class="mo-attribution">{{ arammetaLine }}</div>
               <div v-if="captureLabel">{{ captureLabel }}</div>
               <button class="mo-link mo-no-drag" @click="clearCandidates">清除本次三选一</button>
             </div>
@@ -493,6 +504,7 @@
                     <span class="mo-detail-plan-desc">{{ plan.description }}</span>
                   </div>
                 </div>
+                <div class="mo-detail-line">出装路线：{{ buildSource === 'arammeta' ? '实测·arammeta（路线 / 搭配 / 鞋子 / 两件组合）' : '实测·dtodo（arammeta 无该英雄路线）' }}</div>
                 <div v-if="tagSummary" class="mo-detail-line">海克斯偏好：{{ tagSummary }}</div>
                 <ol class="mo-detail-items">
                   <li v-for="item in engine.items" :key="`detail-${item.itemId}`">
@@ -509,7 +521,8 @@
                 </div>
                 <div v-for="(note, index) in engine.notes" :key="`note-${index}`" class="mo-detail-line">{{ note }}</div>
                 <div class="mo-detail-line">{{ liveLabel }}</div>
-                <div class="mo-detail-line mo-disclaimer">海克斯/阵容加成是规则模型（数据源没有海克斯×装备、阵容×装备胜率）；先验来自该英雄的真实出装统计。</div>
+                <div class="mo-detail-line mo-disclaimer">理由前缀：「实测」= 统计数据（带场次 n），「规则」= 规则模型，「实时」= 本局装备。arammeta 也没有海克斯×装备、阵容×装备的胜率，所以海克斯→装备、阵容→装备的加成仍是规则。</div>
+                <div v-if="arammetaLine" class="mo-detail-line mo-attribution">{{ arammetaLine }}</div>
               </div>
             </template>
             <div v-else class="mo-empty">暂无该英雄的出装数据</div>
@@ -528,6 +541,11 @@ import {
   rankAugmentChoices,
   type AugmentChoiceInput,
 } from '../../shared/augment-choice-ranking.ts'
+import { ARAMMETA_ATTRIBUTION } from '../../shared/arammeta/normalize.ts'
+import { rankAugmentChoicesArammeta, type ArammetaRankedChoice } from '../../shared/arammeta/augment-ranking.ts'
+import { arammetaToBuilds } from '../../shared/arammeta/builds.ts'
+import { frontlineSignal, measuredDamageSplit } from '../../shared/arammeta/composition.ts'
+import { COMP_REASON_PREFIX } from '../../shared/recommendation/build-engine.ts'
 import {
   ADAPTED_LABEL,
   adviseTeamComp,
@@ -561,6 +579,7 @@ import type {
   ChampionMonitorState,
   ManualOverlaySection,
   ManualOverlayAugmentRef,
+  ManualOverlayArammetaResult,
   ManualOverlayCandidate,
   ManualOverlayPickedAugment,
   ManualOverlayLiveData,
@@ -624,6 +643,7 @@ const settings = reactive<ManualOverlaySettings>({
   opacity: 0.92,
   scale: 1,
   collapsedSections: [],
+  hideWinRates: false,
 })
 const showSettings = ref(false)
 const championId = ref<number | null>(null)
@@ -631,6 +651,8 @@ const championData = ref<Record<string, any> | null>(null)
 const championLoading = ref(false)
 const championError = ref<string | null>(null)
 const live = ref<ManualOverlayLiveData | null>(null)
+/** arammeta（Lanternko/ARAM-Mayhem-Database，MIT）：英雄统计 + 全局元数据 */
+const arammeta = ref<ManualOverlayArammetaResult | null>(null)
 
 const hotkeyOptions = [
   { value: 'CommandOrControl+Shift+R', label: 'Ctrl+Shift+R' },
@@ -727,6 +749,22 @@ const heldProfiles = computed(() => state.value.picked.map((augment) => profileO
 // ------------------------------------------------------------- 对局阵容（2999 双方 10 人；选人阶段用 LCU 我方）
 const engineItemIndex = computed(() => buildItemProfileIndex(engineItems.value))
 
+const arammetaMeta = computed(() => arammeta.value?.meta ?? null)
+const arammetaChampion = computed(() => {
+  const champion = arammeta.value?.champion ?? null
+  return champion && champion.championId === championId.value ? champion : null
+})
+const measuredDamage = (id: number) => measuredDamageSplit(arammetaMeta.value, id)
+
+/** 先按画像分析一遍拿到我方英雄 id，再用 arammeta 实测阵容表算「我去当前排」的效果 */
+function withMeasuredFrontline(analysis: TeamAnalysis | null, rerun: (_signal: { delta: number }) => TeamAnalysis): TeamAnalysis | null {
+  if (!analysis) return null
+  const allyIds = analysis.allies.map((player) => player.championId).filter((id): id is number => id != null)
+  const self = analysis.allies.find((player) => player.isSelf)?.championId ?? championId.value
+  const signal = allyIds.length >= 2 ? frontlineSignal(arammetaMeta.value, allyIds, self ?? null) : null
+  return signal ? rerun({ delta: signal.delta }) : analysis
+}
+
 const teamAnalysis = computed<TeamAnalysis | null>(() => {
   const data = live.value
   if (!data) return null
@@ -746,22 +784,30 @@ const teamAnalysis = computed<TeamAnalysis | null>(() => {
     const allies = players.filter((player) => player.isAlly).map(toInput)
     const enemies = players.filter((player) => !player.isAlly).map(toInput)
     if (allies.length + enemies.length < 2) return null
-    return analyzeTeamComp({ allies, enemies, source: 'live', itemIndex: engineItemIndex.value })
+    const run = (measuredFrontline: { delta: number } | null) => analyzeTeamComp({ allies, enemies, source: 'live', itemIndex: engineItemIndex.value, measuredDamage, measuredFrontline })
+    return withMeasuredFrontline(run(null), run)
   }
   const allyIds = data.allyChampionIds ?? []
   if (allyIds.length >= 2) {
     const self = data.selfChampionId ?? championId.value
-    return analyzeTeamComp({
+    const run = (measuredFrontline: { delta: number } | null) => analyzeTeamComp({
       allies: allyIds.map((id) => ({ championId: id, isSelf: id === self })),
       enemies: [],
       source: 'champ-select',
       itemIndex: engineItemIndex.value,
+      measuredDamage,
+      measuredFrontline,
     })
+    return withMeasuredFrontline(run(null), run)
   }
   return null
 })
 
-const routeFlex = computed(() => championRouteFlex({ builds: championData.value?.builds || [], items: engineItems.value }))
+/** 出装路线：优先 arammeta 实测路线（itemClusters），没有时用 dtodo */
+const arammetaBuilds = computed(() => arammetaToBuilds(arammetaChampion.value, (id) => engineItemIndex.value.get(id)?.name))
+const buildSource = computed<'arammeta' | 'dtodo'>(() => (arammetaBuilds.value.length ? 'arammeta' : 'dtodo'))
+const engineBuilds = computed(() => (arammetaBuilds.value.length ? arammetaBuilds.value : championData.value?.builds || []))
+const routeFlex = computed(() => championRouteFlex({ builds: engineBuilds.value, items: engineItems.value }))
 const teamAdvice = computed(() => (teamAnalysis.value ? adviseTeamComp(teamAnalysis.value, routeFlex.value) : null))
 const teamExpanded = ref(false)
 const teamSides = computed(() => {
@@ -783,7 +829,9 @@ function teamPlayerTitle(player: TeamPlayerTag) {
 
 /** 出装引擎：每次已选海克斯 / 2999 装备 / 阵容变化都会重新计算 */
 const engineInput = computed(() => ({
-  builds: championData.value?.builds || [],
+  builds: engineBuilds.value,
+  itemPairs: arammetaChampion.value?.pairs ?? [],
+  itemSingles: arammetaChampion.value?.singles ?? [],
   items: engineItems.value,
   augments: heldProfiles.value,
   ownedItemIds: live.value?.found ? live.value.ownedItemIds : [],
@@ -895,7 +943,12 @@ function formatSigned(value: number) {
 }
 
 function rankCards(candidates: ManualOverlayCandidate[]) {
-  const base = rankAugmentChoices(toCardInputs(candidates), championStatList.value, { alpha: settings.shrinkageAlpha })
+  const champion = arammetaChampion.value
+  const rarity = arammetaMeta.value?.augRarity ?? {}
+  // arammeta 优先（逐卡退回 dtodo）；没有 arammeta 时用原来的 dtodo 收缩排序
+  const base = champion
+    ? rankAugmentChoicesArammeta(toCardInputs(candidates), champion, { fallbackStats: championStatList.value, rarityOf: (id) => rarity[String(id)] ?? null })
+    : rankAugmentChoices(toCardInputs(candidates), championStatList.value, { alpha: settings.shrinkageAlpha })
   const trios = championData.value?.augmentTrios || []
   return applyCardSynergy(base, (card) => scoreCardSynergy(
     profileOf(card),
@@ -906,6 +959,67 @@ function rankCards(candidates: ManualOverlayCandidate[]) {
 }
 
 const ranking = computed(() => rankCards(state.value.candidates))
+const cardRankingSource = computed(() => (ranking.value as { source?: string }).source ?? 'dtodo')
+
+const RARITY_SHORT: Record<string, string> = { kPrismatic: '棱彩', kGold: '金', kSilver: '银' }
+type CardEntry = SynergyRankedChoice<CardInput> & Partial<ArammetaRankedChoice<CardInput>>
+
+function cardSampleText(entry: CardEntry) {
+  const parts = [`n=${entry.games}`]
+  if (entry.rarityRank && entry.rarity) parts.push(`${RARITY_SHORT[entry.rarity] ?? ''}#${entry.rarityRank.rank}/${entry.rarityRank.total}`)
+  if (entry.source === 'dtodo') parts.push('dtodo')
+  return parts.join(' · ')
+}
+
+function cardSourceTitle(entry: CardEntry) {
+  if (entry.source === 'arammeta') return `实测·arammeta：${entry.games} 场${entry.rarityRank ? `；本英雄同稀有度第 ${entry.rarityRank.rank}/${entry.rarityRank.total}` : ''}`
+  if (entry.source === 'dtodo') return `实测·dtodo：${entry.games} 场（arammeta 没有这张卡的统计）`
+  return `实测·dtodo：${entry.games} 场`
+}
+
+function cardDetailText(entry: CardEntry) {
+  const hide = settings.hideWinRates
+  if (entry.source === 'arammeta') {
+    const parts = [`实测·arammeta ${entry.games} 场`]
+    if (!hide) parts.push(`后验胜率 ${formatPercent(entry.shrunkWinRate)}`)
+    if (!hide && entry.lcbLift != null) parts.push(`保守提升 ${formatDelta(entry.lcbLift)}`)
+    if (entry.pickRate != null) parts.push(`选取率 ${formatPercent(entry.pickRate)}`)
+    return parts.join(' · ')
+  }
+  const label = entry.source === 'dtodo' ? '实测·dtodo（arammeta 无此卡）' : '实测·dtodo'
+  return hide ? `${label} ${entry.games} 场` : `${label} ${entry.games} 场 · 原始胜率 ${formatPercent(entry.rawWinRate)}`
+}
+
+/** 署名 + 版本/样本/更新时间 */
+const arammetaLine = computed(() => {
+  const result = arammeta.value
+  const meta = result?.meta
+  if (!meta) return result?.error && championId.value ? `arammeta 数据暂不可用（${result.error.slice(0, 80)}）` : ''
+  const parts = [ARAMMETA_ATTRIBUTION]
+  if (meta.patch) parts.push(`版本 ${meta.patch}`)
+  if (meta.games) parts.push(`本版本 ${meta.games.toLocaleString('en-US')} 场`)
+  if (meta.updatedAt) parts.push(`更新 ${formatDateTime(meta.updatedAt)}`)
+  else if (meta.detailVersion) parts.push(`数据版本 ${meta.detailVersion.split('-')[0]}`)
+  if (meta.sampleEndMs) parts.push(`样本截至 ${formatDateTime(meta.sampleEndMs)}`)
+  const champion = arammetaChampion.value
+  if (champion) {
+    const games = arammetaMeta.value?.champs[String(champion.championId)]?.g
+    if (games) parts.push(`本英雄 ${games.toLocaleString('en-US')} 场`)
+  } else if (championId.value) {
+    parts.push('本英雄无 arammeta 数据，用 dtodo')
+  }
+  const source = { network: '在线', revalidated: '在线（未变）', cache: '缓存', memory: '缓存', 'stale-cache': '旧缓存（离线）', bundled: '内置快照', none: '' }[result!.source] ?? ''
+  if (source) parts.push(source)
+  parts.push(meta.regionNote)
+  return parts.join(' · ')
+})
+
+function formatDateTime(value: string | number) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
 
 /** 按游戏里的左右顺序展示，标签来自三卡相对排序（胜率 + 契合度） */
 const rankedCards = computed(() => [...ranking.value.choices].sort((a, b) => a.slot - b.slot))
@@ -975,9 +1089,9 @@ const focusReasons = computed(() => {
   const item = focusItem.value
   const reasons = item?.reasons || []
   // 阵容影响比海克斯大时，先说阵容
-  const compReason = reasons.find((reason) => reason.startsWith('阵容：'))
+  const compReason = reasons.find((reason) => reason.startsWith(COMP_REASON_PREFIX))
   if (item && compReason && Math.abs(item.score.comp) > Math.abs(item.score.synergy)) {
-    return [compReason, reasons.find((reason) => reason !== compReason && !reason.startsWith('数据：')) ?? reasons[0]].filter(Boolean)
+    return [compReason, reasons.find((reason) => reason !== compReason && !reason.startsWith('实测·')) ?? reasons[0]].filter(Boolean)
   }
   return reasons.length > 1 ? [reasons[1], reasons[0]] : reasons.slice(0, 1)
 })
@@ -989,8 +1103,8 @@ function itemTooltip(item: EngineItem) {
 function cardTooltip(entry: SynergyRankedChoice<CardInput>) {
   const lines = [`${entry.card.name}（点击记录为已选）`]
   if (entry.method === 'shrunk') {
-    lines.push(`收缩胜率 ${formatPercent(entry.shrunkWinRate)}（相对基准 ${formatDelta(entry.delta)}）`)
-    lines.push(`${entry.games} 场 · 原始胜率 ${formatPercent(entry.rawWinRate)}`)
+    if (!settings.hideWinRates) lines.push(`收缩胜率 ${formatPercent(entry.shrunkWinRate)}（相对基准 ${formatDelta(entry.delta)}）`)
+    lines.push(cardDetailText(entry as CardEntry))
   }
   if (entry.synergy?.reasons?.length) lines.push(`契合：${entry.synergy.reasons.join('；')}`)
   const source = sourceTitle(entry.card)
@@ -1038,8 +1152,9 @@ function changeBadge(item: EngineItem) {
 function scoreTitle(item: EngineItem) {
   const s = item.score
   const enemy = Math.abs(s.enemy) >= 0.05 ? ` · 敌方 ${s.enemy.toFixed(1)}` : ''
-  const comp = Math.abs(s.comp) >= 0.05 ? ` · 阵容 ${s.comp >= 0 ? '+' : ''}${s.comp.toFixed(1)}` : ''
-  return `先验 ${s.prior.toFixed(1)} · 海克斯 ${s.synergy >= 0 ? '+' : ''}${s.synergy.toFixed(1)} · 进度 ${s.progress.toFixed(1)}${enemy}${comp} = ${s.total.toFixed(1)}`
+  const comp = Math.abs(s.comp) >= 0.05 ? ` · 阵容(规则) ${s.comp >= 0 ? '+' : ''}${s.comp.toFixed(1)}` : ''
+  const pair = Math.abs(s.pair ?? 0) >= 0.05 ? ` · 组合(实测) ${s.pair >= 0 ? '+' : ''}${s.pair.toFixed(1)}` : ''
+  return `先验(实测) ${s.prior.toFixed(1)} · 海克斯(规则) ${s.synergy >= 0 ? '+' : ''}${s.synergy.toFixed(1)} · 进度 ${s.progress.toFixed(1)}${enemy}${comp}${pair} = ${s.total.toFixed(1)}`
 }
 
 function synergyText(entry: SynergyRankedChoice<CardInput>) {
@@ -1305,6 +1420,7 @@ async function loadChampion(id: number | null) {
     return
   }
   championLoading.value = true
+  void loadArammeta(id, sequence)
   try {
     const result = await electronAPI.winrate.loadChampionData(id)
     if (sequence !== championLoadSequence) return
@@ -1319,6 +1435,18 @@ async function loadChampion(id: number | null) {
     championError.value = `英雄数据加载失败：${error instanceof Error ? error.message : String(error)}`
   } finally {
     if (sequence === championLoadSequence) championLoading.value = false
+  }
+}
+
+/** arammeta 与 dtodo 并行加载；失败不影响 dtodo（主进程内部：缓存 → 镜像 → 内置快照） */
+async function loadArammeta(id: number, sequence: number) {
+  try {
+    const result = await electronAPI.manualOverlay.getArammeta(id)
+    if (sequence === championLoadSequence) arammeta.value = result
+  } catch (error) {
+    if (sequence === championLoadSequence) {
+      arammeta.value = { champion: null, meta: null, source: 'none', metaSource: 'none', mirror: null, fetchedAt: null, error: error instanceof Error ? error.message : String(error) }
+    }
   }
 }
 
@@ -1666,6 +1794,8 @@ onBeforeUnmount(() => {
 .mo-delta { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .mo-up { color: var(--mo-up); }
 .mo-down { color: var(--mo-down); }
+.mo-card-n { font-size: 10px; color: rgba(200, 210, 225, 0.62); white-space: nowrap; }
+.mo-attribution { color: rgba(170, 190, 215, 0.7); font-size: 10px; }
 .mo-synergy { font-size: 10px; padding: 0 5px; border-radius: 8px; line-height: 16px; white-space: nowrap; }
 .mo-synergy-up { background: rgba(95, 208, 138, 0.14); color: var(--mo-up); }
 .mo-synergy-down { background: rgba(239, 111, 111, 0.14); color: var(--mo-down); }

@@ -251,6 +251,16 @@ async function main() {
   }
   await logPreparedClientData()
 
+  // arammeta 快照（运行时离线兜底）：失败不阻断打包，运行时仍会在线获取
+  const arammetaResult = await run('node', ['scripts/build-arammeta-snapshot.mjs'], {
+    env: packEnv,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+  if (arammetaResult.code !== 0) {
+    console.warn('arammeta snapshot failed; packaging without the bundled fallback')
+    await mkdir(path.join(process.cwd(), 'resources', 'arammeta'), { recursive: true }).catch(() => {})
+  }
+
   const buildResult = await run('electron-vite', ['build'], {
     env: packEnv,
     stdio: ['ignore', 'pipe', 'pipe'],

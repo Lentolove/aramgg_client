@@ -4,6 +4,7 @@ node_modules
 /dist-electron
 /build
 /resources/client-data
+/resources/arammeta
 /.runtime
 /.codex-tmp
 /.codex-update-test

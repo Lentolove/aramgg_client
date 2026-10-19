@@ -373,6 +373,8 @@ export interface ManualOverlaySettings {
   scale: number
   /** 折叠的分区 */
   collapsedSections: ManualOverlaySection[]
+  /** 隐藏胜率数字（只看排序与标签） */
+  hideWinRates: boolean
 }
 
 export type ManualOverlaySection = 'cards' | 'picked' | 'build'
@@ -486,6 +488,19 @@ export interface ManualOverlayLivePlayer {
   kills: number | null
   deaths: number | null
   assists: number | null
+}
+
+export type ManualOverlayArammetaSource = 'memory' | 'cache' | 'network' | 'revalidated' | 'stale-cache' | 'bundled' | 'none'
+
+/** arammeta（Lanternko/ARAM-Mayhem-Database，MIT）英雄数据 + 全局元数据 */
+export interface ManualOverlayArammetaResult {
+  champion: import('./arammeta/normalize.ts').ArammetaChampion | null
+  meta: import('./arammeta/normalize.ts').ArammetaMeta | null
+  source: ManualOverlayArammetaSource
+  metaSource: ManualOverlayArammetaSource
+  mirror: string | null
+  fetchedAt: number | null
+  error: string | null
 }
 
 export interface ManualOverlayLiveData {
@@ -624,6 +639,8 @@ export interface ElectronAPI {
     acknowledgeReminder(): Promise<ManualOverlayState>
     /** 全部海克斯（用于按名字搜索更正） */
     listAugments(): Promise<ManualOverlayAugmentRef[]>
+    /** arammeta 英雄统计（运行时获取 + 缓存 + 打包快照兜底） */
+    getArammeta(championId: number): Promise<ManualOverlayArammetaResult>
     /** 临时让浮窗可获得焦点（搜索框输入用），关闭搜索后恢复 */
     setFocusable(focusable: boolean): Promise<boolean>
     show(): void

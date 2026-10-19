@@ -77,7 +77,7 @@ export function generateBuildPlans(input: EngineInput, options: BuildPlanOptions
     if (adapted.archetype && baselineRoute && adapted.archetype.index !== baselineRoute.index) {
       const name = localizeArchetype(baselineRoute.label)
       const by = [hasAugments ? '海克斯' : '', hasTeam ? '阵容' : ''].filter(Boolean).join('/')
-      make('alternate', `${name.split('·')[0]}流`, `${by}把流派切到了「${localizeArchetype(adapted.archetype.label)}」；这是原「${name}」路线 + ${inputs}`, { ...input, archetype: baselineRoute.index }, hasAugments)
+      make('alternate', `${name.split('·')[0].split('（')[0].split('/')[0]}流`, `${by}把流派切到了「${localizeArchetype(adapted.archetype.label)}」；这是原「${name}」路线 + ${inputs}`, { ...input, archetype: baselineRoute.index }, hasAugments)
     }
   }
 
