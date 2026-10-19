@@ -39,6 +39,7 @@
     <div class="mo-body">
       <div class="mo-hint">
         <span>三选一出现时点「刷新」或按 <b>{{ hotkeyLabel }}</b></span>
+        <span v-if="state.autoWatching" class="mo-watching">· 自动跟拍中，关掉三选一后自动记录</span>
         <span v-if="!state.hotkeyRegistered" class="mo-warn">（{{ state.hotkeyError || '快捷键未注册' }}）</span>
       </div>
       <div v-if="state.lastError" class="mo-status mo-warn">{{ state.lastError }}</div>
@@ -69,6 +70,10 @@
         <label class="mo-setting">
           <input v-model="settings.focusable" type="checkbox" @change="saveSettings">
           <span>浮窗可获得焦点（重启生效；默认关闭以免抢游戏焦点）</span>
+        </label>
+        <label class="mo-setting">
+          <input v-model="settings.autoFollowUp" type="checkbox" @change="saveSettings">
+          <span>刷新后自动跟拍三选一（2.5 秒一次，最多 45 秒），关闭时自动记录所选</span>
         </label>
         <label class="mo-setting">
           <input v-model="settings.iconMatchEnabled" type="checkbox" @change="saveSettings">
@@ -135,11 +140,18 @@
               <div class="mo-card-stats">
                 <template v-if="entry.method === 'shrunk'">
                   <span title="收缩后胜率">{{ formatPercent(entry.shrunkWinRate) }}</span>
+                  <span
+                    v-if="synergyText(entry)"
+                    class="mo-synergy"
+                    :class="(entry.synergy?.score ?? 0) > 0 ? 'mo-up' : 'mo-down'"
+                    :title="(entry.synergy?.reasons || []).join('；')"
+                  >{{ synergyText(entry) }}</span>
                   <span :class="deltaClass(entry.delta)" title="相对基准（百分点）">{{ formatDelta(entry.delta) }}</span>
                   <span class="mo-muted">{{ entry.games }} 场 · 原始 {{ formatPercent(entry.rawWinRate) }}</span>
                 </template>
                 <span v-else class="mo-muted">{{ entry.note }}</span>
               </div>
+              <div v-if="entry.synergy?.reasons?.length" class="mo-card-reason">{{ entry.synergy.reasons[0] }}</div>
             </div>
           </div>
           <div
@@ -200,16 +212,21 @@
       <section class="mo-section">
         <div class="mo-section-title">
           <span>本局已选海克斯</span>
-          <span class="mo-muted">{{ state.picked.length ? '点 × 移除' : '点上方卡片标记' }}</span>
+          <span class="mo-muted">{{ state.picked.length ? '点名字更正 · 点 × 移除' : '点上方卡片标记，或关掉三选一后自动记录' }}</span>
         </div>
         <div v-if="state.picked.length" class="mo-chips">
-          <span v-for="augment in state.picked" :key="augment.id" class="mo-chip">
+          <span
+            v-for="augment in state.picked"
+            :key="augment.id"
+            class="mo-chip"
+            :class="{ 'mo-chip-inferred': augment.inferred === 'recommended' }"
+          >
             <img v-if="augment.iconPath" :src="getAugmentIconUrl(augment.iconPath)" alt="">
             <span
               class="mo-chip-name mo-no-drag"
-              title="点这里换成别的海克斯"
+              :title="inferredTitle(augment) || '点这里换成别的海克斯'"
               @click="openCorrection({ kind: 'picked', currentId: augment.id })"
-            >{{ augment.name }}</span>
+            >{{ augment.name }}<span v-if="augment.inferred === 'recommended'" class="mo-chip-tag">推断</span><span v-else-if="augment.inferred === 'live-client'" class="mo-chip-tag">自动</span></span>
             <button class="mo-chip-x mo-no-drag" title="移除" @click="unpick(augment.id)">×</button>
           </span>
         </div>
@@ -218,6 +235,18 @@
           <div class="mo-correction-title">
             <span>把「{{ pickedName(correction.currentId) }}」换成</span>
             <button class="mo-link" @click="closeCorrection">关闭</button>
+          </div>
+          <div v-if="pickedAlternatives(correction.currentId).length" class="mo-alt-list">
+            <button
+              v-for="alt in pickedAlternatives(correction.currentId)"
+              :key="`picked-alt-${alt.id}`"
+              class="mo-alt"
+              @click="applyCorrection(alt)"
+            >
+              <img v-if="alt.iconPath" :src="getAugmentIconUrl(alt.iconPath)" alt="">
+              <span class="mo-alt-name">{{ alt.name }}</span>
+              <span class="mo-muted">同一轮</span>
+            </button>
           </div>
           <input
             ref="searchInput"
@@ -250,26 +279,43 @@
         </div>
         <div v-if="championLoading" class="mo-muted mo-empty">加载英雄数据…</div>
         <template v-else>
-          <div v-if="tagSummary" class="mo-tags">倾向：{{ tagSummary }}</div>
-          <ol v-if="build.items.length" class="mo-items">
+          <div v-if="archetypeLabel || tagSummary" class="mo-tags">
+            <span v-if="archetypeLabel">流派：<b>{{ archetypeLabel }}</b></span>
+            <span v-if="tagSummary"> · 海克斯偏好：{{ tagSummary }}</span>
+          </div>
+          <ol v-if="engine.items.length" class="mo-items">
             <li
-              v-for="item in build.items"
+              v-for="item in engine.items"
               :key="item.itemId"
               class="mo-item"
               :class="{ 'mo-item-owned': item.owned, 'mo-item-next': item.isNext }"
             >
-              <img class="mo-item-icon" :src="item.iconUrl || getItemIconUrl(item.itemId)" alt="">
+              <img class="mo-item-icon" :src="getItemIconUrl(item.itemId)" alt="">
               <div class="mo-item-main">
                 <div class="mo-item-name">
                   <span>{{ item.name }}</span>
+                  <span
+                    v-if="changeBadge(item)"
+                    class="mo-change"
+                    :class="changeBadge(item)!.cls"
+                    :title="changeBadge(item)!.title"
+                  >{{ changeBadge(item)!.text }}</span>
                   <span v-if="item.isNext" class="mo-badge mo-badge-next">下一件</span>
                   <span v-else-if="item.owned" class="mo-badge mo-badge-owned">已有</span>
+                  <span class="mo-item-score" :title="scoreTitle(item)">
+                    {{ item.score.total.toFixed(1) }}<span v-if="Math.abs(item.score.synergy) >= 0.3" :class="item.score.synergy > 0 ? 'mo-up' : 'mo-down'">（海克斯{{ item.score.synergy > 0 ? '+' : '' }}{{ item.score.synergy.toFixed(1) }}）</span>
+                  </span>
                 </div>
-                <div v-for="(reason, index) in item.reasons" :key="index" class="mo-item-reason">{{ reason }}</div>
+                <div v-for="(reason, index) in item.reasons.slice(0, 2)" :key="index" class="mo-item-reason">{{ reason }}</div>
               </div>
             </li>
           </ol>
-          <div v-for="(note, index) in build.notes" :key="`note-${index}`" class="mo-muted mo-note">{{ note }}</div>
+          <div v-if="state.picked.length && engine.removed.length" class="mo-removed">
+            <span class="mo-muted">被挤掉：</span>
+            <span v-for="removed in engine.removed" :key="`removed-${removed.itemId}`" class="mo-removed-item" :title="removed.reason">{{ removed.name }}</span>
+          </div>
+          <div v-for="(note, index) in engine.notes" :key="`note-${index}`" class="mo-muted mo-note">{{ note }}</div>
+          <div class="mo-muted mo-note">海克斯加成是规则模型（数据源没有海克斯×装备胜率），先验来自该英雄的真实出装统计</div>
         </template>
       </section>
     </div>
@@ -283,20 +329,25 @@ import { getAugmentIconUrl, getChampionSquareIconUrl, getItemIconUrl } from '../
 import {
   rankAugmentChoices,
   type AugmentChoiceInput,
-  type RankedAugmentChoice,
 } from '../../shared/augment-choice-ranking.ts'
 import {
-  STAT_TAG_LABELS,
-  buildItemIndex,
-  recommendBuildForAugments,
-  summarizeEnemyDamage,
-  type StatTag,
-} from '../../shared/augment-build-heuristic.ts'
+  applyCardSynergy,
+  localizeArchetype,
+  recommendBuild,
+  resolveAugmentProfile,
+  scoreCardSynergy,
+  STORED_ITEM_PROFILES,
+  type AugmentProfile,
+  type EngineItem,
+  type SynergyRankedChoice,
+} from '../../shared/recommendation/index.ts'
+import { MECHANIC_LABELS, STAT_LABELS, type WeightKey } from '../../shared/recommendation/profiles.ts'
 import { AUGMENT_LEVEL_PRESETS } from '../../shared/refresh-reminder.ts'
 import type {
   ChampionMonitorState,
   ManualOverlayAugmentRef,
   ManualOverlayCandidate,
+  ManualOverlayPickedAugment,
   ManualOverlayLiveData,
   ManualOverlaySettings,
   ManualOverlayState,
@@ -333,6 +384,8 @@ const state = ref<ManualOverlayState>({
   acknowledgedStage: 0,
   iconIndex: { ready: false, count: 0, error: null },
   liveGame: false,
+  pendingChoice: null,
+  autoWatching: false,
   revision: 0,
 })
 const settings = reactive<ManualOverlaySettings>({
@@ -346,6 +399,7 @@ const settings = reactive<ManualOverlaySettings>({
   reminderOnlyWhenDead: false,
   startWindowSec: 90,
   iconMatchEnabled: true,
+  autoFollowUp: true,
 })
 const showSettings = ref(false)
 const championId = ref<number | null>(null)
@@ -410,8 +464,8 @@ const championStatList = computed(() => Object.values(augmentStats.value).map((s
   wins: stat?.num_win_games ?? null,
 })))
 
-const ranking = computed(() => {
-  const cards: CardInput[] = state.value.candidates.map((candidate) => {
+function toCardInputs(candidates: ManualOverlayCandidate[]): CardInput[] {
+  return candidates.map((candidate) => {
     const stat = augmentStats.value[String(candidate.id)] || {}
     return {
       ...candidate,
@@ -424,41 +478,112 @@ const ranking = computed(() => {
       pickRate: stat.pick_rate ?? null,
     }
   })
-  return rankAugmentChoices(cards, championStatList.value, { alpha: settings.shrinkageAlpha })
+}
+
+const engineItems = computed(() => {
+  const items = championData.value?.items
+  const count = Array.isArray(items) ? items.length : Object.keys(items || {}).length
+  return count > 0 ? items : STORED_ITEM_PROFILES
 })
 
-/** 按游戏里的左右顺序展示，标签来自三卡相对排序 */
+function profileOf(augment: { id: number | string; name?: string }): AugmentProfile {
+  const base = augmentBaseById.value.get(String(augment.id))
+  return resolveAugmentProfile(augment, base ? { ...base, id: base.id ?? augment.id } as any : null, engineItems.value)
+}
+
+const heldProfiles = computed(() => state.value.picked.map((augment) => profileOf(augment)))
+
+/** 海克斯感知出装引擎：每次已选海克斯 / 2999 装备 / 敌方装备变化都会重新计算 */
+const engine = computed(() => recommendBuild({
+  builds: championData.value?.builds || [],
+  items: engineItems.value,
+  augments: heldProfiles.value,
+  ownedItemIds: live.value?.found ? live.value.ownedItemIds : [],
+  enemyItemIds: live.value?.found ? live.value.enemyItemIds : [],
+}))
+
+function rankCards(candidates: ManualOverlayCandidate[]) {
+  const base = rankAugmentChoices(toCardInputs(candidates), championStatList.value, { alpha: settings.shrinkageAlpha })
+  const trios = championData.value?.augmentTrios || []
+  return applyCardSynergy(base, (card) => scoreCardSynergy(
+    profileOf(card),
+    heldProfiles.value,
+    engine.value.context,
+    { trios, baselineWinRate: base.baselineWinRate },
+  ))
+}
+
+const ranking = computed(() => rankCards(state.value.candidates))
+
+/** 按游戏里的左右顺序展示，标签来自三卡相对排序（胜率 + 契合度） */
 const rankedCards = computed(() => [...ranking.value.choices].sort((a, b) => a.slot - b.slot))
 
-const itemIndex = computed(() => buildItemIndex(championData.value?.items || []))
-
-const build = computed(() => {
-  const pickedAugments = state.value.picked.map((augment) => {
-    const base = augmentBaseById.value.get(String(augment.id)) || {}
-    return {
-      id: augment.id,
-      name: augment.name || base.name,
-      description: base.description || null,
-      tooltip: base.tooltip || null,
-    }
-  })
-  const enemyDamage = live.value?.found
-    ? summarizeEnemyDamage(live.value.enemyItemIds, itemIndex.value)
-    : null
-  return recommendBuildForAugments({
-    pickedAugments,
-    builds: championData.value?.builds || [],
-    items: championData.value?.items || [],
-    ownedItemIds: live.value?.found ? live.value.ownedItemIds : [],
-    enemyDamage,
-    maxItems: 8,
-  })
+const archetypeLabel = computed(() => {
+  const archetype = engine.value.archetype
+  if (!archetype) return ''
+  const changed = archetype.baselineIndex !== 0 && state.value.picked.length > 0
+  return `${localizeArchetype(archetype.label)}${changed ? '（海克斯改变了流派）' : ''}`
 })
 
-const tagSummary = computed(() => Object.entries(build.value.tagWeights)
-  .sort((a, b) => Number(b[1]) - Number(a[1]))
-  .map(([tag, weight]) => `${STAT_TAG_LABELS[tag as StatTag]}${Number(weight) > 1 ? `×${weight}` : ''}`)
-  .join('、'))
+const tagSummary = computed(() => {
+  const weights = Object.entries(engine.value.weights || {})
+    .filter(([, weight]) => Number(weight) >= 0.2)
+    .sort((a, b) => Number(b[1]) - Number(a[1]))
+    .slice(0, 4)
+    .map(([key]) => STAT_LABELS[key as WeightKey] || key)
+  const mechanics = (engine.value.mechanics || []).slice(0, 3).map((mechanic) => MECHANIC_LABELS[mechanic] || mechanic)
+  return [...weights, ...mechanics].join('、')
+})
+
+function changeBadge(item: EngineItem) {
+  if (!state.value.picked.length) return null
+  if (item.change === 'new') return { text: '新', cls: 'mo-change-new', title: '无海克斯时不在推荐里' }
+  if (item.change === 'up') return { text: '↑', cls: 'mo-change-up', title: `原第 ${(item.baselineIndex ?? 0) + 1} 件，提前了` }
+  if (item.change === 'down') return { text: '↓', cls: 'mo-change-down', title: `原第 ${(item.baselineIndex ?? 0) + 1} 件，推后了` }
+  return null
+}
+
+function scoreTitle(item: EngineItem) {
+  const s = item.score
+  return `先验 ${s.prior.toFixed(1)} · 海克斯 ${s.synergy >= 0 ? '+' : ''}${s.synergy.toFixed(1)} · 进度 ${s.progress.toFixed(1)} · 敌方 ${s.enemy.toFixed(1)} = ${s.total.toFixed(1)}`
+}
+
+function synergyText(entry: SynergyRankedChoice<CardInput>) {
+  const score = entry.synergy?.score ?? 0
+  if (Math.abs(score) < 0.5) return ''
+  return `契合 ${score > 0 ? '+' : '−'}${Math.abs(score).toFixed(1)}`
+}
+
+// ------------------------------------------------------------- 自动记录选择
+const autoPickedRounds = new Set<number>()
+
+/** 三选一关闭但没点：按推荐（胜率+契合度第一）自动记录，标「推断」，可一键更正 */
+watch(() => state.value.pendingChoice, async (pending) => {
+  if (!pending || !pending.candidates.length || autoPickedRounds.has(pending.closedAt)) return
+  autoPickedRounds.add(pending.closedAt)
+  const ranked = rankCards(pending.candidates)
+  const top = [...ranked.choices].sort((a, b) => a.order - b.order)[0]?.card
+  if (!top) return
+  const toRef = (card: ManualOverlayCandidate) => ({
+    id: card.id, name: card.name, rarity: card.rarity ?? null, iconPath: card.iconPath ?? null,
+  })
+  applyState(await electronAPI.manualOverlay.pick({
+    ...toRef(top),
+    inferred: 'recommended',
+    alternatives: pending.candidates.filter((card) => String(card.id) !== String(top.id)).map(toRef),
+  }))
+})
+
+function pickedAlternatives(id: number | string): ManualOverlayAugmentRef[] {
+  const picked = state.value.picked.find((augment) => String(augment.id) === String(id)) as ManualOverlayPickedAugment | undefined
+  return picked?.alternatives || []
+}
+
+function inferredTitle(augment: ManualOverlayPickedAugment) {
+  if (augment.inferred === 'live-client') return '游戏内接口（2999）给出'
+  if (augment.inferred === 'recommended') return '三选一关闭时没有点选，按推荐自动记录；选的不是它就点名字更正'
+  return ''
+}
 
 const reminder = computed(() => (settings.reminderEnabled ? live.value?.reminder ?? null : null))
 
@@ -635,14 +760,14 @@ function deltaClass(value: number | null | undefined) {
   return number > 0.0005 ? 'mo-up' : number < -0.0005 ? 'mo-down' : 'mo-muted'
 }
 
-function cardClass(entry: RankedAugmentChoice<CardInput>) {
+function cardClass(entry: SynergyRankedChoice<CardInput>) {
   return {
     'mo-card-best': entry.order === 0 && !ranking.value.topTie,
     'mo-card-tie': ranking.value.topTie && entry.order < 2,
   }
 }
 
-function badgeClass(entry: RankedAugmentChoice<CardInput>) {
+function badgeClass(entry: SynergyRankedChoice<CardInput>) {
   if (entry.relativeLabel === '差不多') return 'mo-badge-tie'
   if (entry.relativeLabel === '首选') return 'mo-badge-best'
   return 'mo-badge-plain'
@@ -896,4 +1021,16 @@ onBeforeUnmount(() => {
   from { background: rgba(30, 111, 143, 0.35); }
   to { background: rgba(214, 150, 40, 0.75); }
 }
+.mo-watching { color: #7fd1a8; }
+.mo-synergy { font-weight: 600; }
+.mo-card-reason { font-size: 11px; color: #a9b3c4; margin-top: 2px; }
+.mo-chip-inferred { border-style: dashed !important; }
+.mo-chip-tag { margin-left: 4px; font-size: 10px; padding: 0 3px; border-radius: 3px; background: rgba(200, 170, 110, 0.25); color: #e8d6a8; }
+.mo-change { font-size: 10px; font-weight: 700; padding: 0 4px; border-radius: 3px; }
+.mo-change-new { background: #2f7d4f; color: #fff; }
+.mo-change-up { background: rgba(47, 125, 79, 0.35); color: #9fe3b9; }
+.mo-change-down { background: rgba(160, 80, 60, 0.35); color: #f0b3a3; }
+.mo-item-score { margin-left: auto; font-size: 11px; color: #a9b3c4; }
+.mo-removed { margin-top: 4px; font-size: 11px; }
+.mo-removed-item { text-decoration: line-through; color: #b98c84; margin-right: 6px; }
 </style>

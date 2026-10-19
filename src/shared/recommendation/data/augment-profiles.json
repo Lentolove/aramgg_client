@@ -1,0 +1,7430 @@
+{
+ "meta": {
+  "version": 1,
+  "generatedFrom": {
+   "augments": "aramgg-client-api 16.20.2",
+   "items": "CommunityDragon latest zh_cn items.json ∩ dtodo items.json",
+   "dataValues": "Blitz mayhem augments (field names only, as parse signals)"
+  },
+  "gamePatch": "16.20",
+  "note": "模型权重，不是测得的海克斯×装备胜率"
+ },
+ "augments": [
+  {
+   "id": 1001,
+   "key": "ARAM_ImTheJuggernaut",
+   "name": "泰坦的坚决",
+   "rarity": "prismatic",
+   "weights": {
+    "ADAPTIVE": 0.1,
+    "MR": 0.2,
+    "ARMOR": 0.2,
+    "HP": 0.3
+   },
+   "grants": {
+    "ADAPTIVE": 1.5,
+    "MR": 1.5,
+    "ARMOR": 1.5
+   },
+   "mechanics": [
+    "tank",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.67,
+   "evidence": [
+    "给予:适应之力",
+    "给予:适应之力",
+    "给予:魔法抗性",
+    "给予:魔法抗性",
+    "给予:护甲",
+    "给予:护甲"
+   ],
+   "pickRate": 0.1483,
+   "winRate": 0.4781,
+   "topChampionIds": [
+    223,
+    36,
+    50,
+    14,
+    31,
+    875
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1002,
+   "key": "ARAM_ApexInventor",
+   "name": "尖端发明家",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "item-active"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.1409,
+   "winRate": 0.5003,
+   "topChampionIds": [
+    223,
+    36,
+    14,
+    875,
+    50,
+    31
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1004,
+   "key": "ARAM_BacktoBasics",
+   "name": "回归基本功",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": -0.2,
+    "HSP": 0.4,
+    "ADAPTIVE": 0.3
+   },
+   "grants": {
+    "HASTE": 1.5,
+    "HSP": 1.5
+   },
+   "mechanics": [
+    "ability",
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [
+    "ultimate"
+   ],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:治疗效果",
+    "给予:治疗效果",
+    "字段:Haste",
+    "字段:HealingAmp",
+    "字段:ShieldingAmp"
+   ],
+   "notes": "封印大招：大招相关装备（如残疫的终极技能急速）减分",
+   "pickRate": 0.2883,
+   "winRate": 0.5783,
+   "topChampionIds": [
+    13,
+    4,
+    41,
+    901,
+    223,
+    25
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1005,
+   "key": "ARAM_WeeWooWeeWoo",
+   "name": "喂呜喂呜",
+   "rarity": "gold",
+   "weights": {
+    "MS": 0.1,
+    "HSP": 0.5
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.0285,
+   "winRate": 0.5497,
+   "topChampionIds": [
+    16,
+    37,
+    350,
+    43,
+    40,
+    267
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1006,
+   "key": "ARAM_BladeWaltz",
+   "name": "利刃华尔兹",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "summoner-spell",
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.1054,
+   "winRate": 0.5019,
+   "topChampionIds": [
+    86,
+    11,
+    114,
+    360,
+    35,
+    238
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1007,
+   "key": "ARAM_BluntForce",
+   "name": "大力",
+   "rarity": "silver",
+   "weights": {
+    "AD": 1
+   },
+   "grants": {
+    "AD": 1
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "缩放:攻击力",
+    "给予:攻击力",
+    "字段:ADAmp"
+   ],
+   "notes": "攻击力 +20%：攻击力装备被放大",
+   "pickRate": 0.4759,
+   "winRate": 0.5854,
+   "topChampionIds": [
+    202,
+    104,
+    875,
+    51,
+    238,
+    126
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1011,
+   "key": "ARAM_CantTouchThis",
+   "name": "你摸不到",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.4
+   },
+   "grants": {},
+   "mechanics": [
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.1165,
+   "winRate": 0.4854,
+   "topChampionIds": [
+    55,
+    360,
+    126,
+    234,
+    29,
+    38
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1013,
+   "key": "ARAM_CelestialBody",
+   "name": "星界躯体",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.3,
+    "ARMOR": 0.3,
+    "MR": 0.3
+   },
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [
+    "tank"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:生命值",
+    "给予:生命值"
+   ],
+   "notes": "+1500 生命值：生命值缩放与双抗装更值",
+   "pickRate": 0.2701,
+   "winRate": 0.5463,
+   "topChampionIds": [
+    223,
+    36,
+    875,
+    14,
+    31,
+    111
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1015,
+   "key": "ARAM_CircleofDeath",
+   "name": "死亡之环",
+   "rarity": "prismatic",
+   "weights": {
+    "HSP": 0.5
+   },
+   "grants": {
+    "HSP": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:治疗效果",
+    "给予:治疗效果"
+   ],
+   "pickRate": 0.0841,
+   "winRate": 0.5282,
+   "topChampionIds": [
+    50,
+    36,
+    8,
+    48,
+    16,
+    350
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1018,
+   "key": "ARAM_CourageoftheColossus",
+   "name": "巨像的勇气",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.8,
+    "HSP": 0.5
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "字段:HealthScalar"
+   ],
+   "pickRate": 0.0825,
+   "winRate": 0.5039,
+   "topChampionIds": [
+    89,
+    111,
+    526,
+    57,
+    12,
+    3
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1019,
+   "key": "ARAM_Dashing",
+   "name": "全凭身法",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.1
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:Haste"
+   ],
+   "pickRate": 0.1523,
+   "winRate": 0.5028,
+   "topChampionIds": [
+    141,
+    105,
+    11,
+    35,
+    517,
+    238
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1020,
+   "key": "ARAM_DawnbringersResolve",
+   "name": "黎明使者的坚决",
+   "rarity": "gold",
+   "weights": {
+    "HP": 1.5
+   },
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "缩放:生命值",
+    "缩放:最大生命值",
+    "缩放:生命值",
+    "缩放:最大生命值"
+   ],
+   "pickRate": 0.1538,
+   "winRate": 0.5205,
+   "topChampionIds": [
+    36,
+    223,
+    14,
+    31,
+    875,
+    50
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1022,
+   "key": "ARAM_Deft",
+   "name": "灵巧",
+   "rarity": "silver",
+   "weights": {
+    "AS": -0.3,
+    "AD": 0.3,
+    "CRIT": 0.3
+   },
+   "grants": {
+    "AS": 1.5
+   },
+   "mechanics": [
+    "auto-attack",
+    "on-hit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "字段:AttackSpeed"
+   ],
+   "notes": "+60% 攻速：攻速装边际下降，攻击力/暴击/攻击特效更值",
+   "pickRate": 0.3125,
+   "winRate": 0.5579,
+   "topChampionIds": [
+    67,
+    222,
+    51,
+    18,
+    29,
+    22
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1025,
+   "key": "ARAM_DiveBomber",
+   "name": "俯冲轰炸",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "max-hp-damage"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "缩放:最大生命值"
+   ],
+   "notes": "阵亡爆炸，不影响出装",
+   "pickRate": 0.2905,
+   "winRate": 0.53,
+   "topChampionIds": [
+    30,
+    14,
+    54,
+    53,
+    59,
+    35
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1026,
+   "key": "ARAM_DontBlink",
+   "name": "唯快不破",
+   "rarity": "silver",
+   "weights": {
+    "MS": 0.1
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.0721,
+   "winRate": 0.5246,
+   "topChampionIds": [
+    876,
+    202,
+    21,
+    27,
+    120,
+    11
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1027,
+   "key": "ARAM_Earthwake",
+   "name": "大地苏醒",
+   "rarity": "prismatic",
+   "weights": {
+    "AP": 0.8,
+    "AD": 0.8
+   },
+   "grants": {},
+   "mechanics": [
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "字段:APRatio",
+    "字段:BonusADRatio"
+   ],
+   "pickRate": 0.0278,
+   "winRate": 0.4935,
+   "topChampionIds": [
+    157,
+    799,
+    64,
+    555,
+    105,
+    59
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1028,
+   "key": "ARAM_Erosion",
+   "name": "侵蚀",
+   "rarity": "silver",
+   "weights": {
+    "ARMOR": 0.9,
+    "MR": 0.2,
+    "HP": 0.3
+   },
+   "grants": {
+    "MR": 1.5,
+    "ARMOR": 1
+   },
+   "mechanics": [
+    "tank",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "给予:魔法抗性",
+    "给予:魔法抗性",
+    "给予:护甲",
+    "缩放:护甲"
+   ],
+   "pickRate": 0.2161,
+   "winRate": 0.5331,
+   "topChampionIds": [
+    63,
+    17,
+    25,
+    90,
+    21,
+    22
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1029,
+   "key": "ARAM_EtherealWeapon",
+   "name": "虚幻武器",
+   "rarity": "gold",
+   "weights": {
+    "AP": 0.2,
+    "AS": 0.3
+   },
+   "grants": {},
+   "mechanics": [
+    "on-hit",
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "技能施加攻击特效：攻击特效装（纳什、鬼索、破败）价值上升",
+   "pickRate": 0.4307,
+   "winRate": 0.5808,
+   "topChampionIds": [
+    120,
+    17,
+    223,
+    245,
+    55,
+    11
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1030,
+   "key": "ARAM_Eureka",
+   "name": "尤里卡",
+   "rarity": "prismatic",
+   "weights": {
+    "AP": 0.7,
+    "HASTE": -0.2
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "缩放:法术强度",
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:APToHasteConversion"
+   ],
+   "notes": "法强转技能急速：法强装更值",
+   "pickRate": 0.4023,
+   "winRate": 0.5829,
+   "topChampionIds": [
+    30,
+    17,
+    136,
+    63,
+    45,
+    800
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1034,
+   "key": "VeilOfWarding",
+   "name": "防护面纱",
+   "rarity": "silver",
+   "weights": {
+    "HSP": 0.5
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.0816,
+   "winRate": 0.498,
+   "topChampionIds": [
+    145,
+    35,
+    236,
+    238,
+    17,
+    63
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1036,
+   "key": "ARAM_Firebrand",
+   "name": "火上浇油",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.9,
+    "AS": 0.6,
+    "AD": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "on-hit",
+    "auto-attack",
+    "burn",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [
+    "缩放:最大生命值"
+   ],
+   "pickRate": 0.1368,
+   "winRate": 0.5073,
+   "topChampionIds": [
+    17,
+    22,
+    55,
+    10,
+    222,
+    51
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1037,
+   "key": "ARAM_FirstAidKit",
+   "name": "急救用具",
+   "rarity": "silver",
+   "weights": {
+    "HSP": 0.8
+   },
+   "grants": {
+    "HSP": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:治疗和护盾强度",
+    "给予:治疗和护盾强度",
+    "字段:HealShieldAmp"
+   ],
+   "pickRate": 0.0558,
+   "winRate": 0.514,
+   "topChampionIds": [
+    16,
+    350,
+    37,
+    43,
+    267,
+    40
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1038,
+   "key": "ARAM_FromBeginningToEnd",
+   "name": "有始有终",
+   "rarity": "gold",
+   "weights": {
+    "ADAPTIVE": 0.1
+   },
+   "grants": {},
+   "mechanics": [
+    "gold"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "字段:ADRatio",
+    "字段:APRatio"
+   ],
+   "notes": "先攻 + 黑暗收割",
+   "pickRate": 0.3207,
+   "winRate": 0.5771,
+   "topChampionIds": [
+    238,
+    126,
+    30,
+    4,
+    121,
+    141
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1041,
+   "key": "ARAM_Goliath",
+   "name": "歌利亚巨人",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.8,
+    "ADAPTIVE": 0.5
+   },
+   "grants": {},
+   "mechanics": [
+    "tank"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "缩放:适应之力",
+    "缩放:适应之力",
+    "缩放:生命值",
+    "缩放:生命值",
+    "字段:ADAmp",
+    "字段:AFAmp",
+    "字段:APAmp",
+    "字段:HealthAmp"
+   ],
+   "notes": "+35% 生命值 +15% 适应之力",
+   "pickRate": 0.3304,
+   "winRate": 0.5756,
+   "topChampionIds": [
+    223,
+    36,
+    875,
+    14,
+    31,
+    50
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1044,
+   "key": "ARAM_IceCold",
+   "name": "冰寒",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "notes": "减速更强：带减速的装备（冰杖、冰心、破败）更值",
+   "pickRate": 0.2759,
+   "winRate": 0.5313,
+   "topChampionIds": [
+    136,
+    63,
+    25,
+    90,
+    27,
+    17
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1045,
+   "key": "ARAM_InfernalConduit",
+   "name": "炼狱导管",
+   "rarity": "prismatic",
+   "weights": {
+    "AP": 0.4,
+    "HASTE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "burn",
+    "ability",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "技能叠灼烧，灼烧缩冷却：灼烧装更值",
+   "pickRate": 0.2358,
+   "winRate": 0.5724,
+   "topChampionIds": [
+    63,
+    136,
+    876,
+    25,
+    90,
+    17
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1046,
+   "key": "ARAM_InfernalSoul",
+   "name": "炼狱龙魂",
+   "rarity": "silver",
+   "weights": {
+    "AS": 0.4,
+    "AD": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.1592,
+   "winRate": 0.5003,
+   "topChampionIds": [
+    30,
+    22,
+    81,
+    76,
+    4,
+    17
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1047,
+   "key": "ARAM_ItsCritical",
+   "name": "关键暴击",
+   "rarity": "gold",
+   "weights": {
+    "CRIT": 0.7,
+    "AS": 0.2
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:暴击几率",
+    "给予:暴击几率",
+    "字段:CritChance"
+   ],
+   "pickRate": 0.1598,
+   "winRate": 0.5228,
+   "topChampionIds": [
+    202,
+    104,
+    157,
+    51,
+    777,
+    67
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1048,
+   "key": "ARAM_JeweledGauntlet",
+   "name": "珠光护手",
+   "rarity": "prismatic",
+   "weights": {
+    "CRIT": 1.2,
+    "AP": 0.3,
+    "AD": 0.2
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit",
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:暴击",
+    "给予:暴击几率",
+    "给予:暴击",
+    "给予:暴击几率",
+    "字段:CritChance",
+    "字段:CritConverRatio",
+    "字段:CritDamage"
+   ],
+   "notes": "技能可暴击：暴击装对技能型英雄也有价值",
+   "pickRate": 0.5195,
+   "winRate": 0.5737,
+   "topChampionIds": [
+    901,
+    236,
+    126,
+    81,
+    136,
+    21
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1051,
+   "key": "ARAM_LightemUp",
+   "name": "点亮他们！",
+   "rarity": "silver",
+   "weights": {
+    "AS": 0.6
+   },
+   "grants": {},
+   "mechanics": [
+    "on-hit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.0953,
+   "winRate": 0.5038,
+   "topChampionIds": [
+    222,
+    22,
+    67,
+    18,
+    804,
+    51
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1053,
+   "key": "ARAM_MadScientist",
+   "name": "科学狂人",
+   "rarity": "prismatic",
+   "weights": {
+    "ADAPTIVE": 0.4,
+    "HP": 0.3
+   },
+   "grants": {
+    "ADAPTIVE": 1,
+    "HASTE": 1.5,
+    "HP": 1,
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:适应之力",
+    "缩放:适应之力",
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:生命值",
+    "缩放:生命值",
+    "给予:移动速度",
+    "给予:移动速度",
+    "字段:ADAmp",
+    "字段:APAmp",
+    "字段:Haste",
+    "字段:HealthAmp"
+   ],
+   "notes": "随机变大（适应之力/生命）或变小（急速/移速）",
+   "pickRate": 0.3256,
+   "winRate": 0.5775,
+   "topChampionIds": [
+    223,
+    136,
+    36,
+    875,
+    13,
+    21
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1054,
+   "key": "ARAM_MasterofDuality",
+   "name": "物法皆修",
+   "rarity": "prismatic",
+   "weights": {
+    "AP": 0.1,
+    "AD": 0.2,
+    "AS": 0.4
+   },
+   "grants": {
+    "AP": 1.5,
+    "AD": 1.5
+   },
+   "mechanics": [
+    "auto-attack",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "给予:法术强度",
+    "给予:法术强度",
+    "给予:攻击力",
+    "给予:攻击力"
+   ],
+   "pickRate": 0.1072,
+   "winRate": 0.5032,
+   "topChampionIds": [
+    10,
+    5,
+    55,
+    145,
+    804,
+    110
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1056,
+   "key": "ARAM_MindtoMatter",
+   "name": "由心及物",
+   "rarity": "silver",
+   "weights": {
+    "HP": 0.1,
+    "MANA": 0.1
+   },
+   "grants": {
+    "HP": 1.5,
+    "MANA": 1
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:最大生命值",
+    "给予:生命值",
+    "给予:法力值"
+   ],
+   "pickRate": 0.1964,
+   "winRate": 0.5304,
+   "topChampionIds": [
+    13,
+    50,
+    45,
+    53,
+    38,
+    81
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1057,
+   "key": "ARAM_MountainSoul",
+   "name": "山脉龙魂",
+   "rarity": "silver",
+   "weights": {
+    "HSP": 0.5
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.0429,
+   "winRate": 0.4811,
+   "topChampionIds": [
+    223,
+    516,
+    36,
+    412,
+    31,
+    3
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1058,
+   "key": "ARAM_MysticPunch",
+   "name": "秘术冲拳",
+   "rarity": "prismatic",
+   "weights": {
+    "AS": 0.7,
+    "HASTE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "on-hit",
+    "ability",
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "攻击特效缩短技能冷却：攻速/攻击特效装更值",
+   "pickRate": 0.276,
+   "winRate": 0.5556,
+   "topChampionIds": [
+    157,
+    11,
+    120,
+    777,
+    114,
+    901
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1060,
+   "key": "ARAM_OceanSoul",
+   "name": "海洋龙魂",
+   "rarity": "silver",
+   "weights": {
+    "HSP": 0.5,
+    "MANA": 0.1
+   },
+   "grants": {
+    "HSP": 1,
+    "MANA": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:治疗效果",
+    "给予:法力",
+    "给予:法力"
+   ],
+   "pickRate": 0.2006,
+   "winRate": 0.5345,
+   "topChampionIds": [
+    50,
+    223,
+    25,
+    63,
+    4,
+    800
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1061,
+   "key": "ARAM_OkBoomerang",
+   "name": "回力OK镖",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.0331,
+   "winRate": 0.508,
+   "topChampionIds": [
+    4,
+    22,
+    76,
+    25,
+    15,
+    21
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1062,
+   "key": "ARAM_OmniSoul",
+   "name": "全能龙魂",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.0879,
+   "winRate": 0.5313,
+   "topChampionIds": [
+    136,
+    21,
+    202,
+    223,
+    901,
+    4
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1063,
+   "key": "ARAM_OutlawsGrit",
+   "name": "狂徒豪气",
+   "rarity": "gold",
+   "weights": {
+    "MR": 0.2,
+    "ARMOR": 0.8,
+    "HP": 0.3
+   },
+   "grants": {
+    "MR": 1.5,
+    "ARMOR": 1.5
+   },
+   "mechanics": [
+    "tank",
+    "stacks",
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.67,
+   "evidence": [
+    "给予:魔法抗性",
+    "给予:魔法抗性",
+    "给予:护甲",
+    "给予:护甲",
+    "字段:ResistsPerStack"
+   ],
+   "pickRate": 0.103,
+   "winRate": 0.5375,
+   "topChampionIds": [
+    157,
+    799,
+    141,
+    114,
+    517,
+    92
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1067,
+   "key": "ARAM_RabbleRousing",
+   "name": "活力焕发",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.8,
+    "AP": 0.8,
+    "AD": 0.8,
+    "HSP": 0.5
+   },
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "给予:生命值",
+    "给予:生命值",
+    "字段:AP",
+    "字段:BonusHealthPercentageHeal",
+    "字段:MaxHealthPercentageHeal",
+    "字段:bAD"
+   ],
+   "pickRate": 0.0362,
+   "winRate": 0.4852,
+   "topChampionIds": [
+    16,
+    223,
+    82,
+    64,
+    68,
+    33
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1068,
+   "key": "ARAM_Recursion",
+   "name": "循环往复",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": -0.2
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:AbilityHaste"
+   ],
+   "notes": "+60 技能急速：急速装边际下降",
+   "pickRate": 0.6096,
+   "winRate": 0.6121,
+   "topChampionIds": [
+    17,
+    30,
+    22,
+    120,
+    63,
+    136
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1071,
+   "key": "ARAM_ScopierWeapons",
+   "name": "更万用的瞄准镜",
+   "rarity": "gold",
+   "weights": {
+    "AS": 0.3,
+    "AD": 0.2,
+    "CRIT": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "攻击距离",
+   "pickRate": 0.2939,
+   "winRate": 0.554,
+   "topChampionIds": [
+    51,
+    67,
+    10,
+    222,
+    18,
+    235
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1072,
+   "key": "ARAM_SearingDawn",
+   "name": "炽烈黎明",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.0374,
+   "winRate": 0.4926,
+   "topChampionIds": [
+    22,
+    25,
+    136,
+    4,
+    147,
+    27
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1073,
+   "key": "ARAM_ShadowRunner",
+   "name": "暗影疾奔",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "notes": "位移后加速",
+   "pickRate": 0.2454,
+   "winRate": 0.5522,
+   "topChampionIds": [
+    35,
+    67,
+    105,
+    245,
+    157,
+    555
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1074,
+   "key": "ARAM_ShrinkRay",
+   "name": "缩小射线",
+   "rarity": "gold",
+   "weights": {
+    "AS": 0.6,
+    "AD": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "on-hit",
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [],
+   "pickRate": 0.1212,
+   "winRate": 0.4822,
+   "topChampionIds": [
+    22,
+    51,
+    235,
+    222,
+    10,
+    55
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1076,
+   "key": "ARAM_SonicBoom",
+   "name": "天音爆",
+   "rarity": "silver",
+   "weights": {
+    "HSP": 0.5
+   },
+   "grants": {
+    "HSP": 1.5
+   },
+   "mechanics": [
+    "heal-shield",
+    "true-damage",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:治疗效果",
+    "给予:护盾效果",
+    "给予:治疗效果",
+    "给予:护盾效果"
+   ],
+   "pickRate": 0.0479,
+   "winRate": 0.5131,
+   "topChampionIds": [
+    16,
+    350,
+    37,
+    43,
+    267,
+    147
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1077,
+   "key": "ARAM_SoulSiphon",
+   "name": "灵魂虹吸",
+   "rarity": "gold",
+   "weights": {
+    "CRIT": 0.8,
+    "LIFESTEAL": -0.2
+   },
+   "grants": {
+    "CRIT": 1.5,
+    "HSP": 1,
+    "LIFESTEAL": 1
+   },
+   "mechanics": [
+    "crit",
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:暴击",
+    "给予:暴击几率",
+    "给予:暴击几率",
+    "给予:暴击",
+    "给予:治疗效果",
+    "给予:生命偷取",
+    "字段:CritChance"
+   ],
+   "notes": "25% 暴击 + 暴击吸血",
+   "pickRate": 0.36,
+   "winRate": 0.5876,
+   "topChampionIds": [
+    157,
+    104,
+    777,
+    51,
+    202,
+    236
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1079,
+   "key": "ARAM_SymphonyofWar",
+   "name": "战争交响乐",
+   "rarity": "prismatic",
+   "weights": {
+    "ADAPTIVE": 0.8,
+    "AS": 0.4,
+    "HSP": 0.5,
+    "AD": 0.2
+   },
+   "grants": {
+    "ADAPTIVE": 1,
+    "AS": 1,
+    "HSP": 1
+   },
+   "mechanics": [
+    "auto-attack",
+    "heal-shield",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [
+    "给予:适应之力",
+    "给予:攻击速度",
+    "给予:治疗效果",
+    "字段:MaxAdaptivePerStack"
+   ],
+   "pickRate": 0.1283,
+   "winRate": 0.5111,
+   "topChampionIds": [
+    157,
+    222,
+    51,
+    67,
+    777,
+    18
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1080,
+   "key": "ARAM_TankItOrLeaveIt",
+   "name": "会心防御",
+   "rarity": "silver",
+   "weights": {
+    "CRIT": 0.7,
+    "AS": 0.2
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:暴击几率",
+    "给予:暴击几率",
+    "给予:暴击几率",
+    "给予:暴击几率",
+    "字段:CritChance"
+   ],
+   "pickRate": 0.1895,
+   "winRate": 0.5518,
+   "topChampionIds": [
+    104,
+    157,
+    777,
+    51,
+    202,
+    236
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1081,
+   "key": "ARAM_TapDancer",
+   "name": "踢踏舞",
+   "rarity": "prismatic",
+   "weights": {
+    "MS": 0.9,
+    "AS": 0.8,
+    "AD": 0.2
+   },
+   "grants": {
+    "AS": 1.5,
+    "MS": 1.5
+   },
+   "mechanics": [
+    "auto-attack",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "给予:移动速度",
+    "缩放:移动速度",
+    "给予:移动速度",
+    "字段:MSToASConversion"
+   ],
+   "pickRate": 0.1319,
+   "winRate": 0.5212,
+   "topChampionIds": [
+    222,
+    51,
+    202,
+    235,
+    22,
+    804
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1084,
+   "key": "ARAM_ThreadtheNeedle",
+   "name": "穿针引线",
+   "rarity": "gold",
+   "weights": {
+    "ARMOR_PEN": -0.3,
+    "MAGIC_PEN": -0.2,
+    "AD": 0.2,
+    "AP": 0.2
+   },
+   "grants": {
+    "LETHALITY": 1.5,
+    "MAGIC_PEN": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:护甲穿透",
+    "给予:护甲穿透",
+    "给予:法术穿透",
+    "给予:法术穿透",
+    "字段:PercentPen"
+   ],
+   "notes": "+18% 双穿：百分比穿透装边际下降",
+   "pickRate": 0.3078,
+   "winRate": 0.5211,
+   "topChampionIds": [
+    238,
+    126,
+    30,
+    104,
+    141,
+    121
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1087,
+   "key": "ARAM_Typhoon",
+   "name": "台风",
+   "rarity": "silver",
+   "weights": {
+    "AD": 0.8,
+    "AS": 0.6
+   },
+   "grants": {},
+   "mechanics": [
+    "on-hit",
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "字段:ADRatio"
+   ],
+   "pickRate": 0.1825,
+   "winRate": 0.5076,
+   "topChampionIds": [
+    222,
+    67,
+    51,
+    235,
+    18,
+    804
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1088,
+   "key": "ARAM_UltimateRevolution",
+   "name": "终极刷新",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability",
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [],
+   "pickRate": 0.1881,
+   "winRate": 0.4895,
+   "topChampionIds": [
+    30,
+    54,
+    22,
+    31,
+    236,
+    63
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1092,
+   "key": "ARAM_Vulnerability",
+   "name": "易损",
+   "rarity": "gold",
+   "weights": {
+    "CRIT": 0.5
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "burn",
+    "item-active",
+    "crit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:暴击",
+    "给予:暴击几率",
+    "给予:暴击",
+    "给予:暴击几率",
+    "字段:CritChance",
+    "字段:CritDamage"
+   ],
+   "notes": "装备效果与持续伤害可暴击 + 25% 暴击",
+   "pickRate": 0.375,
+   "winRate": 0.577,
+   "topChampionIds": [
+    236,
+    901,
+    21,
+    51,
+    202,
+    222
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1095,
+   "key": "ARAM_WindspeakersBlessing",
+   "name": "风语者的祝福",
+   "rarity": "prismatic",
+   "weights": {
+    "HSP": 0.5,
+    "MR": 0.2,
+    "ARMOR": 0.2,
+    "HP": 0.3
+   },
+   "grants": {
+    "HSP": 1.5,
+    "MR": 1.5,
+    "ARMOR": 1
+   },
+   "mechanics": [
+    "tank",
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.67,
+   "evidence": [
+    "给予:治疗效果",
+    "给予:护盾效果",
+    "给予:治疗效果",
+    "给予:护盾效果",
+    "给予:魔法抗性",
+    "给予:魔法抗性",
+    "给予:护甲"
+   ],
+   "pickRate": 0.0344,
+   "winRate": 0.5388,
+   "topChampionIds": [
+    16,
+    350,
+    36,
+    37,
+    50,
+    40
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1097,
+   "key": "ARAM_WitchfulThinking",
+   "name": "巫师式思考",
+   "rarity": "silver",
+   "weights": {
+    "AP": 0.3
+   },
+   "grants": {
+    "AP": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:法术强度",
+    "给予:法术强度"
+   ],
+   "notes": "给法强：法强放大类装备（帽子）更值",
+   "pickRate": 0.2956,
+   "winRate": 0.5263,
+   "topChampionIds": [
+    30,
+    17,
+    800,
+    4,
+    63,
+    76
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1098,
+   "key": "ARAM_WithHaste",
+   "name": "急急小子",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.9,
+    "MS": 0.1
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "缩放:技能急速",
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.1851,
+   "winRate": 0.5294,
+   "topChampionIds": [
+    120,
+    876,
+    17,
+    22,
+    4,
+    21
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1103,
+   "key": "ARAM_BreadAndButter",
+   "name": "面包和黄油",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": -0.1
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速"
+   ],
+   "notes": "单技能 +100 急速",
+   "pickRate": 0.2961,
+   "winRate": 0.5276,
+   "topChampionIds": [
+    120,
+    4,
+    141,
+    11,
+    223,
+    901
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1104,
+   "key": "ARAM_Minionmancer",
+   "name": "仆从大师",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.1
+   },
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "给予:生命值",
+    "给予:生命值"
+   ],
+   "pickRate": 0.0629,
+   "winRate": 0.5041,
+   "topChampionIds": [
+    143,
+    74,
+    90,
+    35,
+    57,
+    950
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1105,
+   "key": "ARAM_Homeguard",
+   "name": "家园卫士",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "notes": "脱战移速",
+   "pickRate": 0.2824,
+   "winRate": 0.5573,
+   "topChampionIds": [
+    4,
+    21,
+    202,
+    63,
+    25,
+    800
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1112,
+   "key": "ARAM_UltimateUnstoppable",
+   "name": "终极不可阻挡",
+   "rarity": "silver",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability",
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [],
+   "pickRate": 0.1939,
+   "winRate": 0.4822,
+   "topChampionIds": [
+    55,
+    360,
+    9,
+    11,
+    50,
+    54
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1113,
+   "key": "ARAM_SkilledSniper",
+   "name": "老练狙神",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability",
+    "ranged"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "远距离命中返还冷却",
+   "pickRate": 0.2646,
+   "winRate": 0.5309,
+   "topChampionIds": [
+    21,
+    126,
+    4,
+    25,
+    800,
+    147
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1115,
+   "key": "ARAM_ScopiestWeapons",
+   "name": "最万用的瞄准镜",
+   "rarity": "prismatic",
+   "weights": {
+    "AS": 0.4,
+    "AD": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.1789,
+   "winRate": 0.5289,
+   "topChampionIds": [
+    51,
+    222,
+    67,
+    10,
+    18,
+    235
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1116,
+   "key": "ARAM_Flashy",
+   "name": "闪现向前",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.1724,
+   "winRate": 0.5149,
+   "topChampionIds": [
+    875,
+    64,
+    141,
+    122,
+    54,
+    104
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1118,
+   "key": "ARAM_CriticalHealing",
+   "name": "会心治疗",
+   "rarity": "gold",
+   "weights": {
+    "CRIT": 0.7,
+    "AS": 0.2,
+    "HSP": 0.5
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit",
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "给予:暴击",
+    "给予:暴击几率",
+    "给予:暴击",
+    "给予:暴击几率",
+    "字段:CritChance"
+   ],
+   "pickRate": 0.0358,
+   "winRate": 0.4992,
+   "topChampionIds": [
+    235,
+    16,
+    350,
+    37,
+    43,
+    267
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1129,
+   "key": "ARAM_Marksmage",
+   "name": "神射法师",
+   "rarity": "gold",
+   "weights": {
+    "AP": 0.9,
+    "AS": 0.4,
+    "AD": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "缩放:法术强度",
+    "字段:APRatio"
+   ],
+   "pickRate": 0.2131,
+   "winRate": 0.5294,
+   "topChampionIds": [
+    10,
+    517,
+    145,
+    245,
+    105,
+    4
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1133,
+   "key": "ARAM_MagicMissile",
+   "name": "魔法飞弹",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.4
+   },
+   "grants": {
+    "HP": 1
+   },
+   "mechanics": [
+    "ability",
+    "max-hp-damage",
+    "true-damage"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:最大生命值",
+    "缩放:最大生命值"
+   ],
+   "notes": "技能伤害发射百分比真伤飞弹",
+   "pickRate": 0.2951,
+   "winRate": 0.5448,
+   "topChampionIds": [
+    63,
+    4,
+    21,
+    17,
+    25,
+    30
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1134,
+   "key": "ARAM_DrawYourSword",
+   "name": "亮出你的剑",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.9,
+    "AD": 0.9,
+    "AS": 0.4,
+    "LIFESTEAL": 0.1,
+    "MS": 0.1
+   },
+   "grants": {
+    "AS": 1.5,
+    "LIFESTEAL": 1.5,
+    "HP": 1,
+    "MS": 1.5,
+    "AD": 1
+   },
+   "mechanics": [
+    "auto-attack",
+    "melee"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "给予:生命偷取",
+    "给予:生命偷取",
+    "给予:生命值",
+    "缩放:生命值",
+    "给予:移动速度",
+    "给予:移动速度",
+    "给予:攻击力",
+    "缩放:攻击力",
+    "字段:BonusAS",
+    "字段:BonusLifesteal"
+   ],
+   "pickRate": 0.161,
+   "winRate": 0.6096,
+   "topChampionIds": [
+    104,
+    51,
+    81,
+    360,
+    42,
+    236
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1136,
+   "key": "ARAM_SlapAround",
+   "name": "扇巴掌",
+   "rarity": "silver",
+   "weights": {
+    "ADAPTIVE": 0.8
+   },
+   "grants": {
+    "ADAPTIVE": 1.5
+   },
+   "mechanics": [
+    "stacks",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:适应之力",
+    "给予:适应之力",
+    "字段:AdaptiveForce"
+   ],
+   "pickRate": 0.1894,
+   "winRate": 0.5227,
+   "topChampionIds": [
+    25,
+    57,
+    50,
+    526,
+    31,
+    12
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1138,
+   "key": "ARAM_Goredrink",
+   "name": "渴血",
+   "rarity": "silver",
+   "weights": {
+    "OMNIVAMP": -0.4,
+    "LIFESTEAL": -0.3
+   },
+   "grants": {
+    "OMNIVAMP": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:全能吸血",
+    "给予:全能吸血",
+    "字段:Omnivamp"
+   ],
+   "notes": "+15% 全能吸血",
+   "pickRate": 0.3995,
+   "winRate": 0.5601,
+   "topChampionIds": [
+    104,
+    50,
+    236,
+    141,
+    901,
+    876
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1141,
+   "key": "ARAM_AllForYou",
+   "name": "全心为你",
+   "rarity": "gold",
+   "weights": {
+    "HSP": 0.8
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "字段:HealShieldAmp"
+   ],
+   "pickRate": 0.0367,
+   "winRate": 0.5047,
+   "topChampionIds": [
+    350,
+    16,
+    37,
+    43,
+    40,
+    117
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1149,
+   "key": "ARAM_Impassable",
+   "name": "不动如山",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.8,
+    "ARMOR": 0.8
+   },
+   "grants": {},
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "字段:HealthRatio",
+    "字段:PercentBonusResists"
+   ],
+   "pickRate": 0.0605,
+   "winRate": 0.4811,
+   "topChampionIds": [
+    111,
+    412,
+    3,
+    526,
+    31,
+    89
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1150,
+   "key": "ARAM_BreadAndJam",
+   "name": "面包和果酱",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.1
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速"
+   ],
+   "pickRate": 0.1985,
+   "winRate": 0.4994,
+   "topChampionIds": [
+    875,
+    145,
+    25,
+    121,
+    8,
+    238
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1151,
+   "key": "ARAM_BreadAndCheese",
+   "name": "面包和奶酪",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": -0.1
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速"
+   ],
+   "notes": "单技能 +100 急速",
+   "pickRate": 0.233,
+   "winRate": 0.5191,
+   "topChampionIds": [
+    136,
+    21,
+    105,
+    876,
+    13,
+    48
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1152,
+   "key": "ARAM_Quest_SteelYourHeart",
+   "name": "钢化你心",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.6
+   },
+   "grants": {},
+   "mechanics": [
+    "stacks",
+    "tank"
+   ],
+   "itemIds": [
+    3084
+   ],
+   "itemBoost": 6,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "心之钢层数×3：心之钢必出",
+   "pickRate": 0.3147,
+   "winRate": 0.5972,
+   "topChampionIds": [
+    223,
+    36,
+    875,
+    14,
+    50,
+    31
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1154,
+   "key": "ARAM_Quest_UrfsChampion",
+   "name": "海牛阿福的勇士",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.1551,
+   "winRate": 0.5376,
+   "topChampionIds": [
+    202,
+    104,
+    81,
+    236,
+    145,
+    901
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1156,
+   "key": "ARAM_Quest_WoogletsWitchcap",
+   "name": "沃格勒特的巫师帽",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [
+    1058,
+    3089,
+    3157
+   ],
+   "itemBoost": 2,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.1669,
+   "winRate": 0.5496,
+   "topChampionIds": [
+    136,
+    13,
+    4,
+    63,
+    101,
+    45
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1170,
+   "key": "ARAM_ScopedWeapons",
+   "name": "万用瞄准镜",
+   "rarity": "silver",
+   "weights": {
+    "AS": 0.4,
+    "AD": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.2015,
+   "winRate": 0.5111,
+   "topChampionIds": [
+    51,
+    67,
+    222,
+    10,
+    18,
+    235
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1180,
+   "key": "ARAM_BigBrain",
+   "name": "超强大脑",
+   "rarity": "gold",
+   "weights": {
+    "AP": 0.8,
+    "HSP": 0.5
+   },
+   "grants": {
+    "AP": 1
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:法术强度",
+    "字段:AP",
+    "字段:APRatio"
+   ],
+   "pickRate": 0.1108,
+   "winRate": 0.527,
+   "topChampionIds": [
+    45,
+    13,
+    136,
+    63,
+    54,
+    4
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1181,
+   "key": "ARAM_HeavyHitter",
+   "name": "重量级打击手",
+   "rarity": "silver",
+   "weights": {
+    "HP": 0.8,
+    "AS": 0.4
+   },
+   "grants": {},
+   "mechanics": [
+    "auto-attack",
+    "tank"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "缩放:最大生命值"
+   ],
+   "notes": "攻击附带基于最大生命值的伤害",
+   "pickRate": 0.3634,
+   "winRate": 0.5814,
+   "topChampionIds": [
+    223,
+    36,
+    875,
+    14,
+    31,
+    516
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1187,
+   "key": "ARAM_Flashbang",
+   "name": "闪光弹",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "dash",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.0071,
+   "winRate": 0.4771,
+   "topChampionIds": [
+    875,
+    64,
+    53,
+    54,
+    141,
+    122
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1194,
+   "key": "ARAM_FeyMagic",
+   "name": "精怪魔法",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.4
+   },
+   "grants": {},
+   "mechanics": [
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.1175,
+   "winRate": 0.4878,
+   "topChampionIds": [
+    55,
+    516,
+    360,
+    77,
+    53,
+    9
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1195,
+   "key": "ARAM_GiantSlayer",
+   "name": "巨人杀手",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "notes": "变小，按体型差增伤",
+   "pickRate": 0.2834,
+   "winRate": 0.5654,
+   "topChampionIds": [
+    202,
+    51,
+    236,
+    21,
+    876,
+    67
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1204,
+   "key": "ARAM_StackosaurusRex",
+   "name": "叠角龙",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.0856,
+   "winRate": 0.5645,
+   "topChampionIds": [
+    136,
+    901,
+    45,
+    235,
+    31,
+    75
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1205,
+   "key": "ARAM_ADAPt",
+   "name": "物理转魔法",
+   "rarity": "silver",
+   "weights": {
+    "AD": 0.5,
+    "AP": 0.3
+   },
+   "grants": {
+    "AP": 1.5,
+    "AD": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:法术强度",
+    "缩放:法术强度",
+    "给予:法术强度",
+    "给予:法术强度",
+    "给予:法术强度",
+    "给予:攻击力",
+    "给予:攻击力",
+    "缩放:攻击力",
+    "字段:APAmp"
+   ],
+   "notes": "额外攻击力按 1.67 转法强：攻击力装备对法师也能出",
+   "pickRate": 0.4459,
+   "winRate": 0.5584,
+   "topChampionIds": [
+    13,
+    30,
+    63,
+    4,
+    17,
+    45
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1206,
+   "key": "ARAM_escAPADe",
+   "name": "魔法转物理",
+   "rarity": "silver",
+   "weights": {
+    "AP": 0.9,
+    "AD": 0.9
+   },
+   "grants": {
+    "AP": 1.5,
+    "AD": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:法术强度",
+    "给予:法术强度",
+    "缩放:法术强度",
+    "给予:攻击力",
+    "缩放:攻击力",
+    "给予:攻击力",
+    "给予:攻击力",
+    "给予:攻击力",
+    "字段:ADAmp"
+   ],
+   "pickRate": 0.2166,
+   "winRate": 0.5342,
+   "topChampionIds": [
+    104,
+    202,
+    81,
+    901,
+    126,
+    51
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1211,
+   "key": "ARAM_ItsKillingTime",
+   "name": "杀戮时间到了",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability",
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [],
+   "pickRate": 0.2171,
+   "winRate": 0.4997,
+   "topChampionIds": [
+    30,
+    55,
+    77,
+    17,
+    238,
+    54
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1214,
+   "key": "ARAM_SpinToWin",
+   "name": "旋转至胜",
+   "rarity": "silver",
+   "weights": {
+    "HASTE": 0.1
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速"
+   ],
+   "pickRate": 0.1793,
+   "winRate": 0.5435,
+   "topChampionIds": [
+    120,
+    141,
+    876,
+    55,
+    86,
+    122
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1220,
+   "key": "ARAM_FanTheHammer",
+   "name": "连拨击锤",
+   "rarity": "prismatic",
+   "weights": {
+    "CRIT": 0.4,
+    "AS": 0.3,
+    "AD": 0.4
+   },
+   "grants": {
+    "CRIT": 1
+   },
+   "mechanics": [
+    "on-hit",
+    "crit",
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:暴击"
+   ],
+   "notes": "攻击英雄额外飞弹，可暴击、带攻击特效",
+   "pickRate": 0.227,
+   "winRate": 0.5259,
+   "topChampionIds": [
+    67,
+    202,
+    51,
+    222,
+    18,
+    29
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1225,
+   "key": "ARAM_DualWield",
+   "name": "双刀流",
+   "rarity": "prismatic",
+   "weights": {
+    "AS": 0.7
+   },
+   "grants": {
+    "AS": 1
+   },
+   "mechanics": [
+    "on-hit",
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "缩放:攻击速度",
+    "缩放:攻击速度",
+    "字段:AttackSpeed"
+   ],
+   "notes": "额外弩箭施加 40% 攻击特效",
+   "pickRate": 0.2682,
+   "winRate": 0.5659,
+   "topChampionIds": [
+    67,
+    51,
+    222,
+    18,
+    29,
+    804
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1237,
+   "key": "ARAM_TransmuteGold",
+   "name": "质变：黄金阶",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "随机给一个黄金海克斯",
+   "pickRate": 0.505,
+   "winRate": 0.5691,
+   "topChampionIds": [
+    223,
+    63,
+    22,
+    17,
+    48,
+    36
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1238,
+   "key": "ARAM_TransmutePrismatic",
+   "name": "质变：棱彩阶",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "随机给一个棱彩海克斯，本身不影响出装",
+   "pickRate": 0.6431,
+   "winRate": 0.6531,
+   "topChampionIds": [
+    22,
+    136,
+    30,
+    17,
+    63,
+    157
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1243,
+   "key": "ARAM_TransmuteChaos",
+   "name": "质变：混沌",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "随机给两个海克斯",
+   "pickRate": 0.2886,
+   "winRate": 0.5413,
+   "topChampionIds": [
+    136,
+    13,
+    223,
+    202,
+    22,
+    21
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1301,
+   "key": "ARAM_DivineIntervention",
+   "name": "神圣干预",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.1113,
+   "winRate": 0.4911,
+   "topChampionIds": [
+    350,
+    412,
+    223,
+    136,
+    25,
+    89
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1305,
+   "key": "ARAM_LegDay",
+   "name": "练腿日",
+   "rarity": "silver",
+   "weights": {
+    "MS": -0.2
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "notes": "+50 移速 + 减速抗性",
+   "pickRate": 0.2841,
+   "winRate": 0.537,
+   "topChampionIds": [
+    27,
+    876,
+    202,
+    223,
+    122,
+    875
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1308,
+   "key": "ARAM_Firefox",
+   "name": "火狐",
+   "rarity": "silver",
+   "weights": {
+    "MS": 0.9
+   },
+   "grants": {
+    "MS": 1
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "给予:移动速度",
+    "缩放:移动速度"
+   ],
+   "pickRate": 0.1005,
+   "winRate": 0.5036,
+   "topChampionIds": [
+    103,
+    4,
+    54,
+    30,
+    22,
+    800
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1310,
+   "key": "ARAM_ClownCollege",
+   "name": "小丑学院",
+   "rarity": "prismatic",
+   "weights": {
+    "AD": 0.2
+   },
+   "grants": {
+    "CRIT": 1
+   },
+   "mechanics": [
+    "summoner-spell"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:暴击",
+    "缩放:最大生命值"
+   ],
+   "notes": "背刺/隐身召唤师技能",
+   "pickRate": 0.269,
+   "winRate": 0.5559,
+   "topChampionIds": [
+    35,
+    238,
+    121,
+    104,
+    107,
+    59
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1311,
+   "key": "ARAM_Overflow",
+   "name": "溢流",
+   "rarity": "gold",
+   "weights": {
+    "MANA": 0.9,
+    "HSP": 0.5
+   },
+   "grants": {
+    "HSP": 1.5,
+    "MANA": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:治疗效果",
+    "给予:护盾效果",
+    "给予:治疗效果",
+    "给予:护盾效果",
+    "给予:法力",
+    "缩放:最大法力值",
+    "给予:法力值"
+   ],
+   "pickRate": 0.1187,
+   "winRate": 0.5182,
+   "topChampionIds": [
+    13,
+    81,
+    30,
+    41,
+    126,
+    120
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1314,
+   "key": "MightyShield",
+   "name": "强力护盾",
+   "rarity": "silver",
+   "weights": {
+    "ADAPTIVE": 0.1,
+    "HSP": 0.5
+   },
+   "grants": {
+    "ADAPTIVE": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:适应之力",
+    "给予:适应之力"
+   ],
+   "pickRate": 0.033,
+   "winRate": 0.4874,
+   "topChampionIds": [
+    111,
+    82,
+    157,
+    98,
+    43,
+    131
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1315,
+   "key": "SwiftAndSafe",
+   "name": "快中求稳",
+   "rarity": "silver",
+   "weights": {
+    "AD": 0.8,
+    "AP": 0.8,
+    "HSP": 0.5
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield",
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "字段:ADPercent",
+    "字段:APPercent"
+   ],
+   "pickRate": 0.1258,
+   "winRate": 0.5328,
+   "topChampionIds": [
+    157,
+    105,
+    517,
+    114,
+    64,
+    67
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1318,
+   "key": "ARAM_Upgrade_ZH",
+   "name": "升级：中娅",
+   "rarity": "silver",
+   "weights": {
+    "AP": 0.1
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [
+    "item-upgrade",
+    "stasis",
+    "gold"
+   ],
+   "itemIds": [
+    3157
+   ],
+   "itemBoost": 6,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "notes": "升级中娅沙漏",
+   "pickRate": 0.2253,
+   "winRate": 0.5268,
+   "topChampionIds": [
+    25,
+    63,
+    68,
+    105,
+    800,
+    134
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1319,
+   "key": "ARAM_Upgrade_Immolate",
+   "name": "升级：献祭",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "gold",
+    "item-upgrade"
+   ],
+   "itemIds": [
+    6664,
+    3068
+   ],
+   "itemBoost": 5,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [],
+   "pickRate": 0.1935,
+   "winRate": 0.56,
+   "topChampionIds": [
+    223,
+    36,
+    14,
+    516,
+    3,
+    89
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1320,
+   "key": "ARAM_Upgrade_Collector",
+   "name": "升级：收集者",
+   "rarity": "silver",
+   "weights": {
+    "LETHALITY": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "gold",
+    "item-upgrade"
+   ],
+   "itemIds": [
+    6676
+   ],
+   "itemBoost": 5,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "升级收集者",
+   "pickRate": 0.3274,
+   "winRate": 0.5373,
+   "topChampionIds": [
+    104,
+    202,
+    51,
+    236,
+    222,
+    41
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1322,
+   "key": "ARAM_GetExcited",
+   "name": "罪恶快感",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {
+    "AS": 1.5,
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "给予:移动速度",
+    "给予:移动速度",
+    "字段:ASBuff"
+   ],
+   "notes": "击杀后加速",
+   "pickRate": 0.2258,
+   "winRate": 0.5258,
+   "topChampionIds": [
+    202,
+    222,
+    67,
+    120,
+    51,
+    11
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1323,
+   "key": "ARAM_Cruelty",
+   "name": "残忍",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.0861,
+   "winRate": 0.5066,
+   "topChampionIds": [
+    526,
+    12,
+    3,
+    57,
+    111,
+    25
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1324,
+   "key": "ARAM_ProteinShake",
+   "name": "蛋白粉奶昔",
+   "rarity": "prismatic",
+   "weights": {
+    "ARMOR": 1.5,
+    "HSP": 0.5,
+    "MR": 0.1
+   },
+   "grants": {
+    "HSP": 1.5,
+    "MR": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:治疗和护盾强度",
+    "给予:治疗和护盾强度",
+    "给予:魔抗",
+    "给予:魔抗",
+    "缩放:护甲",
+    "缩放:护甲"
+   ],
+   "pickRate": 0.0235,
+   "winRate": 0.5006,
+   "topChampionIds": [
+    16,
+    37,
+    350,
+    43,
+    98,
+    40
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1325,
+   "key": "GlassCannon",
+   "name": "玻璃大炮",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 1.5
+   },
+   "grants": {},
+   "mechanics": [
+    "true-damage"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "缩放:最大生命值",
+    "缩放:最大生命值"
+   ],
+   "pickRate": 0.0451,
+   "winRate": 0.4445,
+   "topChampionIds": [
+    30,
+    21,
+    22,
+    17,
+    126,
+    76
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1326,
+   "key": "Nightstalking",
+   "name": "夜狩",
+   "rarity": "gold",
+   "weights": {
+    "MS": 0.1
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.1896,
+   "winRate": 0.4971,
+   "topChampionIds": [
+    35,
+    121,
+    238,
+    141,
+    11,
+    555
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1328,
+   "key": "CriticalRhythm",
+   "name": "暴击律动",
+   "rarity": "gold",
+   "weights": {
+    "CRIT": 0.7,
+    "AS": 0.2
+   },
+   "grants": {
+    "AS": 1.5,
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit",
+    "auto-attack",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "给予:暴击",
+    "给予:暴击几率",
+    "给予:暴击",
+    "给予:暴击几率",
+    "字段:ASPerStack",
+    "字段:CritChance"
+   ],
+   "notes": "暴击叠攻速 + 25% 暴击",
+   "pickRate": 0.2476,
+   "winRate": 0.5423,
+   "topChampionIds": [
+    51,
+    222,
+    67,
+    157,
+    777,
+    18
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1329,
+   "key": "BiggestSnowballEver",
+   "name": "史上最大雪球",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:APRatio",
+    "字段:Haste",
+    "字段:bADRatio"
+   ],
+   "notes": "大雪球",
+   "pickRate": 0.2425,
+   "winRate": 0.526,
+   "topChampionIds": [
+    223,
+    157,
+    875,
+    48,
+    64,
+    53
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1331,
+   "key": "EmpyreanPromise",
+   "name": "至高天诺言",
+   "rarity": "prismatic",
+   "weights": {
+    "HSP": 0.8,
+    "AP": 0.8,
+    "HP": 0.8
+   },
+   "grants": {
+    "HSP": 1.5
+   },
+   "mechanics": [
+    "heal-shield",
+    "summoner-spell"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "给予:治疗和护盾强度",
+    "给予:治疗和护盾强度",
+    "字段:HSAmp",
+    "字段:ShieldRatioAP",
+    "字段:ShieldRatioBHealth"
+   ],
+   "pickRate": 0.0132,
+   "winRate": 0.5004,
+   "topChampionIds": [
+    16,
+    37,
+    40,
+    350,
+    43,
+    117
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1332,
+   "key": "OminousPact",
+   "name": "不祥契约",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.9,
+    "AP": 0.1,
+    "OMNIVAMP": 0.1,
+    "MS": 0.1,
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {
+    "AP": 1.5,
+    "OMNIVAMP": 1.5,
+    "MS": 1.5
+   },
+   "mechanics": [
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [
+    "给予:法术强度",
+    "给予:法术强度",
+    "给予:全能吸血",
+    "给予:全能吸血",
+    "缩放:生命值",
+    "给予:移动速度",
+    "给予:移动速度",
+    "字段:MaxOmnivamp"
+   ],
+   "pickRate": 0.0836,
+   "winRate": 0.5041,
+   "topChampionIds": [
+    876,
+    27,
+    136,
+    8,
+    13,
+    50
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1333,
+   "key": "EscapePlan",
+   "name": "逃跑计划",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "缩放:生命值",
+    "缩放:生命值",
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "notes": "低血护盾/逃生，不影响出装",
+   "pickRate": 0.3848,
+   "winRate": 0.5715,
+   "topChampionIds": [
+    223,
+    36,
+    27,
+    875,
+    50,
+    48
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1335,
+   "key": "Goldrend",
+   "name": "夺金",
+   "rarity": "prismatic",
+   "weights": {
+    "MS": 0.1,
+    "AP": 0.8,
+    "AD": 0.8
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [
+    "gold"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度",
+    "字段:APRatio",
+    "字段:BonusADRatio"
+   ],
+   "pickRate": 0.0658,
+   "winRate": 0.5152,
+   "topChampionIds": [
+    136,
+    21,
+    63,
+    800,
+    25,
+    4
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1336,
+   "key": "ARAM_Upgrade_IE",
+   "name": "升级：无尽之刃",
+   "rarity": "gold",
+   "weights": {
+    "CRIT": 0.5
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit",
+    "auto-attack",
+    "gold",
+    "item-upgrade"
+   ],
+   "itemIds": [
+    3031
+   ],
+   "itemBoost": 5,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:暴击几率",
+    "给予:暴击伤害",
+    "给予:暴击",
+    "给予:暴击伤害",
+    "给予:暴击几率",
+    "给予:暴击伤害",
+    "字段:BonusCritDMG",
+    "字段:CritChanceToDamage"
+   ],
+   "notes": "升级无尽之刃",
+   "pickRate": 0.3736,
+   "winRate": 0.5717,
+   "topChampionIds": [
+    51,
+    104,
+    202,
+    157,
+    236,
+    901
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1337,
+   "key": "KingMe",
+   "name": "尊我为王",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.0374,
+   "winRate": 0.3264,
+   "topChampionIds": [
+    136,
+    223,
+    22,
+    104,
+    202,
+    21
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1344,
+   "key": "FinalForm",
+   "name": "最终形态",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.9,
+    "MS": 0.9,
+    "OMNIVAMP": 0.1,
+    "HASTE": 0.4,
+    "HSP": 0.5
+   },
+   "grants": {
+    "OMNIVAMP": 1.5,
+    "HP": 1,
+    "MS": 1
+   },
+   "mechanics": [
+    "ultimate",
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [
+    "给予:全能吸血",
+    "给予:全能吸血",
+    "给予:最大生命值",
+    "缩放:最大生命值",
+    "给予:移动速度",
+    "缩放:移动速度",
+    "字段:OmniVamp"
+   ],
+   "pickRate": 0.2193,
+   "winRate": 0.5328,
+   "topChampionIds": [
+    55,
+    360,
+    50,
+    234,
+    238,
+    266
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1345,
+   "key": "ARAM_SpiritualPurification",
+   "name": "心灵净化",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.1187,
+   "winRate": 0.4822,
+   "topChampionIds": [
+    22,
+    30,
+    55,
+    54,
+    63,
+    136
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1347,
+   "key": "Poltergeist",
+   "name": "吵闹鬼",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "summoner-spell"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.0334,
+   "winRate": 0.4723,
+   "topChampionIds": [
+    22,
+    202,
+    21,
+    51,
+    67,
+    27
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1348,
+   "key": "Flash2",
+   "name": "闪闪现现",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "summoner-spell",
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.0066,
+   "winRate": 0.4681,
+   "topChampionIds": [
+    875,
+    53,
+    64,
+    122,
+    54,
+    141
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1349,
+   "key": "UltimateAwakening",
+   "name": "终极唤醒",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "ability",
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:AH"
+   ],
+   "pickRate": 0.2162,
+   "winRate": 0.5154,
+   "topChampionIds": [
+    120,
+    17,
+    11,
+    22,
+    48,
+    141
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1353,
+   "key": "ARAM_TankEngine",
+   "name": "坦克引擎",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.8
+   },
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [
+    "stacks",
+    "tank"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:最大生命值",
+    "缩放:最大生命值",
+    "给予:生命值"
+   ],
+   "notes": "击杀叠 5% 最大生命值：生命值装被放大",
+   "pickRate": 0.4285,
+   "winRate": 0.6023,
+   "topChampionIds": [
+    223,
+    36,
+    875,
+    50,
+    14,
+    31
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1356,
+   "key": "CriticalMissile",
+   "name": "暴击飞弹",
+   "rarity": "gold",
+   "weights": {
+    "CRIT": 0.9,
+    "AS": 0.2
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:暴击",
+    "给予:暴击几率",
+    "给予:暴击",
+    "给予:暴击几率",
+    "字段:ADRatio",
+    "字段:APRatio",
+    "字段:CrtiChance"
+   ],
+   "notes": "暴击时发飞弹 + 25% 暴击",
+   "pickRate": 0.4142,
+   "winRate": 0.59,
+   "topChampionIds": [
+    51,
+    222,
+    901,
+    236,
+    202,
+    804
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1358,
+   "key": "PinballSnowball",
+   "name": "弹球",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.1
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "true-damage"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:AbilityHaste"
+   ],
+   "pickRate": 0.1244,
+   "winRate": 0.4819,
+   "topChampionIds": [
+    54,
+    77,
+    875,
+    53,
+    223,
+    59
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1361,
+   "key": "ARAM_Quest_VoidImmolation",
+   "name": "艾卡西亚的陷落",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [
+    3068,
+    6664
+   ],
+   "itemBoost": 2,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.0871,
+   "winRate": 0.5709,
+   "topChampionIds": [
+    223,
+    36,
+    14,
+    89,
+    31,
+    3
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1373,
+   "key": "ShrinkEngine",
+   "name": "缩小引擎",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": -0.1
+   },
+   "grants": {
+    "HASTE": 1.5,
+    "MS": 1.5
+   },
+   "mechanics": [
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:移动速度",
+    "缩放:移动速度",
+    "给予:移动速度",
+    "字段:HastePerStack"
+   ],
+   "notes": "击杀叠急速/移速，影响小",
+   "pickRate": 0.5671,
+   "winRate": 0.6141,
+   "topChampionIds": [
+    17,
+    22,
+    21,
+    876,
+    25,
+    63
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1375,
+   "key": "SoulEater",
+   "name": "吞噬灵魂",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.1
+   },
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:最大生命值",
+    "给予:生命值",
+    "给予:最大生命值",
+    "给予:生命值",
+    "给予:生命值"
+   ],
+   "pickRate": 0.0996,
+   "winRate": 0.5128,
+   "topChampionIds": [
+    111,
+    31,
+    89,
+    526,
+    50,
+    412
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1379,
+   "key": "Upgrade_SwordOfBlossom",
+   "name": "升级：花晓之剑",
+   "rarity": "prismatic",
+   "weights": {
+    "AS": 0.12,
+    "HSP": 0.15,
+    "AD": 0.06
+   },
+   "grants": {
+    "AS": 1.5,
+    "HSP": 1.5
+   },
+   "mechanics": [
+    "auto-attack",
+    "heal-shield",
+    "item-upgrade"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.67,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "给予:治疗效果",
+    "给予:治疗效果",
+    "字段:AttackSpeed"
+   ],
+   "pickRate": 0.0114,
+   "winRate": 0.494,
+   "topChampionIds": [
+    235,
+    16,
+    37,
+    117,
+    40,
+    147
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1384,
+   "key": "Donation",
+   "name": "捐赠",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "gold"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "直接 1750 金币",
+   "pickRate": 0.2727,
+   "winRate": 0.5622,
+   "topChampionIds": [
+    22,
+    11,
+    30,
+    238,
+    136,
+    119
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1386,
+   "key": "YouSpinMeRightRound",
+   "name": "转得我眩晕了",
+   "rarity": "silver",
+   "weights": {
+    "AD": 0.8
+   },
+   "grants": {},
+   "mechanics": [
+    "summoner-spell"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "字段:ADRatio"
+   ],
+   "pickRate": 0.0323,
+   "winRate": 0.4463,
+   "topChampionIds": [
+    223,
+    53,
+    48,
+    14,
+    412,
+    36
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1388,
+   "key": "InfiniteRecursion",
+   "name": "无限循环往复",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": -0.25
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:HastePerStack",
+    "字段:StartingHaste"
+   ],
+   "notes": "+60 技能急速并随击杀叠加",
+   "pickRate": 0.3252,
+   "winRate": 0.5978,
+   "topChampionIds": [
+    136,
+    21,
+    30,
+    17,
+    63,
+    901
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1389,
+   "key": "HandOfBaron",
+   "name": "男爵之手",
+   "rarity": "prismatic",
+   "weights": {
+    "ADAPTIVE": 1.5
+   },
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "缩放:适应之力",
+    "缩放:适应之力",
+    "字段:AFAmp"
+   ],
+   "pickRate": 0.0452,
+   "winRate": 0.5412,
+   "topChampionIds": [
+    136,
+    13,
+    202,
+    4,
+    21,
+    25
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1390,
+   "key": "ARAM_PhenomenalEvil",
+   "name": "超凡邪恶",
+   "rarity": "gold",
+   "weights": {
+    "AP": 0.2,
+    "HASTE": 0.3
+   },
+   "grants": {
+    "AP": 1.5
+   },
+   "mechanics": [
+    "ability",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:法术强度",
+    "给予:法术强度",
+    "给予:法术强度",
+    "给予:法术强度",
+    "给予:法术强度"
+   ],
+   "notes": "技能命中永久叠法强",
+   "pickRate": 0.3565,
+   "winRate": 0.5835,
+   "topChampionIds": [
+    136,
+    63,
+    30,
+    13,
+    876,
+    4
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1392,
+   "key": "GoldenSnowball",
+   "name": "神圣雪球",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.1
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:Haste"
+   ],
+   "pickRate": 0.0745,
+   "winRate": 0.4663,
+   "topChampionIds": [
+    223,
+    104,
+    77,
+    157,
+    875,
+    777
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1401,
+   "key": "GrowthSpurt",
+   "name": "生机迸发",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.1
+   },
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [
+    "summoner-spell",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:最大生命值",
+    "给予:最大生命值"
+   ],
+   "pickRate": 0.1691,
+   "winRate": 0.5273,
+   "topChampionIds": [
+    36,
+    223,
+    14,
+    54,
+    875,
+    31
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1402,
+   "key": "ARAM_StatsOnStatsOnStats",
+   "name": "属性叠属性叠属性！",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.0744,
+   "winRate": 0.5084,
+   "topChampionIds": [
+    136,
+    202,
+    21,
+    22,
+    223,
+    901
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1403,
+   "key": "ARAM_StatsOnStats",
+   "name": "属性叠属性！",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.1707,
+   "winRate": 0.5354,
+   "topChampionIds": [
+    22,
+    30,
+    136,
+    17,
+    238,
+    13
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1404,
+   "key": "ARAM_Stats",
+   "name": "属性！",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.0864,
+   "winRate": 0.4917,
+   "topChampionIds": [
+    22,
+    30,
+    17,
+    223,
+    48,
+    54
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1413,
+   "key": "ARAM_StuckInHereWithMe",
+   "name": "和我一起困在这里",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2,
+    "HP": 0.3,
+    "ARMOR": 0.2,
+    "MR": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability",
+    "ultimate",
+    "tank",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [],
+   "pickRate": 0.053,
+   "winRate": 0.4806,
+   "topChampionIds": [
+    54,
+    36,
+    50,
+    59,
+    875,
+    53
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1415,
+   "key": "Twinfire",
+   "name": "双生火焰",
+   "rarity": "silver",
+   "weights": {
+    "CRIT": 0.6,
+    "HASTE": 0.3
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit",
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:暴击几率",
+    "给予:暴击几率",
+    "字段:ADRatio",
+    "字段:APRatio",
+    "字段:CrtiChance"
+   ],
+   "notes": "技能伤害发飞弹 + 25% 暴击",
+   "pickRate": 0.3925,
+   "winRate": 0.5428,
+   "topChampionIds": [
+    901,
+    21,
+    63,
+    81,
+    17,
+    4
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1416,
+   "key": "HextechSoul",
+   "name": "海克斯科技龙魂",
+   "rarity": "silver",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [],
+   "pickRate": 0.145,
+   "winRate": 0.5009,
+   "topChampionIds": [
+    21,
+    4,
+    17,
+    22,
+    30,
+    76
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1420,
+   "key": "Sonata",
+   "name": "咏叹奏鸣",
+   "rarity": "gold",
+   "weights": {
+    "MS": 0.1,
+    "HSP": 0.5
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.0405,
+   "winRate": 0.5379,
+   "topChampionIds": [
+    350,
+    37,
+    16,
+    147,
+    40,
+    43
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1421,
+   "key": "PromQueen",
+   "name": "舞会女王",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.4
+   },
+   "grants": {},
+   "mechanics": [
+    "ultimate",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.0263,
+   "winRate": 0.4733,
+   "topChampionIds": [
+    27,
+    223,
+    14,
+    36,
+    3,
+    111
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 1996,
+   "key": "ARAM_Upgrade_Sheen",
+   "name": "升级：耀光",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.45,
+    "HSP": 0.15
+   },
+   "grants": {
+    "HSP": 1
+   },
+   "mechanics": [
+    "max-hp-damage",
+    "heal-shield",
+    "gold",
+    "item-upgrade"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.67,
+   "evidence": [
+    "给予:治疗效果",
+    "缩放:生命值",
+    "缩放:生命值",
+    "字段:DamageMaxHP",
+    "字段:HealMaxHP"
+   ],
+   "pickRate": 0.1661,
+   "winRate": 0.5186,
+   "topChampionIds": [
+    81,
+    901,
+    5,
+    245,
+    41,
+    105
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2004,
+   "key": "ARAM_EmpoweredByTheFaithful",
+   "name": "信念者的强化",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.1,
+    "HSP": 0.5
+   },
+   "grants": {
+    "HP": 1
+   },
+   "mechanics": [
+    "heal-shield",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:生命值"
+   ],
+   "pickRate": 0.028,
+   "winRate": 0.4932,
+   "topChampionIds": [
+    16,
+    350,
+    37,
+    40,
+    147,
+    43
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2005,
+   "key": "ARAM_InfernoTriggered",
+   "name": "扳机炼狱",
+   "rarity": "prismatic",
+   "weights": {
+    "CRIT": 0.7,
+    "LIFESTEAL": 0.1,
+    "HP": 0.1,
+    "MS": 0.1,
+    "AS": 0.2
+   },
+   "grants": {
+    "CRIT": 1,
+    "LIFESTEAL": 1,
+    "HP": 1,
+    "MS": 1
+   },
+   "mechanics": [
+    "crit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.67,
+   "evidence": [
+    "给予:暴击",
+    "给予:生命偷取",
+    "给予:生命值",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.1397,
+   "winRate": 0.4938,
+   "topChampionIds": [
+    120,
+    360,
+    55,
+    799,
+    64,
+    141
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2006,
+   "key": "ARAM_Dropkick",
+   "name": "飞身踢",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:最大生命值",
+    "给予:生命值"
+   ],
+   "notes": "斩杀击退，不依赖属性",
+   "pickRate": 0.3812,
+   "winRate": 0.5643,
+   "topChampionIds": [
+    223,
+    36,
+    875,
+    14,
+    50,
+    31
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2009,
+   "key": "ARAM_Zealot",
+   "name": "狂热者",
+   "rarity": "silver",
+   "weights": {
+    "AP": 0.6,
+    "CRIT": -0.2
+   },
+   "grants": {
+    "AP": 1.5,
+    "AS": 1.5,
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "crit",
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:法术强度",
+    "给予:法术强度",
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "给予:暴击几率",
+    "给予:暴击几率",
+    "字段:ASAPRatio",
+    "字段:BaseCritChance",
+    "字段:CritAPRatio"
+   ],
+   "notes": "按法强给暴击和攻速",
+   "pickRate": 0.2998,
+   "winRate": 0.5487,
+   "topChampionIds": [
+    145,
+    10,
+    22,
+    17,
+    21,
+    4
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2010,
+   "key": "ARAM_DoubleTap",
+   "name": "双发快射",
+   "rarity": "prismatic",
+   "weights": {
+    "CRIT": 0.7,
+    "AS": 0.6
+   },
+   "grants": {
+    "CRIT": 1.5
+   },
+   "mechanics": [
+    "on-hit",
+    "crit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:暴击",
+    "给予:暴击几率",
+    "给予:暴击",
+    "给予:暴击几率"
+   ],
+   "pickRate": 0.1661,
+   "winRate": 0.4984,
+   "topChampionIds": [
+    67,
+    51,
+    222,
+    18,
+    202,
+    804
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2016,
+   "key": "ARAM_Juiced",
+   "name": "注魔",
+   "rarity": "silver",
+   "weights": {
+    "CRIT": 0.7,
+    "MANA": 0.8,
+    "AS": 0.6
+   },
+   "grants": {
+    "CRIT": 1.5,
+    "MANA": 1.5
+   },
+   "mechanics": [
+    "on-hit",
+    "crit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "给予:暴击",
+    "给予:暴击",
+    "给予:法力值",
+    "给予:法力值",
+    "给予:法力值",
+    "字段:ManaPercentDamagePercent"
+   ],
+   "pickRate": 0.1208,
+   "winRate": 0.4882,
+   "topChampionIds": [
+    81,
+    13,
+    145,
+    22,
+    17,
+    10
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2018,
+   "key": "ARAM_Purist_Caster",
+   "name": "纯粹主义者 - 术师",
+   "rarity": "silver",
+   "weights": {
+    "AS": 0.4,
+    "HASTE": 0.3,
+    "CRIT": -0.3
+   },
+   "grants": {
+    "AS": 1.5,
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "缩放:攻击速度",
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:Haste_Per_AS"
+   ],
+   "notes": "攻速全部转技能急速",
+   "pickRate": 0.4209,
+   "winRate": 0.5416,
+   "topChampionIds": [
+    17,
+    30,
+    21,
+    63,
+    126,
+    22
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2024,
+   "key": "CritNCast",
+   "name": "由暴生急",
+   "rarity": "silver",
+   "weights": {
+    "CRIT": 0.9,
+    "HASTE": 0.1,
+    "AS": 0.2
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "crit"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "缩放:暴击几率",
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:CritToHasteConversion"
+   ],
+   "pickRate": 0.1039,
+   "winRate": 0.485,
+   "topChampionIds": [
+    901,
+    41,
+    236,
+    11,
+    22,
+    202
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2026,
+   "key": "KillSecured",
+   "name": "杀意翻涌",
+   "rarity": "silver",
+   "weights": {
+    "HP": 0.9,
+    "MS": 0.1
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "缩放:生命值",
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.1015,
+   "winRate": 0.4977,
+   "topChampionIds": [
+    122,
+    27,
+    14,
+    555,
+    120,
+    202
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2031,
+   "key": "ARAM_DropBear",
+   "name": "空投熊",
+   "rarity": "prismatic",
+   "weights": {
+    "MAGIC_PEN": 0.8
+   },
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "字段:FlatPenConversion",
+    "字段:PercentPenConversion"
+   ],
+   "pickRate": 0.1877,
+   "winRate": 0.5647,
+   "topChampionIds": [
+    30,
+    14,
+    54,
+    27,
+    77,
+    35
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2032,
+   "key": "FishBait",
+   "name": "鲨鱼诱饵",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.067,
+   "winRate": 0.4919,
+   "topChampionIds": [
+    54,
+    77,
+    59,
+    53,
+    27,
+    55
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2034,
+   "key": "SharkTempest",
+   "name": "鲨鱼暴风",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.0822,
+   "winRate": 0.4902,
+   "topChampionIds": [
+    77,
+    54,
+    48,
+    14,
+    53,
+    59
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2042,
+   "key": "BrushPower",
+   "name": "藏身草丛",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.0182,
+   "winRate": 0.4699,
+   "topChampionIds": [
+    107,
+    35,
+    9,
+    121,
+    17,
+    30
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2043,
+   "key": "NatureIsHealing",
+   "name": "自然即是治愈",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.1,
+    "HSP": 0.5
+   },
+   "grants": {
+    "HP": 1
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:生命值"
+   ],
+   "pickRate": 0.072,
+   "winRate": 0.4857,
+   "topChampionIds": [
+    36,
+    223,
+    27,
+    31,
+    875,
+    14
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2046,
+   "key": "PoroCharge_Active",
+   "name": "魄罗蛮冲",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "stacks",
+    "summoner-spell",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.0116,
+   "winRate": 0.427,
+   "topChampionIds": [
+    48,
+    223,
+    21,
+    17,
+    25,
+    4
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2054,
+   "key": "SpellVolley",
+   "name": "三重射击",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.3,
+    "ARMOR": 0.2,
+    "MR": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "tank"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [],
+   "pickRate": 0.0552,
+   "winRate": 0.4956,
+   "topChampionIds": [
+    63,
+    202,
+    13,
+    45,
+    17,
+    35
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2055,
+   "key": "ARAM_Multishot",
+   "name": "多重射击",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.0681,
+   "winRate": 0.4624,
+   "topChampionIds": [
+    901,
+    161,
+    22,
+    800,
+    76,
+    45
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2062,
+   "key": "Ability_SelfAOE_DoubleCast",
+   "name": "回响施放",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.0755,
+   "winRate": 0.5251,
+   "topChampionIds": [
+    4,
+    120,
+    875,
+    53,
+    122,
+    86
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2063,
+   "key": "DimensionShift_Active",
+   "name": "位面转移",
+   "rarity": "prismatic",
+   "weights": {
+    "AP": 0.1,
+    "HP": 0.1,
+    "AD": 0.1
+   },
+   "grants": {
+    "AP": 1,
+    "HP": 1,
+    "AD": 1
+   },
+   "mechanics": [
+    "summoner-spell"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:法术强度",
+    "给予:生命值",
+    "给予:攻击力"
+   ],
+   "pickRate": 0.0166,
+   "winRate": 0.4326,
+   "topChampionIds": [
+    223,
+    48,
+    82,
+    14,
+    35,
+    157
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2064,
+   "key": "ARAM_Quickstep",
+   "name": "快步",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "dash"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.0967,
+   "winRate": 0.4797,
+   "topChampionIds": [
+    120,
+    875,
+    122,
+    876,
+    86,
+    48
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2065,
+   "key": "ARAM_Terror",
+   "name": "惊惧",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.0241,
+   "winRate": 0.4705,
+   "topChampionIds": [
+    36,
+    266,
+    23,
+    75,
+    24,
+    5
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2072,
+   "key": "Missile_Split",
+   "name": "咒语裂变",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2,
+    "HP": 0.3,
+    "ARMOR": 0.2,
+    "MR": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "ability",
+    "tank"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [],
+   "pickRate": 0.0858,
+   "winRate": 0.4871,
+   "topChampionIds": [
+    25,
+    76,
+    22,
+    53,
+    45,
+    81
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2073,
+   "key": "ARAM_SustainingStrike",
+   "name": "虹吸",
+   "rarity": "silver",
+   "weights": {
+    "HP": 0.1,
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2,
+    "HSP": 0.5
+   },
+   "grants": {
+    "HP": 1,
+    "LIFESTEAL": 1
+   },
+   "mechanics": [
+    "ability",
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.67,
+   "evidence": [
+    "给予:生命值",
+    "字段:Lifesteal"
+   ],
+   "pickRate": 0.1775,
+   "winRate": 0.5112,
+   "topChampionIds": [
+    901,
+    136,
+    157,
+    13,
+    48,
+    36
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2076,
+   "key": "TitansPulse",
+   "name": "保持坚定",
+   "rarity": "silver",
+   "weights": {
+    "MR": 0.2,
+    "ARMOR": 0.8,
+    "HP": 0.3
+   },
+   "grants": {
+    "MR": 1.5,
+    "ARMOR": 1.5
+   },
+   "mechanics": [
+    "tank"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:魔法抗性",
+    "给予:魔抗",
+    "给予:魔抗",
+    "给予:魔抗",
+    "给予:护甲",
+    "给予:护甲",
+    "给予:护甲",
+    "给予:护甲",
+    "字段:AdditionalARMR"
+   ],
+   "pickRate": 0.0997,
+   "winRate": 0.5332,
+   "topChampionIds": [
+    120,
+    32,
+    122,
+    86,
+    12,
+    89
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2077,
+   "key": "DarkWind",
+   "name": "贪欲束缚",
+   "rarity": "gold",
+   "weights": {
+    "HSP": 0.5,
+    "HP": 0.8,
+    "AP": 0.8
+   },
+   "grants": {
+    "HSP": 1,
+    "HP": 1
+   },
+   "mechanics": [
+    "heal-shield",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [
+    "给予:治疗效果",
+    "给予:生命值",
+    "字段:Damage_APRatio",
+    "字段:Damage_HPRatio"
+   ],
+   "pickRate": 0.2085,
+   "winRate": 0.5207,
+   "topChampionIds": [
+    48,
+    50,
+    266,
+    31,
+    57,
+    223
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2078,
+   "key": "ChainReaction",
+   "name": "连锁反应",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.4
+   },
+   "grants": {},
+   "mechanics": [
+    "ultimate",
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [],
+   "pickRate": 0.0748,
+   "winRate": 0.4741,
+   "topChampionIds": [
+    79,
+    64,
+    134,
+    12,
+    57,
+    246
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2080,
+   "key": "Snowbomb",
+   "name": "冰雪爆裂",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.1
+   },
+   "grants": {
+    "HASTE": 1
+   },
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:技能急速",
+    "字段:AbilityHaste"
+   ],
+   "pickRate": 0.0939,
+   "winRate": 0.4613,
+   "topChampionIds": [
+    157,
+    54,
+    223,
+    59,
+    14,
+    53
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2082,
+   "key": "Equilibrium",
+   "name": "我们的治疗",
+   "rarity": "gold",
+   "weights": {
+    "HSP": 1.5
+   },
+   "grants": {
+    "HSP": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "缩放:治疗效果",
+    "给予:治疗效果",
+    "缩放:治疗效果",
+    "给予:治疗效果"
+   ],
+   "pickRate": 0.0619,
+   "winRate": 0.4694,
+   "topChampionIds": [
+    36,
+    50,
+    223,
+    120,
+    14,
+    31
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2083,
+   "key": "BurstingTeeth",
+   "name": "牙仙子",
+   "rarity": "gold",
+   "weights": {
+    "LETHALITY": -0.1,
+    "MAGIC_PEN": -0.1
+   },
+   "grants": {
+    "LETHALITY": 1.5,
+    "MAGIC_PEN": 1.5,
+    "HP": 1
+   },
+   "mechanics": [
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:穿甲",
+    "给予:穿甲",
+    "给予:法术穿透",
+    "给予:法术穿透",
+    "给予:生命值"
+   ],
+   "notes": "叠穿透，穿透装略降",
+   "pickRate": 0.4144,
+   "winRate": 0.5638,
+   "topChampionIds": [
+    30,
+    238,
+    141,
+    104,
+    121,
+    126
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2087,
+   "key": "ARAM_Archmage",
+   "name": "大法师",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.4
+   },
+   "grants": {},
+   "mechanics": [
+    "ability"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "施法返还其他技能冷却",
+   "pickRate": 0.3456,
+   "winRate": 0.5288,
+   "topChampionIds": [
+    17,
+    21,
+    22,
+    26,
+    63,
+    25
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2088,
+   "key": "ARAM_Snowday",
+   "name": "下雪天",
+   "rarity": "silver",
+   "weights": {
+    "HASTE": 0.1
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:AH"
+   ],
+   "pickRate": 0.1292,
+   "winRate": 0.4787,
+   "topChampionIds": [
+    223,
+    53,
+    54,
+    77,
+    875,
+    48
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2089,
+   "key": "ARAM_YowchMyCoins",
+   "name": "哎哟，我的硬币！",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "gold"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.1024,
+   "winRate": 0.5035,
+   "topChampionIds": [
+    22,
+    30,
+    136,
+    17,
+    48,
+    63
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2091,
+   "key": "EndlessDecimation",
+   "name": "无尽大杀四方",
+   "rarity": "gold",
+   "weights": {
+    "AD": 0.5,
+    "HSP": 0.2
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "自动诺手 Q（物理伤害 + 回血）",
+   "pickRate": 0.2328,
+   "winRate": 0.5309,
+   "topChampionIds": [
+    122,
+    120,
+    36,
+    875,
+    14,
+    141
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2095,
+   "key": "ARAM_HighRoller",
+   "name": "掷骰狂人",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.1411,
+   "winRate": 0.5258,
+   "topChampionIds": [
+    136,
+    901,
+    223,
+    30,
+    41,
+    13
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2096,
+   "key": "LittleExtraHelp",
+   "name": "小小的额外帮助",
+   "rarity": "gold",
+   "weights": {
+    "AS": 0.4,
+    "AD": 0.2
+   },
+   "grants": {
+    "AS": 1.5
+   },
+   "mechanics": [
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度"
+   ],
+   "pickRate": 0.1509,
+   "winRate": 0.5168,
+   "topChampionIds": [
+    18,
+    67,
+    11,
+    29,
+    22,
+    804
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2098,
+   "key": "ARAM_EndlessHunt",
+   "name": "吃过路兵",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.9,
+    "MS": 0.9,
+    "HASTE": 0.5,
+    "ADAPTIVE": 0.2
+   },
+   "grants": {
+    "HP": 1.5,
+    "MS": 1
+   },
+   "mechanics": [
+    "ability",
+    "true-damage",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [
+    "给予:最大生命值",
+    "给予:生命值",
+    "缩放:最大生命值",
+    "给予:移动速度",
+    "缩放:移动速度"
+   ],
+   "pickRate": 0.0745,
+   "winRate": 0.5157,
+   "topChampionIds": [
+    120,
+    157,
+    27,
+    114,
+    876,
+    104
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2099,
+   "key": "ARAM_DivineDomain",
+   "name": "飞升仪式",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.1,
+    "MS": 0.1,
+    "HSP": 0.5
+   },
+   "grants": {
+    "HP": 1,
+    "MS": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:生命值",
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.1348,
+   "winRate": 0.4701,
+   "topChampionIds": [
+    35,
+    238,
+    141,
+    121,
+    59,
+    11
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2100,
+   "key": "ARAM_SpecializedRecursion",
+   "name": "急速之追求",
+   "rarity": "gold",
+   "weights": {
+    "HASTE": 0.3
+   },
+   "grants": {
+    "HASTE": 1
+   },
+   "mechanics": [
+    "ability",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:技能急速"
+   ],
+   "notes": "急速任务",
+   "pickRate": 0.2898,
+   "winRate": 0.5249,
+   "topChampionIds": [
+    11,
+    21,
+    25,
+    53,
+    45,
+    901
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2102,
+   "key": "PressureCooker",
+   "name": "高压锅",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.1
+   },
+   "grants": {
+    "HP": 1
+   },
+   "mechanics": [
+    "burn",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:最大生命值"
+   ],
+   "pickRate": 0.1809,
+   "winRate": 0.514,
+   "topChampionIds": [
+    36,
+    223,
+    14,
+    50,
+    875,
+    31
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2103,
+   "key": "ARAM_BangBang",
+   "name": "狙神飞星",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.1789,
+   "winRate": 0.5371,
+   "topChampionIds": [
+    4,
+    21,
+    30,
+    147,
+    25,
+    101
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2104,
+   "key": "ARAM_SpiritBomb",
+   "name": "灵魄炸弹",
+   "rarity": "prismatic",
+   "weights": {
+    "HP": 0.1,
+    "HSP": 0.5
+   },
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:生命值",
+    "给予:生命值"
+   ],
+   "pickRate": 0.0338,
+   "winRate": 0.5328,
+   "topChampionIds": [
+    16,
+    37,
+    350,
+    43,
+    40,
+    147
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2107,
+   "key": "ARAM_Hellbent",
+   "name": "濒死悟道",
+   "rarity": "prismatic",
+   "weights": {
+    "ADAPTIVE": 0.2,
+    "OMNIVAMP": 0.1,
+    "HP": 0.1,
+    "MS": 0.1,
+    "HASTE": 0.5
+   },
+   "grants": {
+    "ADAPTIVE": 1,
+    "OMNIVAMP": 1,
+    "HP": 1,
+    "MS": 1
+   },
+   "mechanics": [
+    "ability",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [
+    "给予:适应之力",
+    "给予:全能吸血",
+    "给予:最大生命值",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.0572,
+   "winRate": 0.4993,
+   "topChampionIds": [
+    157,
+    266,
+    777,
+    223,
+    120,
+    36
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2111,
+   "key": "Bonk",
+   "name": "邦！",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.1016,
+   "winRate": 0.5217,
+   "topChampionIds": [
+    67,
+    75,
+    48,
+    62,
+    24,
+    36
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2115,
+   "key": "SquishySlappyGrab",
+   "name": "软弹啪叽抓",
+   "rarity": "prismatic",
+   "weights": {
+    "HSP": 0.5
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.0318,
+   "winRate": 0.4845,
+   "topChampionIds": [
+    223,
+    14,
+    412,
+    36,
+    111,
+    3
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2116,
+   "key": "SpecializedEmpowerment",
+   "name": "威能之追求",
+   "rarity": "gold",
+   "weights": {
+    "ADAPTIVE": 0.3
+   },
+   "grants": {},
+   "mechanics": [
+    "ability",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "技能增伤任务",
+   "pickRate": 0.265,
+   "winRate": 0.5141,
+   "topChampionIds": [
+    81,
+    136,
+    13,
+    76,
+    121,
+    145
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2118,
+   "key": "SkipTheBasics",
+   "name": "大招工具人",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.4
+   },
+   "grants": {
+    "HASTE": 1.5
+   },
+   "mechanics": [
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:技能急速",
+    "字段:Haste"
+   ],
+   "pickRate": 0.1638,
+   "winRate": 0.4693,
+   "topChampionIds": [
+    30,
+    17,
+    22,
+    54,
+    41,
+    236
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2119,
+   "key": "Overextender",
+   "name": "过量延伸者",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.0355,
+   "winRate": 0.5172,
+   "topChampionIds": [
+    14,
+    30,
+    875,
+    54,
+    59,
+    223
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2123,
+   "key": "Overloaded",
+   "name": "超负荷",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.1535,
+   "winRate": 0.4937,
+   "topChampionIds": [
+    13,
+    901,
+    246,
+    4,
+    25,
+    63
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2125,
+   "key": "ItsGoTime",
+   "name": "前进时间到",
+   "rarity": "silver",
+   "weights": {
+    "MS": 0.1
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.086,
+   "winRate": 0.4932,
+   "topChampionIds": [
+    875,
+    18,
+    22,
+    36,
+    75,
+    67
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2127,
+   "key": "ForgedByTheMaster",
+   "name": "大师铸就",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "item-active",
+    "burn"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "装备与海克斯伤害提升：带伤害被动/主动的装备更值",
+   "pickRate": 0.3406,
+   "winRate": 0.5533,
+   "topChampionIds": [
+    63,
+    17,
+    30,
+    223,
+    25,
+    48
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2128,
+   "key": "BloodMoneyBurn",
+   "name": "炽燃利息",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "burn",
+    "gold"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [],
+   "notes": "灼烧/持续伤害产金币：带灼烧的装备（兰德里、日炎等）更值",
+   "pickRate": 0.3812,
+   "winRate": 0.6049,
+   "topChampionIds": [
+    136,
+    63,
+    17,
+    876,
+    25,
+    30
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2129,
+   "key": "Terraind",
+   "name": "地形专家",
+   "rarity": "gold",
+   "weights": {
+    "AP": 0.8,
+    "HASTE": 0.4
+   },
+   "grants": {},
+   "mechanics": [
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "字段:APRatio"
+   ],
+   "pickRate": 0.0518,
+   "winRate": 0.5214,
+   "topChampionIds": [
+    48,
+    59,
+    34,
+    516,
+    268,
+    163
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2131,
+   "key": "DontChangeTheChannel",
+   "name": "别停止引导",
+   "rarity": "silver",
+   "weights": {
+    "HSP": 0.5
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.39,
+   "evidence": [],
+   "pickRate": 0.0776,
+   "winRate": 0.5326,
+   "topChampionIds": [
+    136,
+    3,
+    9,
+    55,
+    8,
+    20
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2132,
+   "key": "WarlockJuicebox",
+   "name": "术士果汁盒",
+   "rarity": "gold",
+   "weights": {
+    "OMNIVAMP": -0.3,
+    "LIFESTEAL": -0.2
+   },
+   "grants": {
+    "OMNIVAMP": 1.5
+   },
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:全能吸血",
+    "给予:全能吸血"
+   ],
+   "notes": "给全能吸血，续航装边际下降",
+   "pickRate": 0.4389,
+   "winRate": 0.5972,
+   "topChampionIds": [
+    13,
+    136,
+    876,
+    63,
+    50,
+    517
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2133,
+   "key": "MercysStrike",
+   "name": "仁慈打击",
+   "rarity": "gold",
+   "weights": {
+    "HP": 0.9,
+    "AS": 0.4,
+    "AD": 0.2,
+    "HSP": 0.5
+   },
+   "grants": {
+    "AS": 1.5,
+    "HP": 1.5
+   },
+   "mechanics": [
+    "auto-attack",
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.67,
+   "evidence": [
+    "给予:攻击速度",
+    "给予:攻击速度",
+    "给予:最大生命值",
+    "给予:最大生命值",
+    "缩放:最大生命值"
+   ],
+   "pickRate": 0.0207,
+   "winRate": 0.4902,
+   "topChampionIds": [
+    235,
+    37,
+    43,
+    267,
+    16,
+    888
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2134,
+   "key": "SurgeField",
+   "name": "电涌力场",
+   "rarity": "prismatic",
+   "weights": {
+    "HASTE": 0.4,
+    "MS": 0.1
+   },
+   "grants": {
+    "HASTE": 1.5,
+    "MS": 1.5
+   },
+   "mechanics": [
+    "ultimate"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:技能急速",
+    "给予:技能急速",
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.0368,
+   "winRate": 0.4676,
+   "topChampionIds": [
+    17,
+    22,
+    55,
+    77,
+    21,
+    50
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2135,
+   "key": "Overkill",
+   "name": "针插垫",
+   "rarity": "prismatic",
+   "weights": {
+    "MS": 0.1,
+    "AS": 0.4,
+    "AD": 0.2
+   },
+   "grants": {
+    "MS": 1.5,
+    "AS": 1
+   },
+   "mechanics": [
+    "auto-attack"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度",
+    "字段:ASPerStack"
+   ],
+   "pickRate": 0.0499,
+   "winRate": 0.4626,
+   "topChampionIds": [
+    22,
+    18,
+    29,
+    804,
+    67,
+    15
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2136,
+   "key": "TrustyWeapon",
+   "name": "可靠武器",
+   "rarity": "silver",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.0883,
+   "winRate": 0.4957,
+   "topChampionIds": [
+    4,
+    81,
+    120,
+    45,
+    13,
+    115
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2137,
+   "key": "PatOnTheBack",
+   "name": "轻拍背部",
+   "rarity": "gold",
+   "weights": {
+    "MS": 0.1,
+    "HSP": 0.5
+   },
+   "grants": {
+    "MS": 1.5
+   },
+   "mechanics": [
+    "heal-shield",
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [
+    "给予:移动速度",
+    "给予:移动速度"
+   ],
+   "pickRate": 0.0382,
+   "winRate": 0.4799,
+   "topChampionIds": [
+    27,
+    120,
+    48,
+    876,
+    36,
+    223
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2138,
+   "key": "WardingWeapon",
+   "name": "自适应防护",
+   "rarity": "silver",
+   "weights": {
+    "MR": 0.1,
+    "ARMOR": 0.1
+   },
+   "grants": {
+    "MR": 1.5,
+    "ARMOR": 1.5
+   },
+   "mechanics": [
+    "stacks"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "给予:魔法抗性",
+    "给予:魔法抗性",
+    "给予:护甲",
+    "给予:护甲"
+   ],
+   "pickRate": 0.0584,
+   "winRate": 0.4981,
+   "topChampionIds": [
+    120,
+    876,
+    36,
+    157,
+    266,
+    420
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2139,
+   "key": "PinCushion",
+   "name": "豪猪",
+   "rarity": "gold",
+   "weights": {},
+   "grants": {},
+   "mechanics": [
+    "cc"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.32,
+   "evidence": [],
+   "pickRate": 0.0908,
+   "winRate": 0.482,
+   "topChampionIds": [
+    14,
+    36,
+    223,
+    111,
+    89,
+    31
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2140,
+   "key": "Upgrade_Ravenous",
+   "name": "升级：贪欲九头蛇",
+   "rarity": "gold",
+   "weights": {
+    "LIFESTEAL": 0.03,
+    "HASTE": 0.15,
+    "ADAPTIVE": 0.06
+   },
+   "grants": {
+    "LIFESTEAL": 1.5
+   },
+   "mechanics": [
+    "ability",
+    "gold",
+    "item-upgrade"
+   ],
+   "itemIds": [
+    3074
+   ],
+   "itemBoost": 5,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.7,
+   "evidence": [
+    "给予:生命偷取",
+    "给予:生命偷取"
+   ],
+   "pickRate": 0.1456,
+   "winRate": 0.5234,
+   "topChampionIds": [
+    120,
+    114,
+    238,
+    64,
+    55,
+    141
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2141,
+   "key": "Quest_UltraHydra",
+   "name": "终极九头蛇",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [
+    3077,
+    3748,
+    3074,
+    6698
+   ],
+   "itemBoost": 2,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.53,
+   "evidence": [],
+   "pickRate": 0.1769,
+   "winRate": 0.5621,
+   "topChampionIds": [
+    104,
+    875,
+    59,
+    107,
+    64,
+    11
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2143,
+   "key": "Upgrade_SunderedSky",
+   "name": "升级：焚天",
+   "rarity": "gold",
+   "weights": {
+    "HSP": 0.15
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield",
+    "gold",
+    "item-upgrade"
+   ],
+   "itemIds": [
+    6610
+   ],
+   "itemBoost": 5,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.6,
+   "evidence": [],
+   "pickRate": 0.0768,
+   "winRate": 0.4694,
+   "topChampionIds": [
+    266,
+    64,
+    5,
+    59,
+    122,
+    62
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2144,
+   "key": "DoubleDefense",
+   "name": "加固护盾",
+   "rarity": "silver",
+   "weights": {
+    "HP": 0.9,
+    "HSP": 0.5
+   },
+   "grants": {},
+   "mechanics": [
+    "heal-shield"
+   ],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.46,
+   "evidence": [
+    "缩放:最大生命值"
+   ],
+   "pickRate": 0.0902,
+   "winRate": 0.4932,
+   "topChampionIds": [
+    875,
+    223,
+    82,
+    111,
+    350,
+    14
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 2157,
+   "key": "Upgrade_DeathDance",
+   "name": "升级：死亡之舞",
+   "rarity": "silver",
+   "weights": {
+    "AD": 0.2
+   },
+   "grants": {
+    "HP": 1.5
+   },
+   "mechanics": [
+    "heal-shield",
+    "item-upgrade"
+   ],
+   "itemIds": [
+    6333
+   ],
+   "itemBoost": 5,
+   "antiMechanics": [],
+   "source": "reviewed",
+   "confidence": 0.9,
+   "evidence": [
+    "给予:生命值",
+    "给予:生命值"
+   ],
+   "notes": "升级死亡之舞",
+   "pickRate": 0.2687,
+   "winRate": 0.5406,
+   "topChampionIds": [
+    777,
+    157,
+    141,
+    120,
+    266,
+    5
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  },
+  {
+   "id": 12317,
+   "key": "ARAM_PandorasBox",
+   "name": "潘朵拉的盒子",
+   "rarity": "prismatic",
+   "weights": {},
+   "grants": {},
+   "mechanics": [],
+   "itemIds": [],
+   "itemBoost": 0,
+   "antiMechanics": [],
+   "source": "parsed",
+   "confidence": 0.25,
+   "evidence": [],
+   "pickRate": 0.196,
+   "winRate": 0.4981,
+   "topChampionIds": [
+    22,
+    202,
+    104,
+    126,
+    17,
+    223
+   ],
+   "dataValueSource": "blitz-spellDataValues"
+  }
+ ]
+}

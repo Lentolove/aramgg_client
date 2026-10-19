@@ -12,7 +12,9 @@ import type {
   ManualOverlayAlternative,
   ManualOverlayAugmentRef,
   ManualOverlayCandidate,
+  ManualOverlayInferredSource,
   ManualOverlayLiveData,
+  ManualOverlayPickedAugment,
   ManualOverlayReminder,
   ManualOverlaySettings,
   ManualOverlayState,
@@ -46,7 +48,12 @@ export const DEFAULT_MANUAL_OVERLAY_SETTINGS: ManualOverlaySettings = {
   reminderOnlyWhenDead: false,
   startWindowSec: DEFAULT_START_WINDOW_SEC,
   iconMatchEnabled: true,
+  autoFollowUp: true,
 }
+
+/** 自动跟拍：每次识别完成后隔多久再拍、最长跟多久 */
+export const FOLLOW_UP_INTERVAL_MS = 2500
+export const FOLLOW_UP_MAX_MS = 45000
 
 /** 新的一局从这些阶段开始；Reconnect → InProgress 不算新局。 */
 const NEW_GAME_PHASES = new Set<string>(['ChampSelect', 'GameStart'])
@@ -92,7 +99,7 @@ export interface AnalysisResultLike {
 }
 
 export interface RefreshLogRecord {
-  type: 'refresh' | 'pick' | 'correct' | 'replace-picked' | 'acknowledge'
+  type: 'refresh' | 'pick' | 'correct' | 'replace-picked' | 'acknowledge' | 'choice-closed' | 'live-augments'
   ts: number
   [key: string]: unknown
 }
@@ -120,6 +127,8 @@ export interface ManualOverlayDeps {
   hideWindow: (reason?: string) => void
   broadcast: (state: ManualOverlayState) => void
   now?: () => number
+  /** 定时器（测试可注入）；返回取消函数 */
+  schedule?: (callback: () => void, ms: number) => () => void
   logger?: { info: (...args: any[]) => void; warn: (...args: any[]) => void; debug: (...args: any[]) => void }
 }
 
@@ -144,6 +153,7 @@ function sanitizeSettings(raw: unknown, legacyAutoScreenshot: unknown): ManualOv
       ? Math.round(startWindow)
       : DEFAULT_START_WINDOW_SEC,
     iconMatchEnabled: value.iconMatchEnabled !== false,
+    autoFollowUp: value.autoFollowUp !== false,
   }
 }
 
@@ -240,6 +250,45 @@ function parseLiveTiming(data: any): { gameTime: number | null; level: number | 
   }
 }
 
+/**
+ * 从 2999 的 activePlayer / 自己的 allPlayers 条目里找「海克斯」字段。
+ * 游戏是否在海克斯大乱斗里提供该字段未经验证：找不到就返回空，并把字段名带出去用于诊断。
+ */
+export function extractLiveAugmentIds(data: any): { ids: number[]; keys: string[] } {
+  const ids = new Set<number>()
+  const keys = new Set<string>()
+  const activeName = String(data?.activePlayer?.riotId ?? data?.activePlayer?.summonerName ?? '')
+  const players = Array.isArray(data?.allPlayers) ? data.allPlayers : []
+  const self = players.find((player: any) =>
+    activeName && (player?.riotId === activeName || player?.summonerName === activeName))
+  const addValue = (value: unknown, depth: number) => {
+    if (depth > 3 || value == null) return
+    if (typeof value === 'number' || (typeof value === 'string' && /^\d+$/.test(value))) {
+      const id = Number(value)
+      if (Number.isInteger(id) && id > 0 && id < 10_000_000) ids.add(id)
+    } else if (Array.isArray(value)) {
+      value.forEach((entry) => addValue(entry, depth + 1))
+    } else if (typeof value === 'object') {
+      const record = value as Record<string, unknown>
+      addValue(record.id ?? record.augmentId ?? record.augmentID, depth + 1)
+    }
+  }
+  const scan = (record: unknown, prefix: string, depth: number) => {
+    if (!record || typeof record !== 'object' || depth > 2) return
+    for (const [key, value] of Object.entries(record as Record<string, unknown>)) {
+      if (/augment/i.test(key)) {
+        keys.add(`${prefix}${key}`)
+        addValue(value, 0)
+      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+        scan(value, `${prefix}${key}.`, depth + 1)
+      }
+    }
+  }
+  scan(data?.activePlayer, 'activePlayer.', 0)
+  scan(self, 'self.', 0)
+  return { ids: [...ids], keys: [...keys] }
+}
+
 function sanitizeAugmentRef(value: unknown): ManualOverlayAugmentRef | null {
   if (!value || typeof value !== 'object') return null
   const record = value as Record<string, unknown>
@@ -283,8 +332,100 @@ export class ManualOverlayService {
       acknowledgedStage: 0,
       iconIndex: { ready: false, count: 0, error: null },
       liveGame: false,
+      pendingChoice: null,
+      autoWatching: false,
       revision: 0,
     }
+  }
+
+  // ------------------------------------------------------------------ follow-up
+  private followUpCancel: (() => void) | null = null
+  private followUpStartedAt: number | null = null
+  private loggedLiveKeysRevision = -1
+  private emptyStreak = 0
+
+  private scheduleTimer(callback: () => void, ms: number): () => void {
+    if (this.deps.schedule) return this.deps.schedule(callback, ms)
+    const timer = setTimeout(callback, ms)
+    return () => clearTimeout(timer)
+  }
+
+  private stopFollowUp(): void {
+    this.followUpCancel?.()
+    this.followUpCancel = null
+    this.followUpStartedAt = null
+    this.emptyStreak = 0
+    if (this.state.autoWatching) this.update({ autoWatching: false })
+  }
+
+  private scheduleFollowUp(): void {
+    if (!this.settings.autoFollowUp) return
+    if (this.followUpStartedAt == null) this.followUpStartedAt = this.now()
+    if (this.now() - this.followUpStartedAt >= FOLLOW_UP_MAX_MS) {
+      this.stopFollowUp()
+      return
+    }
+    this.followUpCancel?.()
+    this.followUpCancel = this.scheduleTimer(() => {
+      this.followUpCancel = null
+      void this.refresh('auto')
+    }, FOLLOW_UP_INTERVAL_MS)
+    if (!this.state.autoWatching) this.update({ autoWatching: true })
+  }
+
+  /** 三选一关闭（或换成了下一轮）但没记录选择 → 先尝试用 2999 的海克斯字段确定，否则交给渲染端按推荐推断 */
+  private async handleChoiceClosed(previous: ManualOverlayCandidate[], reason: 'screen-closed' | 'new-offer'): Promise<void> {
+    const pickedIds = new Set(this.state.picked.map((augment) => String(augment.id)))
+    const open = previous.filter((candidate) => !pickedIds.has(String(candidate.id)))
+    if (open.length === 0 || open.length < previous.length) return // 已经记录过这一轮
+    this.log({
+      type: 'choice-closed',
+      gameRevision: this.state.gameRevision,
+      reason,
+      candidates: open.map((candidate) => ({ slot: candidate.slot, id: candidate.id })),
+    })
+    const live = await this.fetchLiveAugments()
+    const match = open.find((candidate) => live.includes(Number(candidate.id)))
+    if (match) {
+      this.addPicked(match, 'live-client', open)
+      return
+    }
+    this.update({ pendingChoice: { candidates: open.map((candidate) => ({ ...candidate })), closedAt: this.now(), reason } })
+  }
+
+  private async fetchLiveAugments(): Promise<number[]> {
+    try {
+      const response = await this.deps.getLiveClientAllGameData()
+      if (!response || response.status !== 200 || !response.data) return []
+      return extractLiveAugmentIds(response.data).ids
+    } catch {
+      return []
+    }
+  }
+
+  private addPicked(
+    augment: ManualOverlayAugmentRef,
+    inferred: ManualOverlayInferredSource | null,
+    alternatives: ManualOverlayAugmentRef[] = [],
+  ): ManualOverlayState {
+    const ref = sanitizeAugmentRef(augment)
+    if (!ref) return this.getState()
+    const others = alternatives
+      .map((alt) => sanitizeAugmentRef(alt))
+      .filter((alt): alt is ManualOverlayAugmentRef => alt != null && String(alt.id) !== String(ref.id))
+      .slice(0, 4)
+    // 推断记录的是「上一轮」：如果屏幕上已经是下一轮的卡，不要把它们清掉
+    const inCurrent = this.state.candidates.some((candidate) => String(candidate.id) === String(ref.id))
+    const candidates = inferred && !inCurrent ? this.state.candidates : []
+    if (this.state.picked.some((picked) => String(picked.id) === String(ref.id))) {
+      return this.update({ candidates, pendingChoice: null })
+    }
+    const entry: ManualOverlayPickedAugment = { ...ref, pickedAt: this.now(), inferred, alternatives: others.length ? others : undefined }
+    return this.update({
+      picked: [...this.state.picked, entry].slice(-6),
+      candidates,
+      pendingChoice: null,
+    })
   }
 
   private liveWatchTimer: ReturnType<typeof setInterval> | null = null
@@ -549,11 +690,15 @@ export class ManualOverlayService {
         lastCapture: null,
         lastRefreshAt: null,
         acknowledgedStage: 0,
+        pendingChoice: null,
       })
       this.lastReminder = null
+      this.stopFollowUp()
     } else if (HIDE_PHASES.has(phase)) {
       // 结算后保留已选列表直到下一局开始，方便回看；只清掉候选卡
       patch.candidates = []
+      patch.pendingChoice = null
+      this.stopFollowUp()
     }
 
     this.update(patch)
@@ -593,7 +738,13 @@ export class ManualOverlayService {
 
   // ------------------------------------------------------------------ refresh
 
-  refresh(source: 'button' | 'hotkey' = 'button'): Promise<ManualOverlayState> {
+  refresh(source: 'button' | 'hotkey' | 'auto' = 'button'): Promise<ManualOverlayState> {
+    if (source !== 'auto') {
+      // 手动刷新会重新开始一轮跟拍
+      this.followUpCancel?.()
+      this.followUpCancel = null
+      this.followUpStartedAt = null
+    }
     if (this.refreshPromise) {
       return this.refreshPromise
     }
@@ -618,6 +769,7 @@ export class ManualOverlayService {
       const captureMs = this.now() - startedAt
       const image: CaptureImage | undefined = capture.raw ?? capture.buffer
       if (!capture.success || !image) {
+        if (source === 'auto') this.stopFollowUp()
         const error = `截图失败：${capture.error || '未知错误'}`
         void this.logRefresh(source, livePromise, { error, captureMs })
         return this.update({
@@ -713,7 +865,42 @@ export class ManualOverlayService {
         error: lastError,
       })
 
-      return this.update({
+      const previous = this.state.candidates
+      const isAuto = source === 'auto'
+      if (isAuto) {
+        // 一次空结果可能只是鼠标挡住/动画；连续两次没识别到（且识别本身成功）才算三选一已关闭
+        if (candidates.length === 0 && previous.length > 0 && analysis.success && this.emptyStreak === 0) {
+          this.emptyStreak = 1
+          this.update({ refreshing: false, lastRefreshAt: this.now(), lastCapture })
+          this.scheduleFollowUp()
+          return this.getState()
+        }
+        if (candidates.length === 0 && previous.length > 0 && !analysis.success) {
+          this.update({ refreshing: false, lastRefreshAt: this.now(), lastCapture })
+          this.scheduleFollowUp()
+          return this.getState()
+        }
+        this.emptyStreak = 0
+        const closed = candidates.length === 0 && previous.length > 0
+        const sameIds = candidates.filter((candidate) => previous.some((old) => String(old.id) === String(candidate.id))).length
+        // 三张全换且不是重随（重随只换一张）→ 上一轮已经选完，这是下一轮
+        const newOffer = candidates.length >= 2 && previous.length >= 2 && sameIds === 0
+        this.update({
+          refreshing: false,
+          lastRefreshAt: this.now(),
+          candidates: candidates.length > 0 ? candidates : [],
+          lastCapture,
+          lastError: null,
+        })
+        if (closed || newOffer) {
+          await this.handleChoiceClosed(previous, closed ? 'screen-closed' : 'new-offer')
+        }
+        if (candidates.length > 0) this.scheduleFollowUp()
+        else this.stopFollowUp()
+        return this.getState()
+      }
+
+      const snapshot = this.update({
         refreshing: false,
         lastRefreshAt: this.now(),
         // 识别为空时保留上一次结果，避免一次失败把卡片清掉
@@ -721,6 +908,11 @@ export class ManualOverlayService {
         lastCapture,
         lastError,
       })
+      if (candidates.length >= 2) {
+        this.scheduleFollowUp()
+        return this.getState()
+      }
+      return snapshot
     } catch (error) {
       const message = `刷新出错：${error instanceof Error ? error.message : String(error)}`
       void this.logRefresh(source, livePromise, { error: message })
@@ -778,13 +970,12 @@ export class ManualOverlayService {
       level: this.lastTiming?.level ?? null,
       candidates: this.state.candidates.map((candidate) => ({ slot: candidate.slot, id: candidate.id, source: candidate.source })),
     })
-    if (this.state.picked.some((picked) => String(picked.id) === String(augment.id))) {
-      return this.update({ candidates: [] })
-    }
-    return this.update({
-      picked: [...this.state.picked, { ...augment, pickedAt: this.now() }].slice(-6),
-      candidates: [],
-    })
+    const record = value as Record<string, unknown>
+    const inferred = record.inferred === 'recommended' || record.inferred === 'live-client' ? record.inferred : null
+    // 手动点卡 = 本轮结束；自动推断的是上一轮，下一轮可能正在跟拍，不停
+    if (!inferred) this.stopFollowUp()
+    const alternatives = Array.isArray(record.alternatives) ? record.alternatives as ManualOverlayAugmentRef[] : []
+    return this.addPicked(augment, inferred, alternatives)
   }
 
   unpick(augmentId: unknown): ManualOverlayState {
@@ -836,7 +1027,7 @@ export class ManualOverlayService {
     return picked.flatMap((item) => {
       if (String(item.id) !== String(oldId)) return [item]
       // 新的海克斯已经在列表里：只删掉旧的，避免重复
-      return duplicate ? [] : [{ ...augment, pickedAt: item.pickedAt }]
+      return duplicate ? [] : [{ ...augment, pickedAt: item.pickedAt, inferred: null, alternatives: undefined }]
     })
   }
 
@@ -883,7 +1074,8 @@ export class ManualOverlayService {
   }
 
   clearCandidates(): ManualOverlayState {
-    return this.update({ candidates: [], lastError: null })
+    this.stopFollowUp()
+    return this.update({ candidates: [], lastError: null, pendingChoice: null })
   }
 
   resetGame(): ManualOverlayState {
@@ -895,10 +1087,35 @@ export class ManualOverlayService {
       picked: [],
       lastError: null,
       lastCapture: null,
+      pendingChoice: null,
     })
   }
 
   // ------------------------------------------------------------------ live client
+
+  private augmentCatalog: Map<string, ManualOverlayAugmentRef> | null = null
+
+  /** 2999 给出了已持有海克斯时，自动补进「已选」（名字/图标来自海克斯列表） */
+  private async syncLiveAugments(ids: number[]): Promise<void> {
+    const known = new Set(this.state.picked.map((augment) => String(augment.id)))
+    const missing = ids.filter((id) => !known.has(String(id)))
+    if (!missing.length) return
+    if (!this.augmentCatalog) {
+      const list = await this.listAugments()
+      this.augmentCatalog = new Map(list.map((augment) => [String(augment.id), augment]))
+    }
+    let picked = this.state.picked
+    for (const id of missing) {
+      const ref = this.augmentCatalog.get(String(id))
+      if (!ref) continue // 不是海克斯 id（字段含义未知时宁可不加）
+      picked = [...picked, { ...ref, pickedAt: this.now(), inferred: 'live-client' as const }]
+    }
+    if (picked !== this.state.picked) {
+      const pendingIds = new Set((this.state.pendingChoice?.candidates ?? []).map((candidate) => String(candidate.id)))
+      const resolved = picked.some((augment) => pendingIds.has(String(augment.id)))
+      this.update({ picked: picked.slice(-6), pendingChoice: resolved ? null : this.state.pendingChoice })
+    }
+  }
 
   async getLiveData(): Promise<ManualOverlayLiveData> {
     const empty: ManualOverlayLiveData = {
@@ -916,6 +1133,18 @@ export class ManualOverlayService {
       }
       const parsed = parseLiveClientPlayers(response.data.activePlayer, response.data.allPlayers)
       const timing = parseLiveTiming(response.data)
+      const liveAugments = extractLiveAugmentIds(response.data)
+      if (this.loggedLiveKeysRevision !== this.state.gameRevision) {
+        // 每局记一次 2999 的字段名，用于确认游戏是否提供「已持有海克斯」
+        this.loggedLiveKeysRevision = this.state.gameRevision
+        this.deps.logger?.info('[manual-overlay] 2999 fields', {
+          activePlayer: Object.keys(response.data.activePlayer ?? {}).slice(0, 40),
+          augmentKeys: liveAugments.keys,
+          augmentIds: liveAugments.ids,
+        })
+        this.log({ type: 'live-augments', gameRevision: this.state.gameRevision, keys: liveAugments.keys, ids: liveAugments.ids })
+      }
+      if (liveAugments.ids.length) await this.syncLiveAugments(liveAugments.ids)
       this.lastTiming = timing
       const reminder = this.settings.reminderEnabled
         ? computeRefreshReminder({
@@ -939,6 +1168,8 @@ export class ManualOverlayService {
         enemyChampionNames: parsed.enemyChampionNames,
         ...timing,
         reminder,
+        heldAugmentIds: liveAugments.ids,
+        augmentFieldKeys: liveAugments.keys,
       }
     } catch (error) {
       return { ...empty, error: error instanceof Error ? error.message : String(error) }

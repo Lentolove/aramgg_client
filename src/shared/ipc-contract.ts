@@ -361,6 +361,8 @@ export interface ManualOverlaySettings {
   startWindowSec: number
   /** 卡片图标匹配（与 OCR 交叉校验） */
   iconMatchEnabled: boolean
+  /** 识别到三选一后自动跟拍（每 2.5 秒，最多 45 秒），三选一关闭时自动记录选择 */
+  autoFollowUp: boolean
 }
 
 export interface ManualOverlayAugmentRef {
@@ -389,8 +391,21 @@ export interface ManualOverlayCandidate extends ManualOverlayAugmentRef {
   alternatives?: ManualOverlayAlternative[]
 }
 
+export type ManualOverlayInferredSource = 'live-client' | 'recommended'
+
 export interface ManualOverlayPickedAugment extends ManualOverlayAugmentRef {
   pickedAt: number
+  /** 自动记录：live-client = 2999 接口给出；recommended = 三选一关闭后按推荐推断（可点更正） */
+  inferred?: ManualOverlayInferredSource | null
+  /** 推断时同一轮的另外几张卡（一键更正用） */
+  alternatives?: ManualOverlayAugmentRef[]
+}
+
+export interface ManualOverlayPendingChoice {
+  /** 关闭前最后看到的三张卡 */
+  candidates: ManualOverlayCandidate[]
+  closedAt: number
+  reason: 'screen-closed' | 'new-offer'
 }
 
 export interface ManualOverlayCaptureInfo {
@@ -427,6 +442,10 @@ export interface ManualOverlayState {
   iconIndex: { ready: boolean; count: number; error: string | null }
   /** 2999 游戏内接口有响应（不依赖 LCU 判断对局中） */
   liveGame: boolean
+  /** 三选一关闭但还没记录选了哪张（渲染端会按推荐自动记录，可更正） */
+  pendingChoice: ManualOverlayPendingChoice | null
+  /** 正在自动跟拍三选一 */
+  autoWatching: boolean
   revision: number
 }
 
@@ -451,6 +470,10 @@ export interface ManualOverlayLiveData {
   isDead?: boolean | null
   respawnTimer?: number | null
   reminder?: ManualOverlayReminder | null
+  /** 2999 返回的已持有海克斯 id（如果接口提供；未验证游戏是否提供该字段） */
+  heldAugmentIds?: number[]
+  /** 2999 中名字含 augment 的字段（诊断用） */
+  augmentFieldKeys?: string[]
   error?: string
 }
 
@@ -546,7 +569,7 @@ export interface ElectronAPI {
   manualOverlay: {
     getState(): Promise<ManualOverlayState>
     refresh(): Promise<ManualOverlayState>
-    pick(augment: ManualOverlayAugmentRef): Promise<ManualOverlayState>
+    pick(augment: ManualOverlayAugmentRef & { inferred?: ManualOverlayInferredSource | null; alternatives?: ManualOverlayAugmentRef[] }): Promise<ManualOverlayState>
     unpick(augmentId: number | string): Promise<ManualOverlayState>
     clearCandidates(): Promise<ManualOverlayState>
     resetGame(): Promise<ManualOverlayState>

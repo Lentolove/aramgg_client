@@ -1,0 +1,7159 @@
+{
+ "meta": {
+  "version": 1,
+  "generatedFrom": {
+   "augments": "aramgg-client-api 16.20.2",
+   "items": "CommunityDragon latest zh_cn items.json ∩ dtodo items.json",
+   "dataValues": "Blitz mayhem augments (field names only, as parse signals)"
+  },
+  "gamePatch": "16.20",
+  "note": "模型权重，不是测得的海克斯×装备胜率"
+ },
+ "items": [
+  {
+   "id": 1001,
+   "name": "鞋子",
+   "priceTotal": 300,
+   "stats": {
+    "MS": 25
+   },
+   "shares": {
+    "MS": 1
+   },
+   "statGold": 300,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": true,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1004,
+   "name": "仙女护符",
+   "priceTotal": 200,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1006,
+   "name": "治疗宝珠",
+   "priceTotal": 300,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1011,
+   "name": "巨人腰带",
+   "priceTotal": 900,
+   "stats": {
+    "HP": 350
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 935,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 1018,
+   "name": "灵巧披风",
+   "priceTotal": 600,
+   "stats": {
+    "CRIT": 15
+   },
+   "shares": {
+    "CRIT": 1
+   },
+   "statGold": 600,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1026,
+   "name": "爆裂魔杖",
+   "priceTotal": 850,
+   "stats": {
+    "AP": 45
+   },
+   "shares": {
+    "AP": 1
+   },
+   "statGold": 900,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1027,
+   "name": "蓝水晶",
+   "priceTotal": 300,
+   "stats": {
+    "MANA": 300
+   },
+   "shares": {
+    "MANA": 1
+   },
+   "statGold": 420,
+   "tags": [
+    "mana"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1028,
+   "name": "红水晶",
+   "priceTotal": 400,
+   "stats": {
+    "HP": 150
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 401,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1029,
+   "name": "布甲",
+   "priceTotal": 300,
+   "stats": {
+    "ARMOR": 15
+   },
+   "shares": {
+    "ARMOR": 1
+   },
+   "statGold": 300,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1031,
+   "name": "锁子甲",
+   "priceTotal": 800,
+   "stats": {
+    "ARMOR": 40
+   },
+   "shares": {
+    "ARMOR": 1
+   },
+   "statGold": 800,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1029
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 1033,
+   "name": "抗魔斗篷",
+   "priceTotal": 400,
+   "stats": {
+    "MR": 20
+   },
+   "shares": {
+    "MR": 1
+   },
+   "statGold": 360,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1035,
+   "name": "灰烬小刀",
+   "priceTotal": 350,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "burn",
+    "heal-shield",
+    "true-damage"
+   ],
+   "uniquePassives": [
+    "7%",
+    "烙印：",
+    "挑战之途：",
+    "狩猎人：",
+    "取食于野："
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1036,
+   "name": "长剑",
+   "priceTotal": 350,
+   "stats": {
+    "AD": 10
+   },
+   "shares": {
+    "AD": 1
+   },
+   "statGold": 350,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1037,
+   "name": "十字镐",
+   "priceTotal": 875,
+   "stats": {
+    "AD": 25
+   },
+   "shares": {
+    "AD": 1
+   },
+   "statGold": 875,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1038,
+   "name": "暴风之剑",
+   "priceTotal": 1300,
+   "stats": {
+    "AD": 40
+   },
+   "shares": {
+    "AD": 1
+   },
+   "statGold": 1400,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1039,
+   "name": "冰雹刀刃",
+   "priceTotal": 350,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "burn",
+    "heal-shield",
+    "true-damage"
+   ],
+   "uniquePassives": [
+    "7%",
+    "烙印：",
+    "深寒之途：",
+    "狩猎人：",
+    "取食于野："
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1042,
+   "name": "短剑",
+   "priceTotal": 250,
+   "stats": {
+    "AS": 10
+   },
+   "shares": {
+    "AS": 1
+   },
+   "statGold": 250,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1043,
+   "name": "反曲之弓",
+   "priceTotal": 700,
+   "stats": {
+    "AS": 15
+   },
+   "shares": {
+    "AS": 1
+   },
+   "statGold": 375,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [
+    "叮刺"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 1052,
+   "name": "增幅典籍",
+   "priceTotal": 400,
+   "stats": {
+    "AP": 20
+   },
+   "shares": {
+    "AP": 1
+   },
+   "statGold": 400,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1053,
+   "name": "吸血鬼节杖",
+   "priceTotal": 900,
+   "stats": {
+    "AD": 15,
+    "LIFESTEAL": 7
+   },
+   "shares": {
+    "AD": 0.67,
+    "LIFESTEAL": 0.33
+   },
+   "statGold": 788,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 1054,
+   "name": "多兰之盾",
+   "priceTotal": 450,
+   "stats": {
+    "HP": 110
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 294,
+   "tags": [],
+   "uniquePassives": [
+    "耐久专注",
+    "帮助之手"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1055,
+   "name": "多兰之刃",
+   "priceTotal": 450,
+   "stats": {
+    "AD": 10,
+    "HP": 80,
+    "OMNIVAMP": 2.5
+   },
+   "shares": {
+    "AD": 0.53,
+    "HP": 0.32,
+    "OMNIVAMP": 0.15
+   },
+   "statGold": 664,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1056,
+   "name": "多兰之戒",
+   "priceTotal": 400,
+   "stats": {
+    "AP": 18,
+    "HP": 90
+   },
+   "shares": {
+    "AP": 0.6,
+    "HP": 0.4
+   },
+   "statGold": 600,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "汲取",
+    "帮助之手"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1057,
+   "name": "负极斗篷",
+   "priceTotal": 850,
+   "stats": {
+    "MR": 45
+   },
+   "shares": {
+    "MR": 1
+   },
+   "statGold": 810,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1033
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 1058,
+   "name": "无用大棒",
+   "priceTotal": 1200,
+   "stats": {
+    "AP": 65
+   },
+   "shares": {
+    "AP": 1
+   },
+   "statGold": 1300,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1082,
+   "name": "黑暗封印",
+   "priceTotal": 350,
+   "stats": {
+    "AP": 15,
+    "HP": 50
+   },
+   "shares": {
+    "AP": 0.69,
+    "HP": 0.31
+   },
+   "statGold": 434,
+   "tags": [
+    "stacks"
+   ],
+   "uniquePassives": [
+    "荣耀"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1083,
+   "name": "萃取",
+   "priceTotal": 450,
+   "stats": {
+    "AD": 7
+   },
+   "shares": {
+    "AD": 1
+   },
+   "statGold": 245,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [
+    "收割"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1086,
+   "name": "多兰之弓",
+   "priceTotal": 400,
+   "stats": {
+    "AD": 8,
+    "AS": 15,
+    "OMNIVAMP": 1.5
+   },
+   "shares": {
+    "AD": 0.39,
+    "AS": 0.52,
+    "OMNIVAMP": 0.08
+   },
+   "statGold": 715,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1101,
+   "name": "焰爪猫幼崽",
+   "priceTotal": 450,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "burn",
+    "cc"
+   ],
+   "uniquePassives": [
+    "灵兽同伴"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1102,
+   "name": "风行狐幼体",
+   "priceTotal": 450,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [
+    "灵兽同伴"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1103,
+   "name": "踏苔蜥幼苗",
+   "priceTotal": 450,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "灵兽同伴"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1111,
+   "name": "嘉文一世之靴",
+   "priceTotal": 300,
+   "stats": {
+    "AS": 25,
+    "MS": 100,
+    "HASTE": 10,
+    "MAGIC_PEN": 12,
+    "ARMOR": 25,
+    "MR": 20
+   },
+   "shares": {
+    "AS": 0.19,
+    "MS": 0.36,
+    "HASTE": 0.08,
+    "MAGIC_PEN": 0.12,
+    "ARMOR": 0.15,
+    "MR": 0.11
+   },
+   "statGold": 3339,
+   "tags": [],
+   "uniquePassives": [
+    "嘉文一世"
+   ],
+   "boots": true,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1120,
+   "name": "多兰之盔",
+   "priceTotal": 450,
+   "stats": {
+    "HP": 150,
+    "ARMOR": 8,
+    "MR": 8
+   },
+   "shares": {
+    "HP": 0.57,
+    "ARMOR": 0.23,
+    "MR": 0.2
+   },
+   "statGold": 705,
+   "tags": [],
+   "uniquePassives": [
+    "帮助之手"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1500,
+   "name": "穿透型子弹",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1502,
+   "name": "加固城防",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "true-damage",
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1503,
+   "name": "典狱官之眼",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1504,
+   "name": "前卫",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1505,
+   "name": "加固城防",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "true-damage",
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1506,
+   "name": "加固城防",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "true-damage",
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1507,
+   "name": "过载",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1508,
+   "name": "反防御塔袜子",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1509,
+   "name": "嗜好",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1510,
+   "name": "弗瑞克风格的嗜好",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1511,
+   "name": "超级士兵 装甲",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1512,
+   "name": "超级士兵 能量场",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1515,
+   "name": "防御塔镀层",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1516,
+   "name": "建筑物赏金",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1517,
+   "name": "建筑物赏金",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1518,
+   "name": "建筑物赏金",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1519,
+   "name": "建筑物赏金",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1520,
+   "name": "过载 - 嚎哭深渊 ",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1521,
+   "name": "钢铁防线",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1522,
+   "name": "防御塔威力升温",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1523,
+   "name": "过载充能",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 1524,
+   "name": "增生",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2001,
+   "name": "回城",
+   "priceTotal": 60,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2002,
+   "name": "强化回城",
+   "priceTotal": 60,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2007,
+   "name": "禁用回城",
+   "priceTotal": 60,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2008,
+   "name": "",
+   "priceTotal": 60,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2010,
+   "name": "永续意志夹心饼干",
+   "priceTotal": 50,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2015,
+   "name": "吉尔菲艾斯碎片",
+   "priceTotal": 700,
+   "stats": {
+    "AD": 15
+   },
+   "shares": {
+    "AD": 1
+   },
+   "statGold": 525,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [
+    "突震"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2019,
+   "name": "钢铁印章",
+   "priceTotal": 1100,
+   "stats": {
+    "AD": 15,
+    "ARMOR": 30
+   },
+   "shares": {
+    "AD": 0.47,
+    "ARMOR": 0.53
+   },
+   "statGold": 1125,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1029,
+    1036,
+    1029
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2020,
+   "name": "残暴之力",
+   "priceTotal": 1337,
+   "stats": {
+    "AD": 25,
+    "HASTE": 10,
+    "LETHALITY": 5
+   },
+   "shares": {
+    "AD": 0.68,
+    "HASTE": 0.21,
+    "LETHALITY": 0.12
+   },
+   "statGold": 1295,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    2022,
+    1037
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2021,
+   "name": "掘道钻头",
+   "priceTotal": 1150,
+   "stats": {
+    "AD": 15,
+    "HP": 250
+   },
+   "shares": {
+    "AD": 0.44,
+    "HP": 0.56
+   },
+   "statGold": 1193,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2022,
+   "name": "荧尘",
+   "priceTotal": 250,
+   "stats": {
+    "HASTE": 5
+   },
+   "shares": {
+    "HASTE": 1
+   },
+   "statGold": 135,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2051,
+   "name": "守护者号角",
+   "priceTotal": 950,
+   "stats": {
+    "HP": 150
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 401,
+   "tags": [
+    "burn"
+   ],
+   "uniquePassives": [
+    "复原力：",
+    "不屈不挠："
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2052,
+   "name": "魄罗佳肴",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2065,
+   "name": "舒瑞娅的战歌",
+   "priceTotal": 2200,
+   "stats": {
+    "AP": 50,
+    "HASTE": 15,
+    "MS": 4
+   },
+   "shares": {
+    "AP": 0.69,
+    "HASTE": 0.28,
+    "MS": 0.03
+   },
+   "statGold": 1453,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3113,
+    4642
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2403,
+   "name": "小兵去质器",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2420,
+   "name": "探索者的护臂",
+   "priceTotal": 1600,
+   "stats": {
+    "AP": 40,
+    "ARMOR": 25
+   },
+   "shares": {
+    "AP": 0.62,
+    "ARMOR": 0.38
+   },
+   "statGold": 1300,
+   "tags": [
+    "stasis",
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052,
+    1029,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2422,
+   "name": "有点神奇之鞋",
+   "priceTotal": 300,
+   "stats": {
+    "MS": 25
+   },
+   "shares": {
+    "MS": 1
+   },
+   "statGold": 300,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": true,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 2501,
+   "name": "霸王血铠",
+   "priceTotal": 3300,
+   "stats": {
+    "AD": 30,
+    "HP": 550
+   },
+   "shares": {
+    "AD": 0.42,
+    "HP": 0.58
+   },
+   "statGold": 2519,
+   "tags": [
+    "tank"
+   ],
+   "uniquePassives": [
+    "专横",
+    "报复"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2021,
+    2021
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2502,
+   "name": "无终恨意",
+   "priceTotal": 2800,
+   "stats": {
+    "HP": 400,
+    "ARMOR": 50,
+    "HASTE": 15
+   },
+   "shares": {
+    "HP": 0.43,
+    "ARMOR": 0.4,
+    "HASTE": 0.16
+   },
+   "statGold": 2473,
+   "tags": [
+    "heal-shield",
+    "tank"
+   ],
+   "uniquePassives": [
+    "苦楚"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1031,
+    3067,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2503,
+   "name": "黯炎火炬",
+   "priceTotal": 2800,
+   "stats": {
+    "AP": 80,
+    "MANA": 600,
+    "HASTE": 20
+   },
+   "shares": {
+    "AP": 0.54,
+    "MANA": 0.28,
+    "HASTE": 0.18
+   },
+   "statGold": 2980,
+   "tags": [
+    "ability",
+    "mana"
+   ],
+   "uniquePassives": [
+    "邪焰",
+    "黯炎"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3802,
+    2508
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2504,
+   "name": "败魔",
+   "priceTotal": 2900,
+   "stats": {
+    "HP": 400,
+    "MR": 80
+   },
+   "shares": {
+    "HP": 0.43,
+    "MR": 0.57
+   },
+   "statGold": 2508,
+   "tags": [
+    "heal-shield",
+    "tank"
+   ],
+   "uniquePassives": [
+    "法师之祸"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3211,
+    1057
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2508,
+   "name": "命定灰烬",
+   "priceTotal": 900,
+   "stats": {
+    "AP": 30
+   },
+   "shares": {
+    "AP": 1
+   },
+   "statGold": 600,
+   "tags": [
+    "ability"
+   ],
+   "uniquePassives": [
+    "激燃"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2510,
+   "name": "黄昏与黎明",
+   "priceTotal": 3100,
+   "stats": {
+    "HP": 300,
+    "AP": 60,
+    "HASTE": 20,
+    "AS": 20
+   },
+   "shares": {
+    "HP": 0.26,
+    "AP": 0.39,
+    "HASTE": 0.18,
+    "AS": 0.16
+   },
+   "statGold": 3041,
+   "tags": [
+    "on-hit",
+    "spellblade",
+    "heal-shield",
+    "ability"
+   ],
+   "uniquePassives": [
+    "咒刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3057,
+    1026,
+    3067,
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2512,
+   "name": "猎魔人弩箭",
+   "priceTotal": 2650,
+   "stats": {
+    "AS": 45,
+    "CRIT": 25,
+    "MS": 4
+   },
+   "shares": {
+    "AS": 0.52,
+    "CRIT": 0.46,
+    "MS": 0.02
+   },
+   "statGold": 2173,
+   "tags": [
+    "ultimate",
+    "true-damage",
+    "crit"
+   ],
+   "uniquePassives": [
+    "守夜",
+    "开战弹幕"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3086,
+    3144
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2517,
+   "name": "无穷饥渴",
+   "priceTotal": 3100,
+   "stats": {
+    "AD": 65,
+    "OMNIVAMP": 5
+   },
+   "shares": {
+    "AD": 0.92,
+    "OMNIVAMP": 0.08
+   },
+   "statGold": 2475,
+   "tags": [],
+   "uniquePassives": [
+    "饥馑",
+    "盛宴"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3133,
+    1037,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2520,
+   "name": "破垒者",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 22,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.64,
+    "LETHALITY": 0.22,
+    "HASTE": 0.14
+   },
+   "statGold": 2990,
+   "tags": [
+    "ability",
+    "true-damage"
+   ],
+   "uniquePassives": [
+    "成型炸药",
+    "破坏"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2020,
+    3134
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2522,
+   "name": "实现器",
+   "priceTotal": 2800,
+   "stats": {
+    "AP": 90,
+    "MANA": 300,
+    "HASTE": 10
+   },
+   "shares": {
+    "AP": 0.72,
+    "MANA": 0.17,
+    "HASTE": 0.11
+   },
+   "statGold": 2490,
+   "tags": [
+    "heal-shield",
+    "ability",
+    "mana",
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3802,
+    1026
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2523,
+   "name": "海克斯镜片 C44",
+   "priceTotal": 2800,
+   "stats": {
+    "AD": 55,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.66,
+    "CRIT": 0.34
+   },
+   "statGold": 2925,
+   "tags": [
+    "auto-attack",
+    "crit"
+   ],
+   "uniquePassives": [
+    "高倍望远镜",
+    "奥术瞄准"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1037,
+    6670,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2524,
+   "name": "班德尔音管",
+   "priceTotal": 2300,
+   "stats": {
+    "HP": 200,
+    "HASTE": 15,
+    "ARMOR": 20,
+    "MR": 20
+   },
+   "shares": {
+    "HP": 0.31,
+    "HASTE": 0.24,
+    "ARMOR": 0.24,
+    "MR": 0.21
+   },
+   "statGold": 1699,
+   "tags": [
+    "cc"
+   ],
+   "uniquePassives": [
+    "嘹亮旋律"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    1029,
+    1033
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2525,
+   "name": "原生质护带",
+   "priceTotal": 2600,
+   "stats": {
+    "HP": 600,
+    "HASTE": 20
+   },
+   "shares": {
+    "HP": 0.75,
+    "HASTE": 0.25
+   },
+   "statGold": 2142,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "救主灵刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    1011
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2526,
+   "name": "耳语头环",
+   "priceTotal": 2250,
+   "stats": {
+    "HP": 200,
+    "HSP": 8,
+    "MANA": 300
+   },
+   "shares": {
+    "HP": 0.38,
+    "HSP": 0.32,
+    "MANA": 0.3
+   },
+   "statGold": 1394,
+   "tags": [
+    "heal-shield",
+    "stacks",
+    "mana"
+   ],
+   "uniquePassives": [
+    "和谐",
+    "法力流"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    3114,
+    1028,
+    3070
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 2530,
+   "name": "歌之权冠",
+   "priceTotal": 2250,
+   "stats": {
+    "HP": 200,
+    "HSP": 8,
+    "MANA": 1000
+   },
+   "shares": {
+    "HP": 0.22,
+    "HSP": 0.19,
+    "MANA": 0.59
+   },
+   "statGold": 2374,
+   "tags": [
+    "heal-shield",
+    "mana"
+   ],
+   "uniquePassives": [
+    "和谐",
+    "和音"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3001,
+   "name": "薄暮法袍",
+   "priceTotal": 2300,
+   "stats": {
+    "HP": 200,
+    "ARMOR": 30,
+    "MR": 30,
+    "HASTE": 20
+   },
+   "shares": {
+    "HP": 0.24,
+    "ARMOR": 0.27,
+    "MR": 0.24,
+    "HASTE": 0.24
+   },
+   "statGold": 2214,
+   "tags": [
+    "cc"
+   ],
+   "uniquePassives": [
+    "闪芒："
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3023,
+    1033
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3002,
+   "name": "引路者",
+   "priceTotal": 2400,
+   "stats": {
+    "HP": 250,
+    "ARMOR": 40,
+    "MS": 4
+   },
+   "shares": {
+    "HP": 0.44,
+    "ARMOR": 0.53,
+    "MS": 0.03
+   },
+   "statGold": 1516,
+   "tags": [
+    "cc"
+   ],
+   "uniquePassives": [
+    "引路"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3066,
+    1031
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3003,
+   "name": "大天使之杖",
+   "priceTotal": 2900,
+   "stats": {
+    "AP": 70,
+    "MANA": 600,
+    "HASTE": 25
+   },
+   "shares": {
+    "AP": 0.48,
+    "MANA": 0.29,
+    "HASTE": 0.23
+   },
+   "statGold": 2915,
+   "tags": [
+    "stacks",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "法力流"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3070,
+    3802,
+    3108
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3004,
+   "name": "魔宗",
+   "priceTotal": 2900,
+   "stats": {
+    "AD": 35,
+    "MANA": 500,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.53,
+    "MANA": 0.3,
+    "HASTE": 0.17
+   },
+   "statGold": 2330,
+   "tags": [
+    "auto-attack",
+    "stacks",
+    "on-hit",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "法力流"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3070,
+    3133,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3006,
+   "name": "狂战士胫甲",
+   "priceTotal": 1100,
+   "stats": {
+    "AS": 30,
+    "MS": 45
+   },
+   "shares": {
+    "AS": 0.58,
+    "MS": 0.42
+   },
+   "statGold": 1290,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": true,
+   "completed": false,
+   "from": [
+    1001,
+    1042,
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3008,
+   "name": "暴食胫甲",
+   "priceTotal": 1000,
+   "stats": {
+    "MS": 45,
+    "OMNIVAMP": 4
+   },
+   "shares": {
+    "MS": 0.77,
+    "OMNIVAMP": 0.23
+   },
+   "statGold": 700,
+   "tags": [],
+   "uniquePassives": [
+    "杀戮"
+   ],
+   "boots": true,
+   "completed": false,
+   "from": [
+    1001
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3009,
+   "name": "轻灵之靴",
+   "priceTotal": 1000,
+   "stats": {
+    "MS": 55
+   },
+   "shares": {
+    "MS": 1
+   },
+   "statGold": 660,
+   "tags": [
+    "cc"
+   ],
+   "uniquePassives": [
+    "迅捷步"
+   ],
+   "boots": true,
+   "completed": false,
+   "from": [
+    1001
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3010,
+   "name": "共生鞋鱼",
+   "priceTotal": 900,
+   "stats": {
+    "MS": 40
+   },
+   "shares": {
+    "MS": 1
+   },
+   "statGold": 480,
+   "tags": [],
+   "uniquePassives": [
+    "灵犀",
+    "共生"
+   ],
+   "boots": true,
+   "completed": false,
+   "from": [
+    1001
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3011,
+   "name": "炼金科技纯化器",
+   "priceTotal": 1900,
+   "stats": {
+    "AP": 35,
+    "HSP": 10,
+    "HASTE": 15
+   },
+   "shares": {
+    "AP": 0.42,
+    "HSP": 0.33,
+    "HASTE": 0.24
+   },
+   "statGold": 1655,
+   "tags": [
+    "anti-heal",
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "芙顶之毒："
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    3916,
+    3114
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3012,
+   "name": "祝福圣杯",
+   "priceTotal": 900,
+   "stats": {
+    "HP": 200
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 534,
+   "tags": [],
+   "uniquePassives": [
+    "和谐："
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028,
+    1004
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3013,
+   "name": "灵犀众魂",
+   "priceTotal": 900,
+   "stats": {
+    "MS": 45
+   },
+   "shares": {
+    "MS": 1
+   },
+   "statGold": 540,
+   "tags": [],
+   "uniquePassives": [
+    "虚空生物",
+    "灵犀"
+   ],
+   "boots": true,
+   "completed": false,
+   "from": [
+    3010
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3020,
+   "name": "法师之靴",
+   "priceTotal": 1100,
+   "stats": {
+    "MAGIC_PEN": 12,
+    "MS": 45
+   },
+   "shares": {
+    "MAGIC_PEN": 0.42,
+    "MS": 0.58
+   },
+   "statGold": 924,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": true,
+   "completed": false,
+   "from": [
+    1001
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3023,
+   "name": "生命水井坠饰",
+   "priceTotal": 1050,
+   "stats": {
+    "HP": 150,
+    "ARMOR": 25,
+    "HASTE": 5
+   },
+   "shares": {
+    "HP": 0.39,
+    "ARMOR": 0.48,
+    "HASTE": 0.13
+   },
+   "statGold": 1036,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028,
+    1029
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3024,
+   "name": "冰川圆盾",
+   "priceTotal": 900,
+   "stats": {
+    "ARMOR": 25,
+    "MANA": 300,
+    "HASTE": 10
+   },
+   "shares": {
+    "ARMOR": 0.42,
+    "MANA": 0.35,
+    "HASTE": 0.23
+   },
+   "statGold": 1190,
+   "tags": [
+    "mana"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1029,
+    1027,
+    2022
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3026,
+   "name": "守护天使",
+   "priceTotal": 3200,
+   "stats": {
+    "AD": 55,
+    "ARMOR": 45
+   },
+   "shares": {
+    "AD": 0.68,
+    "ARMOR": 0.32
+   },
+   "statGold": 2825,
+   "tags": [
+    "stasis"
+   ],
+   "uniquePassives": [
+    "重生"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2019,
+    1038
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3031,
+   "name": "无尽之刃",
+   "priceTotal": 3500,
+   "stats": {
+    "AD": 75,
+    "CRIT": 40
+   },
+   "shares": {
+    "AD": 0.62,
+    "CRIT": 0.38
+   },
+   "statGold": 4225,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1038,
+    1037,
+    1018
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3032,
+   "name": "育恩塔尔荒野箭",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 50,
+    "AS": 45
+   },
+   "shares": {
+    "AD": 0.61,
+    "AS": 0.39
+   },
+   "statGold": 2875,
+   "tags": [
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "熟能生巧",
+    "疾风骤雨"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1038,
+    3144,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3033,
+   "name": "凡性的提醒",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 35,
+    "ARMOR_PEN": 30,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.35,
+    "ARMOR_PEN": 0.36,
+    "CRIT": 0.29
+   },
+   "statGold": 3485,
+   "tags": [
+    "anti-heal",
+    "crit"
+   ],
+   "uniquePassives": [
+    "重伤"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3123,
+    3035,
+    1018
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3035,
+   "name": "最后的轻语",
+   "priceTotal": 1450,
+   "stats": {
+    "AD": 20,
+    "ARMOR_PEN": 18
+   },
+   "shares": {
+    "AD": 0.48,
+    "ARMOR_PEN": 0.52
+   },
+   "statGold": 1456,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3036,
+   "name": "多米尼克领主的致意",
+   "priceTotal": 3300,
+   "stats": {
+    "AD": 35,
+    "ARMOR_PEN": 35,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.33,
+    "ARMOR_PEN": 0.4,
+    "CRIT": 0.27
+   },
+   "statGold": 3695,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [
+    "巨人杀手"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3035,
+    6670
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3040,
+   "name": "炽天使之拥",
+   "priceTotal": 2900,
+   "stats": {
+    "AP": 70,
+    "MANA": 1000,
+    "HASTE": 25
+   },
+   "shares": {
+    "AP": 0.4,
+    "MANA": 0.4,
+    "HASTE": 0.19
+   },
+   "statGold": 3475,
+   "tags": [
+    "heal-shield",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "救主灵刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3041,
+   "name": "梅贾的窃魂卷",
+   "priceTotal": 1500,
+   "stats": {
+    "AP": 20,
+    "HP": 100
+   },
+   "shares": {
+    "AP": 0.6,
+    "HP": 0.4
+   },
+   "statGold": 667,
+   "tags": [
+    "stacks"
+   ],
+   "uniquePassives": [
+    "荣耀"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1082
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3042,
+   "name": "魔切",
+   "priceTotal": 2900,
+   "stats": {
+    "AD": 35,
+    "MANA": 1000,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.4,
+    "MANA": 0.46,
+    "HASTE": 0.13
+   },
+   "statGold": 3030,
+   "tags": [
+    "on-hit",
+    "ability",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "冲击"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3044,
+   "name": "净蚀",
+   "priceTotal": 1100,
+   "stats": {
+    "AD": 15,
+    "HP": 200
+   },
+   "shares": {
+    "AD": 0.5,
+    "HP": 0.5
+   },
+   "statGold": 1059,
+   "tags": [],
+   "uniquePassives": [
+    "狂怒"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3046,
+   "name": "幻影之舞",
+   "priceTotal": 2650,
+   "stats": {
+    "AS": 65,
+    "CRIT": 25,
+    "MS": 10
+   },
+   "shares": {
+    "AS": 0.59,
+    "CRIT": 0.36,
+    "MS": 0.04
+   },
+   "statGold": 2745,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [
+    "幽影华尔兹"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1042,
+    3086,
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3047,
+   "name": "铁板靴",
+   "priceTotal": 1200,
+   "stats": {
+    "ARMOR": 25,
+    "MS": 45
+   },
+   "shares": {
+    "ARMOR": 0.48,
+    "MS": 0.52
+   },
+   "statGold": 1040,
+   "tags": [],
+   "uniquePassives": [
+    "镀板"
+   ],
+   "boots": true,
+   "completed": false,
+   "from": [
+    1001,
+    1029
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3050,
+   "name": "基克的聚合",
+   "priceTotal": 2200,
+   "stats": {
+    "HP": 300,
+    "ARMOR": 25,
+    "MR": 25,
+    "HASTE": 10
+   },
+   "shares": {
+    "HP": 0.4,
+    "ARMOR": 0.25,
+    "MR": 0.22,
+    "HASTE": 0.13
+   },
+   "statGold": 2021,
+   "tags": [
+    "ultimate",
+    "cc"
+   ],
+   "uniquePassives": [
+    "霜火风暴"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    1029,
+    1033
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3051,
+   "name": "缚炉之斧",
+   "priceTotal": 1200,
+   "stats": {
+    "AD": 20,
+    "AS": 20
+   },
+   "shares": {
+    "AD": 0.58,
+    "AS": 0.42
+   },
+   "statGold": 1200,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036,
+    1042,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3053,
+   "name": "斯特拉克的挑战护手",
+   "priceTotal": 3200,
+   "stats": {
+    "HP": 400
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 1068,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "抓人双爪",
+    "救主灵刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1037,
+    2021,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3057,
+   "name": "耀光",
+   "priceTotal": 900,
+   "stats": {
+    "HASTE": 10
+   },
+   "shares": {
+    "HASTE": 1
+   },
+   "statGold": 270,
+   "tags": [
+    "on-hit",
+    "spellblade",
+    "ability"
+   ],
+   "uniquePassives": [
+    "咒刃"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    2022
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3065,
+   "name": "振奋盔甲",
+   "priceTotal": 2700,
+   "stats": {
+    "HP": 400,
+    "MR": 50,
+    "HASTE": 10
+   },
+   "shares": {
+    "HP": 0.48,
+    "MR": 0.4,
+    "HASTE": 0.12
+   },
+   "statGold": 2238,
+   "tags": [
+    "heal-shield",
+    "tank"
+   ],
+   "uniquePassives": [
+    "无拘活力"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3211,
+    3067
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3066,
+   "name": "带翼的月板甲",
+   "priceTotal": 800,
+   "stats": {
+    "HP": 200,
+    "MS": 4
+   },
+   "shares": {
+    "HP": 0.92,
+    "MS": 0.08
+   },
+   "statGold": 582,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3067,
+   "name": "燃烧宝石",
+   "priceTotal": 800,
+   "stats": {
+    "HP": 200,
+    "HASTE": 10
+   },
+   "shares": {
+    "HP": 0.66,
+    "HASTE": 0.34
+   },
+   "statGold": 804,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028,
+    2022
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3068,
+   "name": "日炎圣盾",
+   "priceTotal": 2800,
+   "stats": {
+    "HP": 350,
+    "ARMOR": 50,
+    "HASTE": 10
+   },
+   "shares": {
+    "HP": 0.42,
+    "ARMOR": 0.45,
+    "HASTE": 0.12
+   },
+   "statGold": 2205,
+   "tags": [
+    "burn",
+    "tank"
+   ],
+   "uniquePassives": [
+    "献祭"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    6660,
+    1031,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3070,
+   "name": "女神之泪",
+   "priceTotal": 400,
+   "stats": {
+    "MANA": 240
+   },
+   "shares": {
+    "MANA": 1
+   },
+   "statGold": 336,
+   "tags": [
+    "stacks",
+    "mana"
+   ],
+   "uniquePassives": [
+    "法力流",
+    "帮助之手"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3071,
+   "name": "黑色切割者",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 45,
+    "HP": 400,
+    "HASTE": 20
+   },
+   "shares": {
+    "AD": 0.49,
+    "HP": 0.34,
+    "HASTE": 0.17
+   },
+   "statGold": 3183,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [
+    "切割",
+    "热烈"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3044,
+    3067,
+    1037
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3072,
+   "name": "饮血剑",
+   "priceTotal": 3400,
+   "stats": {
+    "AD": 80,
+    "LIFESTEAL": 15
+   },
+   "shares": {
+    "AD": 0.83,
+    "LIFESTEAL": 0.17
+   },
+   "statGold": 3363,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "灵液护盾"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1038,
+    1037,
+    1053
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3073,
+   "name": "海克斯注力刚壁",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 40,
+    "AS": 20,
+    "HP": 450
+   },
+   "shares": {
+    "AD": 0.45,
+    "AS": 0.16,
+    "HP": 0.39
+   },
+   "statGold": 3102,
+   "tags": [
+    "ultimate"
+   ],
+   "uniquePassives": [
+    "海克斯充能",
+    "过载"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2021,
+    1042,
+    3044
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3074,
+   "name": "贪欲九头蛇",
+   "priceTotal": 3300,
+   "stats": {
+    "AD": 65,
+    "HASTE": 15,
+    "LIFESTEAL": 12
+   },
+   "shares": {
+    "AD": 0.73,
+    "HASTE": 0.13,
+    "LIFESTEAL": 0.14
+   },
+   "statGold": 3130,
+   "tags": [
+    "on-hit",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "顺劈"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3077,
+    1053,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3075,
+   "name": "荆棘之甲",
+   "priceTotal": 2450,
+   "stats": {
+    "HP": 150,
+    "ARMOR": 75
+   },
+   "shares": {
+    "HP": 0.21,
+    "ARMOR": 0.79
+   },
+   "statGold": 1901,
+   "tags": [
+    "anti-heal",
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "荆棘"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3076,
+    1031,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3076,
+   "name": "棘刺背心",
+   "priceTotal": 800,
+   "stats": {
+    "ARMOR": 30
+   },
+   "shares": {
+    "ARMOR": 1
+   },
+   "statGold": 600,
+   "tags": [
+    "anti-heal",
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "荆棘"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1029,
+    1029
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3077,
+   "name": "提亚马特",
+   "priceTotal": 1200,
+   "stats": {
+    "AD": 25
+   },
+   "shares": {
+    "AD": 1
+   },
+   "statGold": 875,
+   "tags": [
+    "on-hit",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "顺劈"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3078,
+   "name": "三相之力",
+   "priceTotal": 3333,
+   "stats": {
+    "AD": 36,
+    "AS": 30,
+    "HP": 333,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.38,
+    "AS": 0.23,
+    "HP": 0.27,
+    "HASTE": 0.12
+   },
+   "statGold": 3304,
+   "tags": [
+    "on-hit",
+    "spellblade",
+    "ability",
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "咒刃",
+    "加快"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3057,
+    3044,
+    3051
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3082,
+   "name": "守望者铠甲",
+   "priceTotal": 1000,
+   "stats": {
+    "ARMOR": 40
+   },
+   "shares": {
+    "ARMOR": 1
+   },
+   "statGold": 800,
+   "tags": [],
+   "uniquePassives": [
+    "坚如磐石"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1029,
+    1029
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3083,
+   "name": "狂徒铠甲",
+   "priceTotal": 3100,
+   "stats": {
+    "HP": 1000
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 2670,
+   "tags": [
+    "tank"
+   ],
+   "uniquePassives": [
+    "狂徒之心",
+    "狂徒之活力"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1011,
+    1011,
+    3801
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3084,
+   "name": "心之钢",
+   "priceTotal": 3000,
+   "stats": {
+    "HP": 900
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 2403,
+   "tags": [
+    "tank"
+   ],
+   "uniquePassives": [
+    "庞然吞食",
+    "歌利亚巨人"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1011,
+    3801,
+    1011
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3085,
+   "name": "卢安娜的飓风",
+   "priceTotal": 2650,
+   "stats": {
+    "AS": 40,
+    "CRIT": 25,
+    "MS": 5
+   },
+   "shares": {
+    "AS": 0.49,
+    "CRIT": 0.49,
+    "MS": 0.03
+   },
+   "statGold": 2060,
+   "tags": [
+    "on-hit",
+    "crit"
+   ],
+   "uniquePassives": [
+    "风怒"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3086,
+    3144
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3086,
+   "name": "狂热",
+   "priceTotal": 1200,
+   "stats": {
+    "AS": 15,
+    "CRIT": 15,
+    "MS": 4
+   },
+   "shares": {
+    "AS": 0.37,
+    "CRIT": 0.59,
+    "MS": 0.05
+   },
+   "statGold": 1023,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1018,
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3087,
+   "name": "斯塔缇克电刃",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 45,
+    "AP": 45,
+    "AS": 30,
+    "MS": 4
+   },
+   "shares": {
+    "AD": 0.48,
+    "AP": 0.27,
+    "AS": 0.23,
+    "MS": 0.01
+   },
+   "statGold": 3273,
+   "tags": [
+    "on-hit",
+    "stacks"
+   ],
+   "uniquePassives": [
+    "电火花",
+    "电疗"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3144,
+    3113,
+    1037
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3089,
+   "name": "灭世者的死亡之帽",
+   "priceTotal": 3500,
+   "stats": {
+    "AP": 130
+   },
+   "shares": {
+    "AP": 1
+   },
+   "statGold": 2600,
+   "tags": [],
+   "uniquePassives": [
+    "魔法乐章"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1058,
+    1058
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3091,
+   "name": "智慧末刃",
+   "priceTotal": 2800,
+   "stats": {
+    "AS": 50,
+    "MR": 45
+   },
+   "shares": {
+    "AS": 0.61,
+    "MR": 0.39
+   },
+   "statGold": 2060,
+   "tags": [
+    "on-hit",
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "喧争"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1043,
+    1057,
+    1043
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3094,
+   "name": "疾射火炮",
+   "priceTotal": 2650,
+   "stats": {
+    "AS": 35,
+    "CRIT": 25,
+    "MS": 4
+   },
+   "shares": {
+    "AS": 0.46,
+    "CRIT": 0.52,
+    "MS": 0.02
+   },
+   "statGold": 1923,
+   "tags": [
+    "auto-attack",
+    "crit"
+   ],
+   "uniquePassives": [
+    "神射手"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3086,
+    3144
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3095,
+   "name": "岚切",
+   "priceTotal": 3200,
+   "stats": {
+    "AD": 50,
+    "AS": 25,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.52,
+    "AS": 0.19,
+    "CRIT": 0.3
+   },
+   "statGold": 3375,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [
+    "盈能",
+    "弩箭"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1038,
+    1018,
+    3144
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3097,
+   "name": "岚切",
+   "priceTotal": 3200,
+   "stats": {
+    "AD": 50,
+    "AS": 20,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.54,
+    "AS": 0.15,
+    "CRIT": 0.31
+   },
+   "statGold": 3250,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [
+    "盈能",
+    "弩箭"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1038,
+    1018,
+    3144
+   ],
+   "source": "dtodo"
+  },
+  {
+   "id": 3100,
+   "name": "巫妖之祸",
+   "priceTotal": 2900,
+   "stats": {
+    "AP": 100,
+    "MS": 6,
+    "HASTE": 10
+   },
+   "shares": {
+    "AP": 0.85,
+    "MS": 0.03,
+    "HASTE": 0.12
+   },
+   "statGold": 2342,
+   "tags": [
+    "on-hit",
+    "spellblade",
+    "ability"
+   ],
+   "uniquePassives": [
+    "咒刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3057,
+    3113,
+    1026
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3102,
+   "name": "女妖面纱",
+   "priceTotal": 3000,
+   "stats": {
+    "AP": 105,
+    "MR": 40
+   },
+   "shares": {
+    "AP": 0.74,
+    "MR": 0.26
+   },
+   "statGold": 2820,
+   "tags": [
+    "heal-shield",
+    "stacks"
+   ],
+   "uniquePassives": [
+    "废除"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1058,
+    4632
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3107,
+   "name": "救赎",
+   "priceTotal": 2300,
+   "stats": {
+    "AP": 30,
+    "HASTE": 15,
+    "HSP": 10
+   },
+   "shares": {
+    "AP": 0.39,
+    "HASTE": 0.26,
+    "HSP": 0.35
+   },
+   "statGold": 1555,
+   "tags": [
+    "tank",
+    "true-damage",
+    "item-active",
+    "heal-shield"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3108,
+    3114
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3108,
+   "name": "恶魔法典",
+   "priceTotal": 850,
+   "stats": {
+    "AP": 25,
+    "HASTE": 10
+   },
+   "shares": {
+    "AP": 0.65,
+    "HASTE": 0.35
+   },
+   "statGold": 770,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052,
+    2022
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3109,
+   "name": "骑士之誓",
+   "priceTotal": 2300,
+   "stats": {
+    "HP": 200,
+    "ARMOR": 40,
+    "HASTE": 10
+   },
+   "shares": {
+    "HP": 0.33,
+    "ARMOR": 0.5,
+    "HASTE": 0.17
+   },
+   "statGold": 1604,
+   "tags": [
+    "heal-shield",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "牺牲"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    1031,
+    1006
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3110,
+   "name": "冰霜之心",
+   "priceTotal": 2500,
+   "stats": {
+    "ARMOR": 75,
+    "MANA": 400,
+    "HASTE": 20
+   },
+   "shares": {
+    "ARMOR": 0.58,
+    "MANA": 0.22,
+    "HASTE": 0.21
+   },
+   "statGold": 2600,
+   "tags": [
+    "mana"
+   ],
+   "uniquePassives": [
+    "凛冬之抚"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3082,
+    3024
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3111,
+   "name": "水银之靴",
+   "priceTotal": 1250,
+   "stats": {
+    "MR": 20,
+    "MS": 45
+   },
+   "shares": {
+    "MR": 0.4,
+    "MS": 0.6
+   },
+   "statGold": 900,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": true,
+   "completed": false,
+   "from": [
+    1001,
+    1033
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3112,
+   "name": "守护者法球",
+   "priceTotal": 950,
+   "stats": {
+    "AP": 50,
+    "HP": 150
+   },
+   "shares": {
+    "AP": 0.71,
+    "HP": 0.29
+   },
+   "statGold": 1401,
+   "tags": [],
+   "uniquePassives": [
+    "复原力："
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3113,
+   "name": "以太精魂",
+   "priceTotal": 900,
+   "stats": {
+    "AP": 30,
+    "MS": 4
+   },
+   "shares": {
+    "AP": 0.93,
+    "MS": 0.07
+   },
+   "statGold": 648,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3114,
+   "name": "禁忌雕像",
+   "priceTotal": 600,
+   "stats": {
+    "HSP": 8
+   },
+   "shares": {
+    "HSP": 1
+   },
+   "statGold": 440,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1004
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3115,
+   "name": "纳什之牙",
+   "priceTotal": 2900,
+   "stats": {
+    "AP": 80,
+    "AS": 50,
+    "HASTE": 15
+   },
+   "shares": {
+    "AP": 0.49,
+    "AS": 0.38,
+    "HASTE": 0.12
+   },
+   "statGold": 3255,
+   "tags": [
+    "on-hit",
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "艾卡西亚之咬"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1043,
+    1026,
+    3108
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3116,
+   "name": "瑞莱的冰晶节杖",
+   "priceTotal": 2600,
+   "stats": {
+    "AP": 65,
+    "HP": 400
+   },
+   "shares": {
+    "AP": 0.55,
+    "HP": 0.45
+   },
+   "statGold": 2368,
+   "tags": [
+    "ability",
+    "cc"
+   ],
+   "uniquePassives": [
+    "凝霜"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1026,
+    1011,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3117,
+   "name": "疾行之靴",
+   "priceTotal": 1000,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": true,
+   "completed": true,
+   "from": [
+    1001
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3118,
+   "name": "残疫",
+   "priceTotal": 2700,
+   "stats": {
+    "AP": 90,
+    "MANA": 600,
+    "HASTE": 15
+   },
+   "shares": {
+    "AP": 0.59,
+    "MANA": 0.28,
+    "HASTE": 0.13
+   },
+   "statGold": 3045,
+   "tags": [
+    "burn",
+    "ultimate",
+    "mana"
+   ],
+   "uniquePassives": [
+    "蔑视",
+    "憎恨之雾"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3802,
+    1026
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3119,
+   "name": "凛冬之临",
+   "priceTotal": 2400,
+   "stats": {
+    "HP": 550,
+    "MANA": 500,
+    "HASTE": 15
+   },
+   "shares": {
+    "HP": 0.57,
+    "MANA": 0.27,
+    "HASTE": 0.16
+   },
+   "statGold": 2574,
+   "tags": [
+    "auto-attack",
+    "stacks",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "法力流"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3070,
+    1011,
+    3067
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3121,
+   "name": "末日寒冬",
+   "priceTotal": 2400,
+   "stats": {
+    "HP": 550,
+    "MANA": 1000,
+    "HASTE": 15
+   },
+   "shares": {
+    "HP": 0.45,
+    "MANA": 0.43,
+    "HASTE": 0.12
+   },
+   "statGold": 3274,
+   "tags": [
+    "heal-shield",
+    "cc",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "永续"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3123,
+   "name": "死刑宣告",
+   "priceTotal": 800,
+   "stats": {
+    "AD": 15
+   },
+   "shares": {
+    "AD": 1
+   },
+   "statGold": 525,
+   "tags": [
+    "anti-heal"
+   ],
+   "uniquePassives": [
+    "重伤"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3124,
+   "name": "鬼索的狂暴之刃",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 30,
+    "AP": 30,
+    "AS": 25
+   },
+   "shares": {
+    "AD": 0.46,
+    "AP": 0.26,
+    "AS": 0.27
+   },
+   "statGold": 2275,
+   "tags": [
+    "on-hit",
+    "auto-attack",
+    "stacks"
+   ],
+   "uniquePassives": [
+    "怨怒",
+    "沸腾打击"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1052,
+    1043,
+    1037
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3133,
+   "name": "考尔菲德的战锤",
+   "priceTotal": 1050,
+   "stats": {
+    "AD": 20,
+    "HASTE": 10
+   },
+   "shares": {
+    "AD": 0.72,
+    "HASTE": 0.28
+   },
+   "statGold": 970,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036,
+    2022,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3134,
+   "name": "锯齿短匕",
+   "priceTotal": 1000,
+   "stats": {
+    "AD": 20,
+    "LETHALITY": 10
+   },
+   "shares": {
+    "AD": 0.7,
+    "LETHALITY": 0.3
+   },
+   "statGold": 1000,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3135,
+   "name": "虚空之杖",
+   "priceTotal": 3000,
+   "stats": {
+    "AP": 95,
+    "MAGIC_PEN": 40
+   },
+   "shares": {
+    "AP": 0.6,
+    "MAGIC_PEN": 0.4
+   },
+   "statGold": 3180,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    4630,
+    1026
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3137,
+   "name": "蜕生",
+   "priceTotal": 3000,
+   "stats": {
+    "AP": 75,
+    "MAGIC_PEN": 30,
+    "HASTE": 20
+   },
+   "shares": {
+    "AP": 0.5,
+    "MAGIC_PEN": 0.32,
+    "HASTE": 0.18
+   },
+   "statGold": 3000,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "死中焕生"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    4630,
+    3108,
+    3108
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3139,
+   "name": "水银弯刀",
+   "priceTotal": 3200,
+   "stats": {
+    "AD": 50,
+    "MR": 35,
+    "LIFESTEAL": 10
+   },
+   "shares": {
+    "AD": 0.64,
+    "MR": 0.23,
+    "LIFESTEAL": 0.14
+   },
+   "statGold": 2755,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3140,
+    1037,
+    1053
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3140,
+   "name": "水银饰带",
+   "priceTotal": 1300,
+   "stats": {
+    "MR": 30
+   },
+   "shares": {
+    "MR": 1
+   },
+   "statGold": 540,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1033
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3142,
+   "name": "幽梦之灵",
+   "priceTotal": 2800,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 18,
+    "MS": 4
+   },
+   "shares": {
+    "AD": 0.77,
+    "LETHALITY": 0.21,
+    "MS": 0.02
+   },
+   "statGold": 2513,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [
+    "鬼影萦绕"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3134,
+    6690,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3143,
+   "name": "兰顿之兆",
+   "priceTotal": 2700,
+   "stats": {
+    "HP": 350,
+    "ARMOR": 75
+   },
+   "shares": {
+    "HP": 0.38,
+    "ARMOR": 0.62
+   },
+   "statGold": 2435,
+   "tags": [
+    "cc",
+    "item-active",
+    "tank"
+   ],
+   "uniquePassives": [
+    "复原力"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3082,
+    1011
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3144,
+   "name": "斥候弹弓",
+   "priceTotal": 600,
+   "stats": {
+    "AS": 20
+   },
+   "shares": {
+    "AS": 1
+   },
+   "statGold": 500,
+   "tags": [],
+   "uniquePassives": [
+    "靶心"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1042,
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3145,
+   "name": "海克斯科技发电机",
+   "priceTotal": 1100,
+   "stats": {
+    "AP": 45
+   },
+   "shares": {
+    "AP": 1
+   },
+   "statGold": 900,
+   "tags": [],
+   "uniquePassives": [
+    "转速加快"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3146,
+   "name": "海克斯科技枪刃",
+   "priceTotal": 3000,
+   "stats": {
+    "AP": 80,
+    "AD": 40,
+    "OMNIVAMP": 10
+   },
+   "shares": {
+    "AP": 0.47,
+    "AD": 0.41,
+    "OMNIVAMP": 0.12
+   },
+   "statGold": 3400,
+   "tags": [
+    "cc",
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1053,
+    3145,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3147,
+   "name": "幽魂面具",
+   "priceTotal": 1300,
+   "stats": {
+    "AP": 30,
+    "HP": 200
+   },
+   "shares": {
+    "AP": 0.53,
+    "HP": 0.47
+   },
+   "statGold": 1134,
+   "tags": [],
+   "uniquePassives": [
+    "癫狂"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3152,
+   "name": "海克斯科技火箭腰带",
+   "priceTotal": 2650,
+   "stats": {
+    "AP": 60,
+    "HP": 350,
+    "HASTE": 10
+   },
+   "shares": {
+    "AP": 0.5,
+    "HP": 0.39,
+    "HASTE": 0.11
+   },
+   "statGold": 2405,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3145,
+    3067,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3153,
+   "name": "破败王者之刃",
+   "priceTotal": 3200,
+   "stats": {
+    "AD": 40,
+    "AS": 25,
+    "LIFESTEAL": 10
+   },
+   "shares": {
+    "AD": 0.58,
+    "AS": 0.26,
+    "LIFESTEAL": 0.16
+   },
+   "statGold": 2400,
+   "tags": [
+    "on-hit",
+    "auto-attack",
+    "max-hp-damage",
+    "cc"
+   ],
+   "uniquePassives": [
+    "雾之锋",
+    "抓挠之影"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1053,
+    1043,
+    1037
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3155,
+   "name": "海克斯饮魔刀",
+   "priceTotal": 1300,
+   "stats": {
+    "AD": 25,
+    "MR": 25
+   },
+   "shares": {
+    "AD": 0.66,
+    "MR": 0.34
+   },
+   "statGold": 1325,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "救主灵刃"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036,
+    1033,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3156,
+   "name": "玛莫提乌斯之噬",
+   "priceTotal": 3100,
+   "stats": {
+    "AD": 60,
+    "HASTE": 15,
+    "MR": 40
+   },
+   "shares": {
+    "AD": 0.65,
+    "HASTE": 0.13,
+    "MR": 0.22
+   },
+   "statGold": 3225,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "救主灵刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3155,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3157,
+   "name": "中娅沙漏",
+   "priceTotal": 3250,
+   "stats": {
+    "AP": 105,
+    "ARMOR": 50
+   },
+   "shares": {
+    "AP": 0.68,
+    "ARMOR": 0.32
+   },
+   "statGold": 3100,
+   "tags": [
+    "stasis",
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1058,
+    2420
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3158,
+   "name": "明朗之靴",
+   "priceTotal": 900,
+   "stats": {
+    "HASTE": 10,
+    "MS": 45
+   },
+   "shares": {
+    "HASTE": 0.33,
+    "MS": 0.67
+   },
+   "statGold": 810,
+   "tags": [],
+   "uniquePassives": [
+    "艾欧尼亚的洞悉"
+   ],
+   "boots": true,
+   "completed": false,
+   "from": [
+    1001,
+    2022
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3161,
+   "name": "朔极之矛",
+   "priceTotal": 3100,
+   "stats": {
+    "AD": 45,
+    "HP": 450
+   },
+   "shares": {
+    "AD": 0.57,
+    "HP": 0.43
+   },
+   "statGold": 2777,
+   "tags": [
+    "ability"
+   ],
+   "uniquePassives": [
+    "龙之力量",
+    "专注意志"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1037,
+    2021,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3165,
+   "name": "莫雷洛秘典",
+   "priceTotal": 2850,
+   "stats": {
+    "AP": 75,
+    "HP": 350,
+    "HASTE": 15
+   },
+   "shares": {
+    "AP": 0.53,
+    "HP": 0.33,
+    "HASTE": 0.14
+   },
+   "statGold": 2840,
+   "tags": [
+    "anti-heal"
+   ],
+   "uniquePassives": [
+    "重伤"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3916,
+    1026,
+    3067
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3168,
+   "name": "不朽之路",
+   "priceTotal": 1000,
+   "stats": {
+    "MS": 45,
+    "OMNIVAMP": 4
+   },
+   "shares": {
+    "MS": 0.77,
+    "OMNIVAMP": 0.23
+   },
+   "statGold": 700,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "杀戮",
+    "现在到永远"
+   ],
+   "boots": true,
+   "completed": true,
+   "from": [
+    3008
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3170,
+   "name": "迅速进军",
+   "priceTotal": 1000,
+   "stats": {
+    "MS": 65
+   },
+   "shares": {
+    "MS": 1
+   },
+   "statGold": 780,
+   "tags": [
+    "cc"
+   ],
+   "uniquePassives": [
+    "迅捷步",
+    "诺克萨斯的狂热"
+   ],
+   "boots": true,
+   "completed": true,
+   "from": [
+    3009
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3171,
+   "name": "猩红明朗",
+   "priceTotal": 900,
+   "stats": {
+    "HASTE": 20,
+    "MS": 45
+   },
+   "shares": {
+    "HASTE": 0.5,
+    "MS": 0.5
+   },
+   "statGold": 1080,
+   "tags": [
+    "ability"
+   ],
+   "uniquePassives": [
+    "艾欧尼亚的洞悉",
+    "诺克萨斯的急速"
+   ],
+   "boots": true,
+   "completed": true,
+   "from": [
+    3158
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3172,
+   "name": "炮铜胫甲",
+   "priceTotal": 1100,
+   "stats": {
+    "AS": 45,
+    "MS": 45,
+    "LIFESTEAL": 5
+   },
+   "shares": {
+    "AS": 0.61,
+    "MS": 0.29,
+    "LIFESTEAL": 0.1
+   },
+   "statGold": 1853,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    3006
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3173,
+   "name": "带链碾碎者",
+   "priceTotal": 1250,
+   "stats": {
+    "MR": 25,
+    "MS": 45
+   },
+   "shares": {
+    "MR": 0.45,
+    "MS": 0.55
+   },
+   "statGold": 990,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "诺克萨斯的不懈"
+   ],
+   "boots": true,
+   "completed": true,
+   "from": [
+    3111
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3174,
+   "name": "装甲战靴",
+   "priceTotal": 1200,
+   "stats": {
+    "ARMOR": 35,
+    "MS": 45
+   },
+   "shares": {
+    "ARMOR": 0.56,
+    "MS": 0.44
+   },
+   "statGold": 1240,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "镀板",
+    "诺克萨斯的耐久"
+   ],
+   "boots": true,
+   "completed": true,
+   "from": [
+    3047
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3175,
+   "name": "灵能使之靴",
+   "priceTotal": 1100,
+   "stats": {
+    "MAGIC_PEN": 28,
+    "MS": 45
+   },
+   "shares": {
+    "MAGIC_PEN": 0.62,
+    "MS": 0.38
+   },
+   "statGold": 1436,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": true,
+   "completed": true,
+   "from": [
+    3020
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3176,
+   "name": "永远前进",
+   "priceTotal": 900,
+   "stats": {
+    "MS": 55
+   },
+   "shares": {
+    "MS": 1
+   },
+   "statGold": 660,
+   "tags": [],
+   "uniquePassives": [
+    "无所不在",
+    "虚空生物",
+    "诺克萨斯的同步"
+   ],
+   "boots": true,
+   "completed": true,
+   "from": [
+    3013
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3177,
+   "name": "守护者之刃",
+   "priceTotal": 950,
+   "stats": {
+    "AD": 30,
+    "HP": 150,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.57,
+    "HP": 0.22,
+    "HASTE": 0.22
+   },
+   "statGold": 1856,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3179,
+   "name": "黯影阔剑",
+   "priceTotal": 2800,
+   "stats": {
+    "AD": 60,
+    "LETHALITY": 18,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.69,
+    "LETHALITY": 0.18,
+    "HASTE": 0.13
+   },
+   "statGold": 3045,
+   "tags": [
+    "auto-attack",
+    "true-damage"
+   ],
+   "uniquePassives": [
+    "夜行者",
+    "封锁"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3134,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3181,
+   "name": "破舰者",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 40,
+    "HP": 500,
+    "MS": 4
+   },
+   "shares": {
+    "AD": 0.5,
+    "HP": 0.48,
+    "MS": 0.02
+   },
+   "statGold": 2783,
+   "tags": [
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "船长",
+    "登舰小组"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2021,
+    3066,
+    1037
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3184,
+   "name": "守护者战锤",
+   "priceTotal": 950,
+   "stats": {
+    "AD": 25,
+    "HP": 150,
+    "LIFESTEAL": 5
+   },
+   "shares": {
+    "AD": 0.6,
+    "HP": 0.27,
+    "LIFESTEAL": 0.13
+   },
+   "statGold": 1463,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3190,
+   "name": "钢铁烈阳之匣",
+   "priceTotal": 2200,
+   "stats": {
+    "HP": 200,
+    "ARMOR": 30,
+    "MR": 30,
+    "HASTE": 10
+   },
+   "shares": {
+    "HP": 0.27,
+    "ARMOR": 0.31,
+    "MR": 0.28,
+    "HASTE": 0.14
+   },
+   "statGold": 1944,
+   "tags": [
+    "heal-shield",
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    1029,
+    1033
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3193,
+   "name": "石像鬼石板甲",
+   "priceTotal": 3150,
+   "stats": {
+    "ARMOR": 60,
+    "MR": 60,
+    "HASTE": 15
+   },
+   "shares": {
+    "ARMOR": 0.45,
+    "MR": 0.4,
+    "HASTE": 0.15
+   },
+   "statGold": 2685,
+   "tags": [
+    "heal-shield",
+    "stacks",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "巩固："
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1029,
+    3105,
+    1033
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3211,
+   "name": "幽魂斗篷",
+   "priceTotal": 1250,
+   "stats": {
+    "HP": 200,
+    "MR": 35
+   },
+   "shares": {
+    "HP": 0.46,
+    "MR": 0.54
+   },
+   "statGold": 1164,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028,
+    1033,
+    1006
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3222,
+   "name": "米凯尔的祝福",
+   "priceTotal": 2300,
+   "stats": {
+    "HP": 250,
+    "HSP": 12,
+    "HASTE": 15
+   },
+   "shares": {
+    "HP": 0.39,
+    "HSP": 0.38,
+    "HASTE": 0.23
+   },
+   "statGold": 1733,
+   "tags": [
+    "item-active",
+    "heal-shield"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    3114
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3302,
+   "name": "界弓",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 30,
+    "AS": 35
+   },
+   "shares": {
+    "AD": 0.55,
+    "AS": 0.45
+   },
+   "statGold": 1925,
+   "tags": [
+    "on-hit",
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "晦影",
+    "交相"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3051,
+    1043
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3504,
+   "name": "炽热香炉",
+   "priceTotal": 2200,
+   "stats": {
+    "AP": 45,
+    "HSP": 10,
+    "MS": 4
+   },
+   "shares": {
+    "AP": 0.6,
+    "HSP": 0.37,
+    "MS": 0.03
+   },
+   "statGold": 1498,
+   "tags": [
+    "on-hit",
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "圣洁化"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3113,
+    3114
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3508,
+   "name": "夺萃之镰",
+   "priceTotal": 3050,
+   "stats": {
+    "AD": 50,
+    "HASTE": 20,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.53,
+    "HASTE": 0.16,
+    "CRIT": 0.3
+   },
+   "statGold": 3290,
+   "tags": [
+    "on-hit",
+    "spellblade",
+    "ability",
+    "crit"
+   ],
+   "uniquePassives": [
+    "咒刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3057,
+    3133,
+    1018
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3742,
+   "name": "亡者的板甲",
+   "priceTotal": 2900,
+   "stats": {
+    "HP": 350,
+    "ARMOR": 55,
+    "MS": 4
+   },
+   "shares": {
+    "HP": 0.45,
+    "ARMOR": 0.53,
+    "MS": 0.02
+   },
+   "statGold": 2083,
+   "tags": [
+    "cc",
+    "tank"
+   ],
+   "uniquePassives": [
+    "沉船者",
+    "永不沉没"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3066,
+    1028,
+    1031
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3748,
+   "name": "巨型九头蛇",
+   "priceTotal": 3300,
+   "stats": {
+    "AD": 40,
+    "HP": 600
+   },
+   "shares": {
+    "AD": 0.47,
+    "HP": 0.53
+   },
+   "statGold": 3002,
+   "tags": [
+    "on-hit",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "顺劈"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3077,
+    2021,
+    1011
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3801,
+   "name": "晶体护腕",
+   "priceTotal": 800,
+   "stats": {
+    "HP": 200
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 534,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028,
+    1006
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3802,
+   "name": "遗失的章节",
+   "priceTotal": 1200,
+   "stats": {
+    "AP": 40,
+    "MANA": 300,
+    "HASTE": 10
+   },
+   "shares": {
+    "AP": 0.54,
+    "MANA": 0.28,
+    "HASTE": 0.18
+   },
+   "statGold": 1490,
+   "tags": [
+    "mana"
+   ],
+   "uniquePassives": [
+    "启蒙"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052,
+    1027,
+    2022
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3803,
+   "name": "万世催化石",
+   "priceTotal": 1300,
+   "stats": {
+    "HP": 300,
+    "MANA": 375
+   },
+   "shares": {
+    "HP": 0.6,
+    "MANA": 0.4
+   },
+   "statGold": 1326,
+   "tags": [
+    "heal-shield",
+    "mana"
+   ],
+   "uniquePassives": [
+    "永恒"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028,
+    1028,
+    1027
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3814,
+   "name": "夜之锋刃",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 50,
+    "LETHALITY": 15,
+    "HP": 250
+   },
+   "shares": {
+    "AD": 0.61,
+    "LETHALITY": 0.16,
+    "HP": 0.23
+   },
+   "statGold": 2868,
+   "tags": [
+    "heal-shield",
+    "stacks"
+   ],
+   "uniquePassives": [
+    "废除"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3134,
+    2021
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3865,
+   "name": "云游图鉴",
+   "priceTotal": 400,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3866,
+   "name": "符文罗盘",
+   "priceTotal": 400,
+   "stats": {
+    "HP": 60
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 160,
+   "tags": [
+    "stacks",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "辅助任务",
+    "分享财富"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3867,
+   "name": "异世珍藏",
+   "priceTotal": 400,
+   "stats": {
+    "HP": 200
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 534,
+   "tags": [
+    "stacks",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "升级："
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 3869,
+   "name": "星界据守",
+   "priceTotal": 400,
+   "stats": {
+    "HP": 200
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 534,
+   "tags": [
+    "stacks",
+    "cc",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "神峰庇佑"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    3867
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3870,
+   "name": "圆梦使者",
+   "priceTotal": 400,
+   "stats": {
+    "HP": 200
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 534,
+   "tags": [
+    "on-hit",
+    "heal-shield",
+    "auto-attack",
+    "stacks",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "圆梦使者"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    3867
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3871,
+   "name": "扎兹沙克的溃口",
+   "priceTotal": 400,
+   "stats": {
+    "HP": 200
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 534,
+   "tags": [
+    "ability",
+    "stacks",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "虚空扩爆"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    3867
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3876,
+   "name": "摩天雪橇",
+   "priceTotal": 400,
+   "stats": {
+    "HP": 200
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 534,
+   "tags": [
+    "stacks",
+    "cc",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "雪橇出击"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    3867
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3877,
+   "name": "血鸣",
+   "priceTotal": 400,
+   "stats": {
+    "HP": 200
+   },
+   "shares": {
+    "HP": 1
+   },
+   "statGold": 534,
+   "tags": [
+    "on-hit",
+    "spellblade",
+    "ability",
+    "stacks",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "咒刃"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    3867
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 3916,
+   "name": "湮灭宝珠",
+   "priceTotal": 800,
+   "stats": {
+    "AP": 25
+   },
+   "shares": {
+    "AP": 1
+   },
+   "statGold": 500,
+   "tags": [
+    "anti-heal"
+   ],
+   "uniquePassives": [
+    "重伤"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4003,
+   "name": "救生索",
+   "priceTotal": 1600,
+   "stats": {
+    "AD": 25,
+    "LETHALITY": 5,
+    "MS": 4
+   },
+   "shares": {
+    "AD": 0.82,
+    "LETHALITY": 0.14,
+    "MS": 0.04
+   },
+   "statGold": 1073,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    6690,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4004,
+   "name": "幽魂弯刀",
+   "priceTotal": 2800,
+   "stats": {
+    "AD": 50,
+    "LETHALITY": 15,
+    "MS": 4
+   },
+   "shares": {
+    "AD": 0.78,
+    "LETHALITY": 0.2,
+    "MS": 0.02
+   },
+   "statGold": 2248,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    4003,
+    3134
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4005,
+   "name": "帝国指令",
+   "priceTotal": 2400,
+   "stats": {
+    "AP": 60,
+    "HASTE": 15
+   },
+   "shares": {
+    "AP": 0.75,
+    "HASTE": 0.25
+   },
+   "statGold": 1605,
+   "tags": [
+    "cc"
+   ],
+   "uniquePassives": [
+    "控制",
+    "命令"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1052,
+    4642,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4401,
+   "name": "自然之力",
+   "priceTotal": 2800,
+   "stats": {
+    "HP": 400,
+    "MR": 55,
+    "MS": 4
+   },
+   "shares": {
+    "HP": 0.51,
+    "MR": 0.47,
+    "MS": 0.02
+   },
+   "statGold": 2106,
+   "tags": [
+    "tank"
+   ],
+   "uniquePassives": [
+    "坚定"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1057,
+    1028,
+    3066
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4628,
+   "name": "视界专注",
+   "priceTotal": 2700,
+   "stats": {
+    "AP": 75,
+    "HASTE": 25
+   },
+   "shares": {
+    "AP": 0.69,
+    "HASTE": 0.31
+   },
+   "statGold": 2175,
+   "tags": [
+    "ability"
+   ],
+   "uniquePassives": [
+    "高能射击",
+    "专注"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3108,
+    3108,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4629,
+   "name": "星界驱驰",
+   "priceTotal": 3000,
+   "stats": {
+    "AP": 70,
+    "HP": 350,
+    "HASTE": 25,
+    "MS": 4
+   },
+   "shares": {
+    "AP": 0.46,
+    "HP": 0.31,
+    "HASTE": 0.22,
+    "MS": 0.02
+   },
+   "statGold": 3058,
+   "tags": [
+    "true-damage"
+   ],
+   "uniquePassives": [
+    "咒舞"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    3113,
+    3108
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4630,
+   "name": "枯萎珠宝",
+   "priceTotal": 1100,
+   "stats": {
+    "AP": 25,
+    "MAGIC_PEN": 13
+   },
+   "shares": {
+    "AP": 0.55,
+    "MAGIC_PEN": 0.45
+   },
+   "statGold": 916,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4632,
+   "name": "翠绿屏障",
+   "priceTotal": 1600,
+   "stats": {
+    "AP": 40,
+    "MR": 25
+   },
+   "shares": {
+    "AP": 0.64,
+    "MR": 0.36
+   },
+   "statGold": 1250,
+   "tags": [
+    "heal-shield",
+    "stacks"
+   ],
+   "uniquePassives": [
+    "废除"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1052,
+    1033,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4633,
+   "name": "裂隙制造者",
+   "priceTotal": 3100,
+   "stats": {
+    "AP": 70,
+    "HP": 350,
+    "HASTE": 15
+   },
+   "shares": {
+    "AP": 0.51,
+    "HP": 0.34,
+    "HASTE": 0.15
+   },
+   "statGold": 2740,
+   "tags": [
+    "tank"
+   ],
+   "uniquePassives": [
+    "虚空腐蚀",
+    "虚空灌注"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3147,
+    3108
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4636,
+   "name": "暗夜收割者",
+   "priceTotal": 2765,
+   "stats": {
+    "AP": 90,
+    "HP": 300,
+    "HASTE": 25
+   },
+   "shares": {
+    "AP": 0.55,
+    "HP": 0.24,
+    "HASTE": 0.21
+   },
+   "statGold": 3276,
+   "tags": [],
+   "uniquePassives": [
+    "灵魂撕裂："
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3145,
+    3108
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4637,
+   "name": "恶魔之拥",
+   "priceTotal": 3000,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1026,
+    1011,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4642,
+   "name": "班德尔玻璃镜",
+   "priceTotal": 900,
+   "stats": {
+    "AP": 20,
+    "HASTE": 10
+   },
+   "shares": {
+    "AP": 0.6,
+    "HASTE": 0.4
+   },
+   "statGold": 670,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1004,
+    1052,
+    2022
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4644,
+   "name": "破碎王后之冕",
+   "priceTotal": 2865,
+   "stats": {
+    "AP": 85,
+    "HP": 250,
+    "MANA": 600,
+    "HASTE": 20
+   },
+   "shares": {
+    "AP": 0.45,
+    "HP": 0.18,
+    "MANA": 0.22,
+    "HASTE": 0.14
+   },
+   "statGold": 3748,
+   "tags": [
+    "mana"
+   ],
+   "uniquePassives": [
+    "护卫："
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    3802,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4645,
+   "name": "影焰",
+   "priceTotal": 3200,
+   "stats": {
+    "AP": 110,
+    "MAGIC_PEN": 15
+   },
+   "shares": {
+    "AP": 0.82,
+    "MAGIC_PEN": 0.18
+   },
+   "statGold": 2680,
+   "tags": [
+    "true-damage"
+   ],
+   "uniquePassives": [
+    "余烬绽放"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3145,
+    1058
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 4646,
+   "name": "风暴狂涌",
+   "priceTotal": 2800,
+   "stats": {
+    "AP": 90,
+    "MAGIC_PEN": 15,
+    "MS": 6
+   },
+   "shares": {
+    "AP": 0.77,
+    "MAGIC_PEN": 0.2,
+    "MS": 0.03
+   },
+   "statGold": 2352,
+   "tags": [
+    "tank"
+   ],
+   "uniquePassives": [
+    "风暴掠袭",
+    "风啸"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3145,
+    3113
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6029,
+   "name": "铁刺鞭",
+   "priceTotal": 1100,
+   "stats": {
+    "AD": 30
+   },
+   "shares": {
+    "AD": 1
+   },
+   "statGold": 1050,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1037
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6035,
+   "name": "密银黎明",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 40,
+    "HP": 300,
+    "MR": 40
+   },
+   "shares": {
+    "AD": 0.48,
+    "HP": 0.27,
+    "MR": 0.25
+   },
+   "statGold": 2921,
+   "tags": [
+    "cc",
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3140,
+    1037,
+    1028
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6333,
+   "name": "死亡之舞",
+   "priceTotal": 3300,
+   "stats": {
+    "AD": 60,
+    "ARMOR": 50,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.6,
+    "ARMOR": 0.29,
+    "HASTE": 0.12
+   },
+   "statGold": 3505,
+   "tags": [
+    "burn"
+   ],
+   "uniquePassives": [
+    "无视痛苦",
+    "蔑视"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2019,
+    1037,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6609,
+   "name": "炼金朋克链锯剑",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 45,
+    "HP": 450,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.5,
+    "HP": 0.38,
+    "HASTE": 0.13
+   },
+   "statGold": 3182,
+   "tags": [
+    "anti-heal"
+   ],
+   "uniquePassives": [
+    "劈削"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3123,
+    1011,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6610,
+   "name": "焚天",
+   "priceTotal": 3100,
+   "stats": {
+    "AD": 40,
+    "HP": 400,
+    "HASTE": 10
+   },
+   "shares": {
+    "AD": 0.51,
+    "HP": 0.39,
+    "HASTE": 0.1
+   },
+   "statGold": 2738,
+   "tags": [],
+   "uniquePassives": [
+    "光盾打击"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2021,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6616,
+   "name": "流水法杖",
+   "priceTotal": 2250,
+   "stats": {
+    "AP": 35,
+    "HSP": 10,
+    "HASTE": 10
+   },
+   "shares": {
+    "AP": 0.46,
+    "HSP": 0.36,
+    "HASTE": 0.18
+   },
+   "statGold": 1520,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "湍流"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3108,
+    3114
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6617,
+   "name": "月石再生器",
+   "priceTotal": 2200,
+   "stats": {
+    "AP": 25,
+    "HP": 200,
+    "HASTE": 20
+   },
+   "shares": {
+    "AP": 0.32,
+    "HP": 0.34,
+    "HASTE": 0.34
+   },
+   "statGold": 1574,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "星光恩典"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    4642
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6620,
+   "name": "海力亚的回响",
+   "priceTotal": 2200,
+   "stats": {
+    "AP": 35,
+    "HP": 200,
+    "HASTE": 20
+   },
+   "shares": {
+    "AP": 0.39,
+    "HP": 0.3,
+    "HASTE": 0.3
+   },
+   "statGold": 1774,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "灵魂吸取",
+    "灵魂充能"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    4642
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6621,
+   "name": "黎明核心",
+   "priceTotal": 2500,
+   "stats": {
+    "AP": 45,
+    "HSP": 16
+   },
+   "shares": {
+    "AP": 0.51,
+    "HSP": 0.49
+   },
+   "statGold": 1780,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "最初之光"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1026,
+    3114,
+    3114
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6630,
+   "name": "渴血战斧",
+   "priceTotal": 3200,
+   "stats": {
+    "AD": 55,
+    "HP": 400,
+    "HASTE": 20,
+    "OMNIVAMP": 8
+   },
+   "shares": {
+    "AD": 0.5,
+    "HP": 0.28,
+    "HASTE": 0.14,
+    "OMNIVAMP": 0.08
+   },
+   "statGold": 3853,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    6029,
+    3044,
+    3067
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6631,
+   "name": "挺进破坏者",
+   "priceTotal": 3300,
+   "stats": {
+    "AD": 40,
+    "AS": 25,
+    "HP": 450
+   },
+   "shares": {
+    "AD": 0.43,
+    "AS": 0.19,
+    "HP": 0.37
+   },
+   "statGold": 3227,
+   "tags": [
+    "cc",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "顺劈"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3077,
+    3044,
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6632,
+   "name": "神圣分离者",
+   "priceTotal": 3450,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3133,
+    3057,
+    3067
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6653,
+   "name": "兰德里的折磨",
+   "priceTotal": 3000,
+   "stats": {
+    "AP": 60,
+    "HP": 300
+   },
+   "shares": {
+    "AP": 0.6,
+    "HP": 0.4
+   },
+   "statGold": 2001,
+   "tags": [
+    "burn",
+    "tank",
+    "ability"
+   ],
+   "uniquePassives": [
+    "折磨",
+    "受苦"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3147,
+    2508
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6655,
+   "name": "卢登的回声",
+   "priceTotal": 2750,
+   "stats": {
+    "AP": 100,
+    "MANA": 600,
+    "HASTE": 10
+   },
+   "shares": {
+    "AP": 0.64,
+    "MANA": 0.27,
+    "HASTE": 0.09
+   },
+   "statGold": 3110,
+   "tags": [
+    "ability",
+    "mana"
+   ],
+   "uniquePassives": [
+    "回声"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3802,
+    3145
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6656,
+   "name": "永霜",
+   "priceTotal": 2865,
+   "stats": {
+    "AP": 70,
+    "HP": 250,
+    "MANA": 600,
+    "HASTE": 20
+   },
+   "shares": {
+    "AP": 0.41,
+    "HP": 0.19,
+    "MANA": 0.24,
+    "HASTE": 0.16
+   },
+   "statGold": 3448,
+   "tags": [
+    "cc",
+    "mana",
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    3802,
+    1052
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6657,
+   "name": "时光之杖",
+   "priceTotal": 2600,
+   "stats": {
+    "AP": 45,
+    "HP": 350,
+    "MANA": 500
+   },
+   "shares": {
+    "AP": 0.36,
+    "HP": 0.37,
+    "MANA": 0.28
+   },
+   "statGold": 2535,
+   "tags": [
+    "heal-shield",
+    "stacks",
+    "mana"
+   ],
+   "uniquePassives": [
+    "时无限",
+    "永恒"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1026,
+    3803
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6660,
+   "name": "斑比的熔渣",
+   "priceTotal": 900,
+   "stats": {
+    "HP": 150,
+    "HASTE": 5
+   },
+   "shares": {
+    "HP": 0.75,
+    "HASTE": 0.25
+   },
+   "statGold": 536,
+   "tags": [
+    "burn"
+   ],
+   "uniquePassives": [
+    "献祭"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1028,
+    2022
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6662,
+   "name": "冰脉护手",
+   "priceTotal": 2900,
+   "stats": {
+    "HP": 300,
+    "ARMOR": 50,
+    "HASTE": 15
+   },
+   "shares": {
+    "HP": 0.36,
+    "ARMOR": 0.45,
+    "HASTE": 0.18
+   },
+   "statGold": 2206,
+   "tags": [
+    "on-hit",
+    "spellblade",
+    "auto-attack",
+    "cc"
+   ],
+   "uniquePassives": [
+    "咒刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3057,
+    1028,
+    1031
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6664,
+   "name": "璀璨回响",
+   "priceTotal": 2800,
+   "stats": {
+    "HP": 400,
+    "MR": 40,
+    "HASTE": 10
+   },
+   "shares": {
+    "HP": 0.52,
+    "MR": 0.35,
+    "HASTE": 0.13
+   },
+   "statGold": 2058,
+   "tags": [
+    "burn",
+    "tank"
+   ],
+   "uniquePassives": [
+    "献祭",
+    "荒弃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    6660,
+    3211
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6665,
+   "name": "千变者贾修",
+   "priceTotal": 3200,
+   "stats": {
+    "HP": 350,
+    "ARMOR": 45,
+    "MR": 45
+   },
+   "shares": {
+    "HP": 0.35,
+    "ARMOR": 0.34,
+    "MR": 0.31
+   },
+   "statGold": 2645,
+   "tags": [
+    "tank"
+   ],
+   "uniquePassives": [
+    "虚空生物的复原力"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1011,
+    1031,
+    1057
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6667,
+   "name": "辉耀美德",
+   "priceTotal": 2600,
+   "stats": {
+    "HP": 350,
+    "ARMOR": 30,
+    "MR": 30,
+    "HASTE": 10
+   },
+   "shares": {
+    "HP": 0.4,
+    "ARMOR": 0.26,
+    "MR": 0.23,
+    "HASTE": 0.12
+   },
+   "statGold": 2345,
+   "tags": [
+    "tank",
+    "heal-shield",
+    "ultimate"
+   ],
+   "uniquePassives": [
+    "指引之光："
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3105,
+    1011
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6670,
+   "name": "正午箭袋",
+   "priceTotal": 1300,
+   "stats": {
+    "AD": 15,
+    "CRIT": 20
+   },
+   "shares": {
+    "AD": 0.4,
+    "CRIT": 0.6
+   },
+   "statGold": 1325,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036,
+    1018
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6671,
+   "name": "狂风之力",
+   "priceTotal": 3500,
+   "stats": {
+    "AD": 50,
+    "AS": 15,
+    "CRIT": 20,
+    "MS": 7
+   },
+   "shares": {
+    "AD": 0.58,
+    "AS": 0.12,
+    "CRIT": 0.27,
+    "MS": 0.03
+   },
+   "statGold": 3009,
+   "tags": [
+    "crit",
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1038,
+    3086,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6672,
+   "name": "海妖杀手",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 45,
+    "AS": 40,
+    "MS": 4
+   },
+   "shares": {
+    "AD": 0.6,
+    "AS": 0.38,
+    "MS": 0.02
+   },
+   "statGold": 2623,
+   "tags": [
+    "on-hit",
+    "auto-attack"
+   ],
+   "uniquePassives": [
+    "放倒它"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    6690,
+    3051,
+    1043
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6673,
+   "name": "不朽盾弓",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 55,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.66,
+    "CRIT": 0.34
+   },
+   "statGold": 2925,
+   "tags": [
+    "heal-shield",
+    "crit"
+   ],
+   "uniquePassives": [
+    "救主灵刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1037,
+    6670
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6675,
+   "name": "纳沃利烁刃",
+   "priceTotal": 2650,
+   "stats": {
+    "AS": 40,
+    "CRIT": 25,
+    "MS": 4
+   },
+   "shares": {
+    "AS": 0.49,
+    "CRIT": 0.49,
+    "MS": 0.02
+   },
+   "statGold": 2048,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [
+    "超凡入圣"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1042,
+    3086,
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6676,
+   "name": "收集者",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 50,
+    "LETHALITY": 10,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.57,
+    "LETHALITY": 0.1,
+    "CRIT": 0.33
+   },
+   "statGold": 3050,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1037,
+    3134,
+    1018
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6677,
+   "name": "狂怒小刀",
+   "priceTotal": 1100,
+   "stats": {
+    "AS": 25
+   },
+   "shares": {
+    "AS": 1
+   },
+   "statGold": 625,
+   "tags": [
+    "on-hit"
+   ],
+   "uniquePassives": [
+    "怨怒：",
+    "沸腾打击："
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1042,
+    1042
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6690,
+   "name": "剑翎",
+   "priceTotal": 775,
+   "stats": {
+    "AD": 15,
+    "MS": 4
+   },
+   "shares": {
+    "AD": 0.92,
+    "MS": 0.08
+   },
+   "statGold": 573,
+   "tags": [],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6691,
+   "name": "德拉克萨的暮刃",
+   "priceTotal": 2950,
+   "stats": {
+    "AD": 60,
+    "LETHALITY": 18,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.69,
+    "LETHALITY": 0.18,
+    "HASTE": 0.13
+   },
+   "statGold": 3045,
+   "tags": [],
+   "uniquePassives": [
+    "夜行者："
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3134,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6692,
+   "name": "星蚀",
+   "priceTotal": 2900,
+   "stats": {
+    "AD": 60,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.84,
+    "HASTE": 0.16
+   },
+   "statGold": 2505,
+   "tags": [
+    "heal-shield",
+    "ability"
+   ],
+   "uniquePassives": [
+    "永升之月"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3133,
+    1037,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6693,
+   "name": "暗行者之爪",
+   "priceTotal": 2850,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 22,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.64,
+    "LETHALITY": 0.22,
+    "HASTE": 0.14
+   },
+   "statGold": 2990,
+   "tags": [],
+   "uniquePassives": [
+    "伺机而动的掠食者："
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3134,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6694,
+   "name": "赛瑞尔达的怨恨",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 45,
+    "ARMOR_PEN": 35,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.46,
+    "ARMOR_PEN": 0.43,
+    "HASTE": 0.12
+   },
+   "statGold": 3450,
+   "tags": [
+    "ability",
+    "cc"
+   ],
+   "uniquePassives": [
+    "严寒"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3133,
+    3035
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6695,
+   "name": "巨蛇之牙",
+   "priceTotal": 2500,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 15
+   },
+   "shares": {
+    "AD": 0.81,
+    "LETHALITY": 0.19
+   },
+   "statGold": 2375,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "掠盾者"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3134,
+    1037
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6696,
+   "name": "公理圆弧",
+   "priceTotal": 2750,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 18,
+    "HASTE": 20
+   },
+   "shares": {
+    "AD": 0.64,
+    "LETHALITY": 0.18,
+    "HASTE": 0.18
+   },
+   "statGold": 3005,
+   "tags": [
+    "ultimate"
+   ],
+   "uniquePassives": [
+    "涌动"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2020,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6697,
+   "name": "狂妄",
+   "priceTotal": 2800,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 18,
+    "HASTE": 10
+   },
+   "shares": {
+    "AD": 0.7,
+    "LETHALITY": 0.2,
+    "HASTE": 0.1
+   },
+   "statGold": 2735,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [
+    "盛名"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3134,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6698,
+   "name": "亵渎九头蛇",
+   "priceTotal": 2850,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 18,
+    "HASTE": 10
+   },
+   "shares": {
+    "AD": 0.7,
+    "LETHALITY": 0.2,
+    "HASTE": 0.1
+   },
+   "statGold": 2735,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [
+    "顺劈"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3077,
+    2020
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6699,
+   "name": "电震涡流剑",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 10,
+    "HASTE": 10
+   },
+   "shares": {
+    "AD": 0.77,
+    "LETHALITY": 0.12,
+    "HASTE": 0.11
+   },
+   "statGold": 2495,
+   "tags": [
+    "auto-attack",
+    "max-hp-damage",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "通电",
+    "苍穹"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    2020,
+    1036,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6700,
+   "name": "拉阔尔之盾",
+   "priceTotal": 2675,
+   "stats": {
+    "AD": 50,
+    "ARMOR": 30,
+    "MS": 5
+   },
+   "shares": {
+    "AD": 0.73,
+    "ARMOR": 0.25,
+    "MS": 0.02
+   },
+   "statGold": 2410,
+   "tags": [
+    "heal-shield",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "神佑："
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    6690,
+    2019
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 6701,
+   "name": "禁忌时机",
+   "priceTotal": 2700,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 18
+   },
+   "shares": {
+    "AD": 0.78,
+    "LETHALITY": 0.22
+   },
+   "statGold": 2465,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [
+    "伺机待发",
+    "险境脱身"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1037,
+    3134,
+    1036
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 8001,
+   "name": "厌恨锁链",
+   "priceTotal": 2500,
+   "stats": {
+    "HP": 650,
+    "HASTE": 20
+   },
+   "shares": {
+    "HP": 0.76,
+    "HASTE": 0.24
+   },
+   "statGold": 2276,
+   "tags": [
+    "stacks",
+    "item-active"
+   ],
+   "uniquePassives": [
+    "复仇令",
+    "报复"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    1011
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 8010,
+   "name": "放血者的诅咒",
+   "priceTotal": 2900,
+   "stats": {
+    "AP": 65,
+    "HP": 400,
+    "HASTE": 15
+   },
+   "shares": {
+    "AP": 0.47,
+    "HP": 0.39,
+    "HASTE": 0.15
+   },
+   "statGold": 2773,
+   "tags": [],
+   "uniquePassives": [
+    "恶劣衰朽"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3147,
+    3108
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 8020,
+   "name": "深渊面具",
+   "priceTotal": 2650,
+   "stats": {
+    "HP": 350,
+    "MR": 45,
+    "HASTE": 15
+   },
+   "shares": {
+    "HP": 0.43,
+    "MR": 0.38,
+    "HASTE": 0.19
+   },
+   "statGold": 2150,
+   "tags": [
+    "tank"
+   ],
+   "uniquePassives": [
+    "损毁"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    1057
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 123430,
+   "name": "毁坏仪式",
+   "priceTotal": 3000,
+   "stats": {
+    "AP": 55,
+    "HASTE": 10,
+    "CRIT": 25,
+    "MS": 4
+   },
+   "shares": {
+    "AP": 0.45,
+    "HASTE": 0.11,
+    "CRIT": 0.41,
+    "MS": 0.02
+   },
+   "statGold": 2418,
+   "tags": [
+    "heal-shield",
+    "ability",
+    "crit"
+   ],
+   "uniquePassives": [
+    "怒火与破坏",
+    "打捞残骸"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1018,
+    3113,
+    3108
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 126697,
+   "name": "狂妄",
+   "priceTotal": 2950,
+   "stats": {
+    "AD": 55,
+    "LETHALITY": 18,
+    "HASTE": 10
+   },
+   "shares": {
+    "AD": 0.7,
+    "LETHALITY": 0.2,
+    "HASTE": 0.1
+   },
+   "statGold": 2735,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [
+    "盛名"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3134,
+    3133
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 220013,
+   "name": "魄罗佳肴",
+   "priceTotal": 0,
+   "stats": {},
+   "shares": {},
+   "statGold": 0,
+   "tags": [
+    "item-active"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 223008,
+   "name": "暴食胫甲",
+   "priceTotal": 500,
+   "stats": {
+    "MS": 45,
+    "OMNIVAMP": 4
+   },
+   "shares": {
+    "MS": 0.77,
+    "OMNIVAMP": 0.23
+   },
+   "statGold": 700,
+   "tags": [],
+   "uniquePassives": [
+    "杀戮"
+   ],
+   "boots": true,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 226660,
+   "name": "Item_226660_Name",
+   "priceTotal": 0,
+   "stats": {
+    "HP": 550,
+    "HASTE": 5
+   },
+   "shares": {
+    "HP": 0.92,
+    "HASTE": 0.08
+   },
+   "statGold": 1604,
+   "tags": [
+    "burn"
+   ],
+   "uniquePassives": [
+    "献祭"
+   ],
+   "boots": false,
+   "completed": false,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 322530,
+   "name": "歌之权冠",
+   "priceTotal": 2250,
+   "stats": {
+    "HP": 200,
+    "HSP": 8,
+    "MANA": 1000
+   },
+   "shares": {
+    "HP": 0.22,
+    "HSP": 0.19,
+    "MANA": 0.59
+   },
+   "statGold": 2374,
+   "tags": [
+    "heal-shield",
+    "mana"
+   ],
+   "uniquePassives": [
+    "和谐",
+    "和音"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 323040,
+   "name": "炽天使之拥",
+   "priceTotal": 2900,
+   "stats": {
+    "AP": 70,
+    "MANA": 1000,
+    "HASTE": 25
+   },
+   "shares": {
+    "AP": 0.4,
+    "MANA": 0.4,
+    "HASTE": 0.19
+   },
+   "statGold": 3475,
+   "tags": [
+    "heal-shield",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "救主灵刃"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 323042,
+   "name": "魔切",
+   "priceTotal": 2900,
+   "stats": {
+    "AD": 35,
+    "MANA": 1000,
+    "HASTE": 15
+   },
+   "shares": {
+    "AD": 0.4,
+    "MANA": 0.46,
+    "HASTE": 0.13
+   },
+   "statGold": 3030,
+   "tags": [
+    "on-hit",
+    "ability",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "冲击"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 323121,
+   "name": "末日寒冬",
+   "priceTotal": 2400,
+   "stats": {
+    "HP": 550,
+    "MANA": 1000,
+    "HASTE": 15
+   },
+   "shares": {
+    "HP": 0.45,
+    "MANA": 0.43,
+    "HASTE": 0.12
+   },
+   "statGold": 3274,
+   "tags": [
+    "heal-shield",
+    "cc",
+    "mana"
+   ],
+   "uniquePassives": [
+    "敬畏",
+    "永续"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [],
+   "source": "cdragon"
+  },
+  {
+   "id": 326617,
+   "name": "月石再生器",
+   "priceTotal": 2900,
+   "stats": {
+    "AP": 35,
+    "HP": 400,
+    "HASTE": 20
+   },
+   "shares": {
+    "AP": 0.3,
+    "HP": 0.46,
+    "HASTE": 0.23
+   },
+   "statGold": 2308,
+   "tags": [
+    "heal-shield"
+   ],
+   "uniquePassives": [
+    "星光恩典"
+   ],
+   "boots": false,
+   "completed": true,
+   "from": [
+    3067,
+    1028,
+    4642
+   ],
+   "source": "cdragon"
+  },
+  {
+   "id": 667666,
+   "name": "收集者",
+   "priceTotal": 3000,
+   "stats": {
+    "AD": 50,
+    "LETHALITY": 10,
+    "CRIT": 25
+   },
+   "shares": {
+    "AD": 0.57,
+    "LETHALITY": 0.1,
+    "CRIT": 0.33
+   },
+   "statGold": 3050,
+   "tags": [
+    "crit"
+   ],
+   "uniquePassives": [],
+   "boots": false,
+   "completed": true,
+   "from": [
+    1037,
+    3134,
+    1018
+   ],
+   "source": "cdragon"
+  }
+ ]
+}

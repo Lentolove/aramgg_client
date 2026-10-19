@@ -41,6 +41,8 @@ function createDeps(overrides: Partial<ManualOverlayDeps> = {}) {
     showWindow: vi.fn(),
     hideWindow: vi.fn(),
     broadcast: vi.fn(),
+    // 默认不触发自动跟拍定时器，跟拍行为在 manual-overlay-follow-up.test.ts 里单独测
+    schedule: vi.fn(() => () => {}),
     ...overrides,
   }
   return { deps, storeValues, registered }
@@ -193,6 +195,7 @@ describe('ManualOverlayService', () => {
       reminderOnlyWhenDead: false,
       startWindowSec: 90,
       iconMatchEnabled: true,
+      autoFollowUp: true,
     })
     expect(service.isAutoScreenshotEnabled()).toBe(true)
   })

@@ -1,0 +1,831 @@
+/**
+ * 海克斯感知的出装评分引擎（纯函数）。
+ *
+ * 分数 = 英雄数据先验（真实统计：出场率、收缩胜率、核心路线）
+ *      + Σ 海克斯画像 · 装备属性/机制（模型）
+ *      + 海克斯点名装备加分（升级类）
+ *      + 已有组件进度（2999 实时装备）
+ *      + 敌方阵容（敌方装备的法/物比例、治疗装数量）
+ * 然后在约束下（一双鞋、唯一被动不重复、6 格）贪心组出整套 6 件 + 「下一件」，每件附带可解释的原因与分项分数。
+ *
+ * 诚实声明：数据源没有「海克斯 × 装备」的统计，海克斯部分是规则模型，不是测得的胜率。
+ */
+
+import {
+  MECHANIC_LABELS,
+  STAT_LABELS,
+  parseAugmentProfile,
+  parseItemProfile,
+  type AugmentProfile,
+  type ItemProfile,
+  type Mechanic,
+  type RawAugmentLike,
+  type RawItemLike,
+  type StatKey,
+  type WeightKey,
+  type WeightMap,
+} from './profiles.ts'
+
+// ---------------------------------------------------------------------------
+// 输入
+
+export interface BuildRecordLike {
+  itemIds?: Array<number | string>
+  items?: Array<number | string>
+  coreItemIds?: Array<number | string>
+  itemId?: number | string
+  id?: number | string
+  step?: number
+  games?: number
+  wins?: number
+  winRate?: number
+  pickRate?: number
+  [key: string]: unknown
+}
+
+export interface ChampionBuildLike {
+  tags?: unknown
+  buildTags?: string
+  games?: number
+  wins?: number
+  winRate?: number
+  stats?: { games?: number; wins?: number; winRate?: number }
+  coreItems?: BuildRecordLike[]
+  fullItems?: BuildRecordLike[]
+  itemExtensions?: BuildRecordLike[]
+  situationalItems?: BuildRecordLike[]
+  [key: string]: unknown
+}
+
+export interface EngineInput {
+  builds: ChampionBuildLike[]
+  /** 装备列表（英雄数据里的 items，或 item-profiles.json） */
+  items: Array<RawItemLike | ItemProfile> | Record<string, RawItemLike>
+  /** 已持有的海克斯（画像或原始数据） */
+  augments: Array<AugmentProfile | RawAugmentLike>
+  ownedItemIds?: Array<number | string>
+  enemyItemIds?: Array<number | string>
+  slots?: number
+  /** 是否同时计算「无海克斯」基线并标注变化（默认 true） */
+  compareBaseline?: boolean
+}
+
+// ---------------------------------------------------------------------------
+// 输出
+
+export interface ScoreBreakdown {
+  prior: number
+  synergy: number
+  progress: number
+  enemy: number
+  total: number
+}
+
+export type ItemChange = 'new' | 'up' | 'down' | 'same' | null
+
+export interface EngineItem {
+  itemId: number
+  name: string
+  score: ScoreBreakdown
+  reasons: string[]
+  owned: boolean
+  isNext: boolean
+  boots: boolean
+  change: ItemChange
+  /** 在无海克斯基线中的位置（不在基线中为 null） */
+  baselineIndex: number | null
+  /** 主要贡献的海克斯 */
+  drivers: string[]
+}
+
+export interface ArchetypeChoice {
+  index: number
+  label: string
+  games: number
+  winRate: number | null
+  score: number
+  baselineIndex: number
+  reasons: string[]
+}
+
+export interface EngineResult {
+  archetype: ArchetypeChoice | null
+  archetypes: ArchetypeChoice[]
+  items: EngineItem[]
+  nextItemId: number | null
+  /** 被挤出基线的装备 */
+  removed: Array<{ itemId: number; name: string; reason: string }>
+  weights: WeightMap
+  mechanics: Mechanic[]
+  damageType: 'AP' | 'AD'
+  notes: string[]
+  /** 供反向（海克斯卡）评分复用 */
+  context: EngineContext
+}
+
+export interface EngineContext {
+  itemIndex: Map<number, ItemProfile>
+  archetypeVector: Partial<Record<StatKey, number>>
+  archetypeTags: Partial<Record<Mechanic, number>>
+  damageType: 'AP' | 'AD'
+  plannedItemIds: number[]
+  ownedItemIds: number[]
+}
+
+// ---------------------------------------------------------------------------
+// 常量（可调参数集中在这里）
+
+export const ENGINE_PARAMS = {
+  /** 装备胜率收缩强度（场次） */
+  itemAlpha: 150,
+  /** 出装流派胜率收缩强度 */
+  buildAlpha: 500,
+  priorPickWeight: 2.5,
+  priorWinWeight: 0.3,
+  coreBonus: [0.6, 0.4, 0.25],
+  /** 其他流派里的装备：相对当前流派的折扣 */
+  offArchetypePenalty: 1.0,
+  /** 英雄数据里完全没出现过的装备 */
+  unseenPrior: -1.6,
+  statSynergy: 3.5,
+  mechanicSynergy: 1.2,
+  antiMechanicPenalty: 2.0,
+  progressWeight: 1.5,
+  enemyResistWeight: 2.5,
+  antiHealBonus: 1.5,
+  archetypePickWeight: 1.2,
+  archetypeWinWeight: 0.05,
+  archetypeStatWeight: 4,
+  archetypeMechanicWeight: 1.5,
+  /** 单个海克斯对单件装备的协同上限（点名/升级加分不受限） */
+  synergyCap: 4.5,
+  /** 同一个海克斯每多满足一件装备，后续装备从它拿到的协同 ×decay */
+  synergyDecay: 0.7,
+  /** 装备里对本英雄「没用」的属性占比 → 罚分 */
+  uselessStatPenalty: 3,
+} as const
+
+/** 海克斯机制 → 装备标签（及匹配系数） */
+const MECHANIC_ITEM_MATCH: Partial<Record<Mechanic, Array<[Mechanic, number]>>> = {
+  'on-hit': [['on-hit', 1]],
+  crit: [['crit', 1]],
+  'auto-attack': [['on-hit', 0.5], ['auto-attack', 0.4]],
+  ability: [['ability', 0.6], ['spellblade', 0.5]],
+  ultimate: [['ultimate', 1]],
+  tank: [['tank', 0.7]],
+  'heal-shield': [['heal-shield', 0.6]],
+  burn: [['burn', 1]],
+  'item-active': [['item-active', 0.8]],
+  cc: [['cc', 0.6]],
+  stasis: [['stasis', 1]],
+  mana: [['mana', 0.6]],
+}
+
+// ---------------------------------------------------------------------------
+// 工具
+
+const toId = (value: unknown): number | null => {
+  const id = Number(value)
+  return Number.isInteger(id) && id > 0 ? id : null
+}
+const ids = (values: unknown): number[] => (Array.isArray(values) ? values.map(toId).filter((id): id is number => id != null) : [])
+const round1 = (value: number) => Math.round(value * 10) / 10
+const pct = (value: number) => `${(value * 100).toFixed(value < 0.1 ? 1 : 0)}%`
+const signed = (value: number) => `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(1)}`
+
+function recordIds(record: BuildRecordLike): number[] {
+  const raw = record.itemIds ?? record.items ?? (record.itemId != null ? [record.itemId] : record.id != null ? [record.id] : [])
+  return ids(raw)
+}
+
+function isItemProfile(value: unknown): value is ItemProfile {
+  return !!value && typeof value === 'object' && 'shares' in (value as object) && 'tags' in (value as object)
+}
+
+function isAugmentProfile(value: unknown): value is AugmentProfile {
+  return !!value && typeof value === 'object' && 'weights' in (value as object) && 'mechanics' in (value as object)
+}
+
+export function buildItemProfileIndex(items: EngineInput['items']): Map<number, ItemProfile> {
+  const list = Array.isArray(items) ? items : Object.values(items ?? {})
+  const index = new Map<number, ItemProfile>()
+  for (const item of list) {
+    const id = toId(item?.id)
+    if (id == null || index.has(id)) continue
+    const raw = item as RawItemLike
+    const categories = raw.categories ?? []
+    if (categories.includes('Consumable') || categories.includes('Trinket') || raw.requiredChampion) continue
+    index.set(id, isItemProfile(item) ? item : parseItemProfile(raw))
+  }
+  return index
+}
+
+export function toAugmentProfile(augment: AugmentProfile | RawAugmentLike, itemIndex?: Map<number, ItemProfile>): AugmentProfile {
+  if (isAugmentProfile(augment)) return augment
+  const names = itemIndex ? [...itemIndex.values()].map((item) => ({ id: item.id, name: item.name, priceTotal: item.priceTotal })) : []
+  return parseAugmentProfile(augment, names)
+}
+
+function buildLabel(build: ChampionBuildLike, index: number): string {
+  const tags = build.tags
+  let label = typeof build.buildTags === 'string' && build.buildTags ? build.buildTags : ''
+  if (!label && tags && typeof tags === 'object') {
+    label = (Array.isArray(tags) ? tags : Object.values(tags as Record<string, unknown>)).map(String).join(', ')
+  }
+  return label || `出装 ${index + 1}`
+}
+
+const ARCHETYPE_LABELS: Record<string, string> = {
+  AP: '法强', AD: '物理', Tank: '坦克', Bruiser: '战士', Crit: '暴击', 'On-Hit': '攻击特效', Lethality: '穿甲',
+}
+export function localizeArchetype(label: string): string {
+  return label.split(/,\s*/).map((part) => ARCHETYPE_LABELS[part] ?? part).join('·')
+}
+
+function buildGames(build: ChampionBuildLike): { games: number; wins: number; winRate: number | null } {
+  const games = Number(build.games ?? build.stats?.games) || 0
+  const rate = Number(build.winRate ?? build.stats?.winRate)
+  const winRate = Number.isFinite(rate) && rate > 0 ? (rate > 1 ? rate / 100 : rate) : null
+  const wins = Number(build.wins ?? build.stats?.wins) || (winRate != null ? winRate * games : 0)
+  return { games, wins, winRate: games > 0 ? wins / games : winRate }
+}
+
+interface ItemPrior {
+  value: number
+  games: number
+  share: number
+  shrunk: number
+  delta: number
+  coreIndex: number | null
+}
+
+/** 某个出装流派里每件装备的先验（真实统计） */
+function computeBuildPriors(build: ChampionBuildLike, itemIndex: Map<number, ItemProfile>): Map<number, ItemPrior> {
+  const { games: buildGamesTotal, winRate } = buildGames(build)
+  const base = winRate ?? 0.5
+  const total = Math.max(1, buildGamesTotal)
+  const agg = new Map<number, { games: number; wins: number; source: number }>()
+  const add = (id: number, games: number, wins: number, source: number) => {
+    const current = agg.get(id)
+    // source：2=situational（「出了这件」的场次，最可靠），1=core/扩展累加
+    if (!current || source > current.source) {
+      agg.set(id, { games, wins, source })
+    } else if (source === current.source && source === 1) {
+      current.games += games
+      current.wins += wins
+    }
+  }
+  for (const record of build.situationalItems ?? []) {
+    const id = recordIds(record)[0]
+    const games = Number(record.games) || 0
+    if (id && games > 0) add(id, games, Number(record.wins) || 0, 2)
+  }
+  const coreOrder = new Map<number, number>()
+  ;(build.coreItems ?? []).forEach((record, recordIndex) => {
+    const games = Number(record.games) || 0
+    const wins = Number(record.wins) || (Number(record.winRate) || 0) * games
+    recordIds(record).forEach((id, position) => {
+      if (recordIndex === 0 && !coreOrder.has(id)) coreOrder.set(id, position)
+      if (!agg.has(id) || agg.get(id)!.source < 2) add(id, games, wins, 1)
+    })
+  })
+  for (const record of build.itemExtensions ?? []) {
+    const games = Number(record.games) || 0
+    const wins = Number(record.wins) || (Number(record.winRate) || 0) * games
+    for (const id of recordIds(record)) {
+      if (!agg.has(id) || agg.get(id)!.source < 2) add(id, games, wins, 1)
+    }
+  }
+
+  const priors = new Map<number, ItemPrior>()
+  for (const [id, { games, wins }] of agg) {
+    const item = itemIndex.get(id)
+    if (!item || !(item.completed || item.boots)) continue
+    const share = Math.min(1, games / total)
+    const shrunk = (wins + ENGINE_PARAMS.itemAlpha * base) / (games + ENGINE_PARAMS.itemAlpha)
+    const delta = shrunk - base
+    const coreIndex = coreOrder.has(id) ? coreOrder.get(id)! : null
+    const value = ENGINE_PARAMS.priorPickWeight * Math.sqrt(share)
+      + ENGINE_PARAMS.priorWinWeight * delta * 100
+      + (coreIndex != null ? ENGINE_PARAMS.coreBonus[coreIndex] ?? 0 : 0)
+    priors.set(id, { value, games, share, shrunk, delta, coreIndex })
+  }
+  return priors
+}
+
+function archetypeVector(priors: Map<number, ItemPrior>, itemIndex: Map<number, ItemProfile>) {
+  const vector: Partial<Record<StatKey, number>> = {}
+  const tags: Partial<Record<Mechanic, number>> = {}
+  let weight = 0
+  for (const [id, prior] of priors) {
+    const item = itemIndex.get(id)
+    if (!item || item.boots) continue
+    const w = prior.share
+    weight += w
+    for (const [key, share] of Object.entries(item.shares) as Array<[StatKey, number]>) {
+      vector[key] = (vector[key] ?? 0) + share * w
+    }
+    for (const tag of item.tags) tags[tag] = (tags[tag] ?? 0) + w
+  }
+  if (weight > 0) {
+    for (const key of Object.keys(vector) as StatKey[]) vector[key] = vector[key]! / weight
+    for (const tag of Object.keys(tags) as Mechanic[]) tags[tag] = tags[tag]! / weight
+  }
+  return { vector, tags }
+}
+
+function damageTypeOf(vector: Partial<Record<StatKey, number>>): 'AP' | 'AD' {
+  const ap = vector.AP ?? 0
+  const ad = (vector.AD ?? 0) + (vector.CRIT ?? 0) + (vector.AS ?? 0) + (vector.LETHALITY ?? 0)
+  return ap > ad ? 'AP' : 'AD'
+}
+
+/** 某属性对该英雄（当前流派 + 海克斯）有多大用处，0~1 */
+function statUsefulness(key: StatKey, vector: Partial<Record<StatKey, number>>, weights: Partial<Record<StatKey, number>>): number {
+  if ((weights[key] ?? 0) > 0.2) return 1
+  if ((vector[key] ?? 0) >= 0.04) return 1
+  switch (key) {
+    case 'HP': case 'ARMOR': case 'MR': return 0.7
+    case 'HASTE': return 0.8
+    case 'MS': return 0.6
+    case 'MANA': return (vector.MANA ?? 0) > 0.01 ? 0.8 : 0.2
+    case 'LIFESTEAL': case 'OMNIVAMP': return 0.5
+    case 'HSP': return 0.4
+    default: return 0
+  }
+}
+
+function mapAdaptive(weights: WeightMap, damageType: 'AP' | 'AD'): Partial<Record<StatKey, number>> {
+  const mapped: Partial<Record<StatKey, number>> = {}
+  for (const [key, value] of Object.entries(weights) as Array<[WeightKey, number]>) {
+    const target: StatKey = key === 'ADAPTIVE' ? damageType : key
+    mapped[target] = (mapped[target] ?? 0) + value
+  }
+  return mapped
+}
+
+function augmentScale(profile: AugmentProfile): number {
+  // 人工复核的按 1 计；自动解析的按可信度打折
+  return profile.source === 'reviewed' ? 1 : Math.max(0.2, profile.confidence)
+}
+
+export interface AugmentItemSynergy {
+  value: number
+  reason: string | null
+}
+
+/** 单个海克斯对单件装备的协同分（正负皆可）与一句话原因 */
+export function augmentItemSynergy(profile: AugmentProfile, item: ItemProfile, damageType: 'AP' | 'AD'): AugmentItemSynergy {
+  const scale = augmentScale(profile)
+  const weights = mapAdaptive(profile.weights, damageType)
+  let statValue = 0
+  let topStat: { key: StatKey; contribution: number } | null = null
+  for (const [key, weight] of Object.entries(weights) as Array<[StatKey, number]>) {
+    const share = item.shares[key] ?? 0
+    if (!share) continue
+    const contribution = weight * share * ENGINE_PARAMS.statSynergy * scale
+    statValue += contribution
+    if (!topStat || Math.abs(contribution) > Math.abs(topStat.contribution)) topStat = { key, contribution }
+  }
+  let mechanicValue = 0
+  let topMechanic: { mechanic: Mechanic; tag: Mechanic; contribution: number } | null = null
+  for (const mechanic of profile.mechanics) {
+    for (const [tag, factor] of MECHANIC_ITEM_MATCH[mechanic] ?? []) {
+      if (!item.tags.includes(tag)) continue
+      const contribution = factor * ENGINE_PARAMS.mechanicSynergy * scale
+      mechanicValue += contribution
+      if (!topMechanic || contribution > topMechanic.contribution) topMechanic = { mechanic, tag, contribution }
+      break
+    }
+  }
+  let antiValue = 0
+  for (const mechanic of profile.antiMechanics ?? []) {
+    if (item.tags.includes(mechanic)) antiValue -= ENGINE_PARAMS.antiMechanicPenalty
+  }
+  const boost = profile.itemIds.includes(item.id) ? profile.itemBoost : 0
+  const capped = Math.max(-ENGINE_PARAMS.synergyCap, Math.min(ENGINE_PARAMS.synergyCap, statValue + mechanicValue))
+  const value = capped + antiValue + boost
+
+  let reason: string | null = null
+  if (boost > 0) {
+    reason = profile.itemBoost >= 4 ? `直接强化「${item.name}」` : `描述点名「${item.name}」`
+  } else if (antiValue < 0) {
+    reason = `与「${MECHANIC_LABELS[profile.antiMechanics[0]]}」冲突`
+  } else if (topMechanic && (!topStat || topMechanic.contribution >= Math.abs(topStat.contribution))) {
+    reason = `${MECHANIC_LABELS[topMechanic.mechanic]}协同（本装带${MECHANIC_LABELS[topMechanic.tag]}）`
+  } else if (topStat) {
+    const share = Math.round((item.shares[topStat.key] ?? 0) * 100)
+    reason = topStat.contribution >= 0
+      ? `放大${STAT_LABELS[topStat.key]}（本装 ${share}% 价值是${STAT_LABELS[topStat.key]}）`
+      : `已给大量${STAT_LABELS[topStat.key]}，本装 ${share}% 价值重复`
+  }
+  return { value, reason }
+}
+
+function recipeGold(item: ItemProfile, owned: Set<number>, itemIndex: Map<number, ItemProfile>, depth = 0): { gold: number; names: string[] } {
+  if (depth > 3) return { gold: 0, names: [] }
+  let gold = 0
+  const names: string[] = []
+  const pool = new Set(owned)
+  for (const componentId of item.from) {
+    const component = itemIndex.get(componentId)
+    if (!component) continue
+    if (pool.has(componentId)) {
+      pool.delete(componentId)
+      gold += component.priceTotal
+      names.push(component.name)
+    } else {
+      const nested = recipeGold(component, pool, itemIndex, depth + 1)
+      gold += nested.gold
+      names.push(...nested.names)
+    }
+  }
+  return { gold, names }
+}
+
+export interface EnemySummary {
+  apItems: number
+  adItems: number
+  healItems: number
+  dominant: 'AP' | 'AD' | null
+}
+
+export function summarizeEnemyItems(enemyItemIds: Array<number | string>, itemIndex: Map<number, ItemProfile>): EnemySummary {
+  let apItems = 0
+  let adItems = 0
+  let healItems = 0
+  for (const id of ids(enemyItemIds)) {
+    const item = itemIndex.get(id)
+    if (!item || !(item.completed || item.boots) || item.boots) continue
+    const ap = item.shares.AP ?? 0
+    const ad = (item.shares.AD ?? 0) + (item.shares.CRIT ?? 0) + (item.shares.AS ?? 0) + (item.shares.LETHALITY ?? 0)
+    if (ap >= 0.3 && ap >= ad) apItems += 1
+    else if (ad >= 0.3) adItems += 1
+    if ((item.shares.LIFESTEAL ?? 0) + (item.shares.OMNIVAMP ?? 0) + (item.shares.HSP ?? 0) >= 0.12) healItems += 1
+  }
+  const total = apItems + adItems
+  let dominant: EnemySummary['dominant'] = null
+  if (total >= 4) {
+    if (apItems / total >= 0.65) dominant = 'AP'
+    else if (adItems / total >= 0.65) dominant = 'AD'
+  }
+  return { apItems, adItems, healItems, dominant }
+}
+
+interface Candidate {
+  item: ItemProfile
+  prior: ItemPrior | null
+  priorValue: number
+  priorReason: string
+  synergy: number
+  synergyReasons: Array<{ augment: string; value: number; reason: string }>
+  /** 每个海克斯的协同（用于组装时的边际递减） */
+  perAugment: Array<{ index: number; value: number }>
+  fit: number
+  fitReason: string | null
+  progress: number
+  progressNames: string[]
+  enemy: number
+  enemyReason: string | null
+  total: number
+  /** 组装时（考虑边际递减后）的分数 */
+  effective?: number
+}
+
+// ---------------------------------------------------------------------------
+// 主流程
+
+function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<number, ItemProfile>): Omit<EngineResult, 'removed'> & { candidates: Map<number, Candidate> } {
+  const builds = (input.builds ?? []).filter((build) => build && typeof build === 'object')
+  const slots = input.slots ?? 6
+  const owned = ids(input.ownedItemIds ?? [])
+  const ownedSet = new Set(owned)
+  const notes: string[] = []
+
+  // 1) 汇总海克斯
+  const weights: WeightMap = {}
+  const mechanics = new Set<Mechanic>()
+  for (const augment of augments) {
+    const scale = augmentScale(augment)
+    for (const [key, value] of Object.entries(augment.weights) as Array<[WeightKey, number]>) {
+      weights[key] = Math.round(((weights[key] ?? 0) + value * scale) * 100) / 100
+    }
+    augment.mechanics.forEach((mechanic) => mechanics.add(mechanic))
+  }
+
+  // 2) 流派（真实统计）+ 海克斯倾向 → 选流派
+  const perBuild = builds.map((build, index) => {
+    const priors = computeBuildPriors(build, itemIndex)
+    const { vector, tags } = archetypeVector(priors, itemIndex)
+    return { build, index, priors, vector, tags, ...buildGames(build), label: buildLabel(build, index) }
+  })
+  const maxGames = Math.max(1, ...perBuild.map((entry) => entry.games))
+  const champGames = perBuild.reduce((sum, entry) => sum + entry.games, 0)
+  const champWins = perBuild.reduce((sum, entry) => sum + entry.wins, 0)
+  const champBase = champGames > 0 ? champWins / champGames : 0.5
+
+  const archetypes: ArchetypeChoice[] = perBuild.map((entry) => {
+    const damageType = damageTypeOf(entry.vector)
+    const mapped = mapAdaptive(weights, damageType)
+    const pickTerm = ENGINE_PARAMS.archetypePickWeight * Math.log(Math.max(entry.games, 1) / maxGames)
+    const shrunk = (entry.wins + ENGINE_PARAMS.buildAlpha * champBase) / (entry.games + ENGINE_PARAMS.buildAlpha)
+    const winTerm = ENGINE_PARAMS.archetypeWinWeight * (shrunk - champBase) * 100
+    let statTerm = 0
+    for (const [key, weight] of Object.entries(mapped) as Array<[StatKey, number]>) {
+      statTerm += weight * (entry.vector[key] ?? 0) * ENGINE_PARAMS.archetypeStatWeight
+    }
+    let mechanicTerm = 0
+    for (const mechanic of mechanics) {
+      for (const [tag, factor] of MECHANIC_ITEM_MATCH[mechanic] ?? []) {
+        mechanicTerm += (entry.tags[tag] ?? 0) * factor * ENGINE_PARAMS.archetypeMechanicWeight
+      }
+    }
+    const reasons = [`${entry.games} 场，收缩胜率 ${pct(shrunk)}`]
+    if (Math.abs(statTerm + mechanicTerm) >= 0.3) reasons.push(`海克斯倾向 ${signed(statTerm + mechanicTerm)}`)
+    return {
+      index: entry.index,
+      label: entry.label,
+      games: entry.games,
+      winRate: entry.winRate,
+      score: pickTerm + winTerm + statTerm + mechanicTerm,
+      baselineIndex: entry.index,
+      reasons,
+    }
+  })
+  const ranked = [...archetypes].sort((a, b) => b.score - a.score)
+  const archetype = ranked[0] ?? null
+  const chosen = archetype ? perBuild[archetype.index] : null
+  const damageType = chosen ? damageTypeOf(chosen.vector) : 'AD'
+  const mappedWeights = mapAdaptive(weights, damageType)
+
+  if (!chosen) notes.push('该英雄没有出装统计，只能按海克斯与通用装备推荐')
+
+  // 3) 候选装备
+  const enemy = summarizeEnemyItems(input.enemyItemIds ?? [], itemIndex)
+  const candidates = new Map<number, Candidate>()
+  const candidateIds = new Set<number>()
+  for (const entry of perBuild) for (const id of entry.priors.keys()) candidateIds.add(id)
+  for (const augment of augments) for (const id of augment.itemIds) candidateIds.add(id)
+  for (const [id, item] of itemIndex) if (item.completed && !item.boots) candidateIds.add(id)
+  for (const id of owned) candidateIds.add(id)
+
+  for (const id of candidateIds) {
+    const item = itemIndex.get(id)
+    if (!item || !(item.completed || item.boots)) continue
+    // 先验：当前流派 > 其他流派（打折）> 没出现过
+    let prior: ItemPrior | null = chosen?.priors.get(id) ?? null
+    let priorValue: number
+    let priorReason: string
+    const archetypeName = chosen ? localizeArchetype(chosen.label) : ''
+    if (prior) {
+      priorValue = prior.value
+      priorReason = `数据：${archetypeName}流派 ${pct(prior.share)} 场出这件，收缩胜率 ${pct(prior.shrunk)}（${signed(prior.delta * 100)}%）`
+    } else {
+      const other = perBuild
+        .filter((entry) => entry !== chosen && entry.priors.has(id))
+        .map((entry) => ({ entry, prior: entry.priors.get(id)! }))
+        .sort((a, b) => b.prior.value - a.prior.value)[0]
+      if (other) {
+        prior = other.prior
+        priorValue = other.prior.value - ENGINE_PARAMS.offArchetypePenalty
+        priorReason = `数据：${localizeArchetype(other.entry.label)}流派 ${pct(other.prior.share)} 场出（非当前流派，打折）`
+      } else {
+        priorValue = ENGINE_PARAMS.unseenPrior
+        priorReason = '该英雄统计里很少出现（纯模型推荐）'
+      }
+    }
+
+    let synergy = 0
+    const synergyReasons: Candidate['synergyReasons'] = []
+    const perAugment: Candidate['perAugment'] = []
+    augments.forEach((augment, augmentIndex) => {
+      const result = augmentItemSynergy(augment, item, damageType)
+      if (Math.abs(result.value) < 0.05) return
+      synergy += result.value
+      perAugment.push({ index: augmentIndex, value: result.value })
+      if (result.reason && Math.abs(result.value) >= 0.3) {
+        synergyReasons.push({ augment: augment.name, value: result.value, reason: result.reason })
+      }
+    })
+
+    // 对本英雄没用的属性（例如法师身上的攻速/暴击，除非海克斯让它变得有用）
+    let fit = 0
+    let fitReason: string | null = null
+    if (!item.boots && chosen) {
+      let useful = 0
+      for (const [key, share] of Object.entries(item.shares) as Array<[StatKey, number]>) {
+        useful += share * statUsefulness(key, chosen.vector, mappedWeights)
+      }
+      if (useful < 0.75) {
+        fit = -ENGINE_PARAMS.uselessStatPenalty * (0.75 - useful) / 0.75
+        const wasted = (Object.entries(item.shares) as Array<[StatKey, number]>)
+          .filter(([key]) => statUsefulness(key, chosen.vector, mappedWeights) < 0.5)
+          .sort((a, b) => b[1] - a[1])
+          .map(([key]) => STAT_LABELS[key])
+        if (wasted.length && fit <= -0.3) fitReason = `本英雄用不上${wasted.slice(0, 2).join('/')}`
+      }
+    }
+
+    let progress = 0
+    let progressNames: string[] = []
+    if (!ownedSet.has(id) && owned.length) {
+      const { gold, names } = recipeGold(item, ownedSet, itemIndex)
+      if (gold > 0 && item.priceTotal > 0) {
+        progress = ENGINE_PARAMS.progressWeight * Math.min(1, gold / item.priceTotal) * 2
+        progressNames = names
+      }
+    }
+
+    let enemyValue = 0
+    let enemyReason: string | null = null
+    if (enemy.dominant === 'AP' && (item.shares.MR ?? 0) > 0) {
+      enemyValue = ENGINE_PARAMS.enemyResistWeight * (item.shares.MR ?? 0)
+      enemyReason = `敌方 ${enemy.apItems}/${enemy.apItems + enemy.adItems} 件法强装 → 魔抗`
+    } else if (enemy.dominant === 'AD' && (item.shares.ARMOR ?? 0) > 0) {
+      enemyValue = ENGINE_PARAMS.enemyResistWeight * (item.shares.ARMOR ?? 0)
+      enemyReason = `敌方 ${enemy.adItems}/${enemy.apItems + enemy.adItems} 件物理装 → 护甲`
+    }
+    if (enemy.healItems >= 3 && item.tags.includes('anti-heal')) {
+      enemyValue += ENGINE_PARAMS.antiHealBonus
+      enemyReason = `${enemyReason ? `${enemyReason}；` : ''}敌方 ${enemy.healItems} 件续航装 → 重伤`
+    }
+
+    const total = priorValue + synergy + fit + progress + enemyValue
+    candidates.set(id, {
+      item, prior, priorValue, priorReason, synergy, synergyReasons, perAugment, fit, fitReason, progress, progressNames, enemy: enemyValue, enemyReason, total,
+    })
+  }
+
+  // 4) 组 6 件：已有装备先占位，然后贪心（一双鞋、唯一被动不重复、反重伤只拿一件）
+  const chosenIds: number[] = []
+  const usedPassives = new Set<string>()
+  let hasBoots = false
+  let hasAntiHealBonus = false
+  const augmentUses = augments.map(() => 0)
+  const effectiveTotal = (candidate: Candidate) => {
+    let synergy = 0
+    for (const { index, value } of candidate.perAugment) {
+      synergy += value > 0 ? value * ENGINE_PARAMS.synergyDecay ** augmentUses[index] : value
+    }
+    return candidate.total - candidate.synergy + synergy
+  }
+  const accept = (candidate: Candidate) => {
+    chosenIds.push(candidate.item.id)
+    candidate.effective = effectiveTotal(candidate)
+    for (const { index, value } of candidate.perAugment) {
+      // 只有明显受益（≥1 分）才算「用掉」这个海克斯的一份协同
+      if (value >= 1) augmentUses[index] += 1
+    }
+    candidate.item.uniquePassives.forEach((name) => usedPassives.add(name))
+    if (candidate.item.boots) hasBoots = true
+    if (candidate.item.tags.includes('anti-heal')) hasAntiHealBonus = true
+  }
+  for (const id of owned) {
+    const candidate = candidates.get(id)
+    if (candidate && !chosenIds.includes(id) && chosenIds.length < slots) accept(candidate)
+  }
+  // 该流派里鞋子出场率 → 是否需要鞋
+  // 该流派核心三件里带鞋的场次占比 → 是否需要鞋
+  let bootsShare = 0.7
+  if (chosen) {
+    let coreGames = 0
+    let bootsGames = 0
+    for (const record of chosen.build.coreItems ?? []) {
+      const games = Number(record.games) || 0
+      coreGames += games
+      if (recordIds(record).some((id) => itemIndex.get(id)?.boots)) bootsGames += games
+    }
+    bootsShare = coreGames > 0
+      ? bootsGames / coreGames
+      : [...chosen.priors.entries()].filter(([id]) => itemIndex.get(id)?.boots).reduce((sum, [, prior]) => sum + prior.share, 0)
+  }
+  const bootsCoreIndex = chosen
+    ? [...chosen.priors.entries()].find(([id, prior]) => itemIndex.get(id)?.boots && prior.coreIndex != null)?.[1].coreIndex ?? null
+    : null
+  const wantsBoots = bootsShare >= 0.4 || augments.some((augment) => augment.mechanics.includes('boots'))
+
+  while (chosenIds.length < slots) {
+    const ordered = [...candidates.values()].sort((a, b) => effectiveTotal(b) - effectiveTotal(a))
+    const next = ordered.find((candidate) => {
+      if (chosenIds.includes(candidate.item.id)) return false
+      if (candidate.item.boots && (hasBoots || !wantsBoots)) return false
+      if (candidate.item.uniquePassives.some((name) => usedPassives.has(name))) return false
+      if (hasAntiHealBonus && candidate.item.tags.includes('anti-heal') && candidate.enemyReason?.includes('重伤')) return false
+      // 还没有鞋且只剩一个格子：留给鞋
+      if (wantsBoots && !hasBoots && !candidate.item.boots && chosenIds.length === slots - 1) return false
+      return true
+    })
+    if (!next) break
+    accept(next)
+  }
+
+  // 5) 购买顺序：已有在前；其余按「分数 + 核心位置」排，鞋子放在数据里的典型位置
+  const orderKey = (id: number) => {
+    const candidate = candidates.get(id)!
+    const coreIndex = candidate.prior?.coreIndex
+    return (candidate.effective ?? candidate.total) + (coreIndex != null ? 1.5 - coreIndex * 0.5 : 0)
+  }
+  const ownedPart = chosenIds.filter((id) => ownedSet.has(id))
+  const rest = chosenIds.filter((id) => !ownedSet.has(id) && !itemIndex.get(id)?.boots).sort((a, b) => orderKey(b) - orderKey(a))
+  const bootsId = chosenIds.find((id) => !ownedSet.has(id) && itemIndex.get(id)?.boots)
+  if (bootsId != null) {
+    // 鞋子放在数据里的典型位置（核心三件里的位置），没有数据时放第 2 件
+    const typical = Math.min(rest.length, candidates.get(bootsId)?.prior?.coreIndex ?? bootsCoreIndex ?? 1)
+    rest.splice(Math.max(0, typical - ownedPart.length), 0, bootsId)
+  }
+  const order = [...ownedPart, ...rest]
+
+  const plannedItemIds = order
+  const items: EngineItem[] = order.map((id) => {
+    const candidate = candidates.get(id)!
+    const reasons = [candidate.priorReason]
+    const sortedSynergy = [...candidate.synergyReasons].sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+    for (const entry of sortedSynergy.slice(0, 3)) {
+      reasons.push(`「${entry.augment}」${entry.reason}（${signed(entry.value)}）`)
+    }
+    if (candidate.fitReason) reasons.push(`${candidate.fitReason}（${signed(candidate.fit)}）`)
+    if (candidate.progressNames.length) reasons.push(`已有组件：${candidate.progressNames.join('、')}（${signed(candidate.progress)}）`)
+    if (candidate.enemyReason) reasons.push(`${candidate.enemyReason}（${signed(candidate.enemy)}）`)
+    return {
+      itemId: id,
+      name: candidate.item.name,
+      score: {
+        prior: round1(candidate.priorValue),
+        // 有效海克斯分（含同一海克斯多件装备的边际递减）
+        synergy: round1((candidate.effective ?? candidate.total) - candidate.priorValue - candidate.progress - candidate.enemy),
+        progress: round1(candidate.progress),
+        enemy: round1(candidate.enemy),
+        total: round1(candidate.effective ?? candidate.total),
+      },
+      reasons,
+      owned: ownedSet.has(id),
+      isNext: false,
+      boots: candidate.item.boots,
+      change: null,
+      baselineIndex: null,
+      drivers: sortedSynergy.filter((entry) => entry.value > 0).map((entry) => entry.augment),
+    }
+  })
+
+  // 下一件：第一件没拥有的；如果前两件里有已经攒了组件的，优先它
+  const pending = items.filter((item) => !item.owned)
+  const withProgress = pending.slice(0, 2).find((item) => item.score.progress > 0)
+  const next = withProgress ?? pending[0] ?? null
+  if (next) next.isNext = true
+
+  const archetypeVectorValue = chosen?.vector ?? {}
+  return {
+    archetype,
+    archetypes: ranked,
+    items,
+    nextItemId: next?.itemId ?? null,
+    weights,
+    mechanics: [...mechanics],
+    damageType,
+    notes,
+    candidates,
+    context: {
+      itemIndex,
+      archetypeVector: archetypeVectorValue,
+      archetypeTags: chosen?.tags ?? {},
+      damageType,
+      plannedItemIds,
+      ownedItemIds: owned,
+    },
+  }
+}
+
+export function recommendBuild(input: EngineInput): EngineResult {
+  const itemIndex = buildItemProfileIndex(input.items)
+  const augments = (input.augments ?? []).filter(Boolean).map((augment) => toAugmentProfile(augment, itemIndex))
+  const result = runOnce(input, augments, itemIndex)
+  const removed: EngineResult['removed'] = []
+
+  if (augments.length && input.compareBaseline !== false) {
+    const baseline = runOnce({ ...input, augments: [] }, [], itemIndex)
+    const baselineOrder = baseline.items.map((item) => item.itemId)
+    for (const [index, item] of result.items.entries()) {
+      const baselineIndex = baselineOrder.indexOf(item.itemId)
+      item.baselineIndex = baselineIndex >= 0 ? baselineIndex : null
+      item.change = baselineIndex < 0 ? 'new' : baselineIndex > index ? 'up' : baselineIndex < index ? 'down' : 'same'
+    }
+    for (const id of baselineOrder) {
+      if (result.items.some((item) => item.itemId === id)) continue
+      const candidate = result.candidates.get(id)
+      const item = itemIndex.get(id)
+      if (!item) continue
+      const negative = candidate?.synergyReasons.filter((entry) => entry.value < 0) ?? []
+      const reason = negative.length
+        ? `「${negative[0].augment}」${negative[0].reason}`
+        : '被更契合当前海克斯的装备挤掉'
+      removed.push({ itemId: id, name: item.name, reason })
+    }
+    if (result.archetype && baseline.archetype && result.archetype.index !== baseline.archetype.index) {
+      result.notes.unshift(`流派从「${localizeArchetype(baseline.archetype.label)}」切换到「${localizeArchetype(result.archetype.label)}」：${result.archetype.reasons.join('，')}`)
+    }
+  }
+  if (!augments.length) result.notes.push('还没有海克斯：显示该英雄数据里的主流出装')
+  const { candidates: _candidates, ...rest } = result
+  void _candidates
+  return { ...rest, removed }
+}
