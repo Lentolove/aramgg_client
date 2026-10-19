@@ -68,6 +68,17 @@ export interface EngineInput {
   slots?: number
   /** 是否同时计算「无海克斯」基线并标注变化（默认 true） */
   compareBaseline?: boolean
+  /** 流派选择：auto（默认，统计 + 海克斯）、popular（场次最多）、winrate（样本足够里收缩胜率最高）或指定 builds 下标 */
+  archetype?: 'auto' | 'popular' | 'winrate' | number
+  /** 装备先验：pick（出场率为主，默认）或 winrate（收缩胜率为主） */
+  priorMode?: 'pick' | 'winrate'
+  /** 用户手动换装：把 from 换成 to（保持格位；不合规则时忽略） */
+  swaps?: ItemSwap[]
+}
+
+export interface ItemSwap {
+  from: number
+  to: number
 }
 
 // ---------------------------------------------------------------------------
@@ -96,6 +107,22 @@ export interface EngineItem {
   baselineIndex: number | null
   /** 主要贡献的海克斯 */
   drivers: string[]
+  /** 该格的备选（引擎的次优候选，同为鞋/非鞋且不与其他格冲突） */
+  alternatives: ItemAlternative[]
+  /** 用户手动换上的；swappedFrom = 原推荐 */
+  swappedFrom: number | null
+  /** 数据先验：该流派里出这件的场次与收缩胜率（没有统计时为 null） */
+  priorGames: number | null
+  priorWinRate: number | null
+}
+
+export interface ItemAlternative {
+  itemId: number
+  name: string
+  total: number
+  /** 相对当前格装备的分差（负数 = 引擎认为略差） */
+  delta: number
+  reason: string
 }
 
 export interface ArchetypeChoice {
@@ -163,6 +190,17 @@ export const ENGINE_PARAMS = {
   synergyDecay: 0.7,
   /** 装备里对本英雄「没用」的属性占比 → 罚分 */
   uselessStatPenalty: 3,
+  /** 高胜率方案：先验权重 */
+  winratePickWeight: 1.0,
+  winrateWinWeight: 0.9,
+  /** 高胜率方案：出场占比低于此视为样本太少 */
+  winrateMinShare: 0.03,
+  winrateOffRoutePenalty: 3,
+  /** 高胜率流派：至少占英雄总场次的比例 / 最少场次 */
+  winrateRouteMinShare: 0.05,
+  winrateRouteMinGames: 300,
+  /** 每格展示的备选数量 */
+  alternativesPerSlot: 3,
 } as const
 
 /** 海克斯机制 → 装备标签（及匹配系数） */
@@ -190,6 +228,7 @@ const toId = (value: unknown): number | null => {
 }
 const ids = (values: unknown): number[] => (Array.isArray(values) ? values.map(toId).filter((id): id is number => id != null) : [])
 const round1 = (value: number) => Math.round(value * 10) / 10
+const round3 = (value: number) => Math.round(value * 1000) / 1000
 const pct = (value: number) => `${(value * 100).toFixed(value < 0.1 ? 1 : 0)}%`
 const signed = (value: number) => `${value >= 0 ? '+' : '−'}${Math.abs(value).toFixed(1)}`
 
@@ -260,7 +299,11 @@ interface ItemPrior {
 }
 
 /** 某个出装流派里每件装备的先验（真实统计） */
-function computeBuildPriors(build: ChampionBuildLike, itemIndex: Map<number, ItemProfile>): Map<number, ItemPrior> {
+function computeBuildPriors(
+  build: ChampionBuildLike,
+  itemIndex: Map<number, ItemProfile>,
+  mode: 'pick' | 'winrate' = 'pick',
+): Map<number, ItemPrior> {
   const { games: buildGamesTotal, winRate } = buildGames(build)
   const base = winRate ?? 0.5
   const total = Math.max(1, buildGamesTotal)
@@ -305,9 +348,14 @@ function computeBuildPriors(build: ChampionBuildLike, itemIndex: Map<number, Ite
     const shrunk = (wins + ENGINE_PARAMS.itemAlpha * base) / (games + ENGINE_PARAMS.itemAlpha)
     const delta = shrunk - base
     const coreIndex = coreOrder.has(id) ? coreOrder.get(id)! : null
-    const value = ENGINE_PARAMS.priorPickWeight * Math.sqrt(share)
-      + ENGINE_PARAMS.priorWinWeight * delta * 100
-      + (coreIndex != null ? ENGINE_PARAMS.coreBonus[coreIndex] ?? 0 : 0)
+    const value = mode === 'winrate'
+      // 高胜率：胜率为主，出场率只用来排除极少出的装备（收缩已经压住小样本）
+      ? ENGINE_PARAMS.winratePickWeight * Math.sqrt(share)
+        + ENGINE_PARAMS.winrateWinWeight * delta * 100
+        + (share < ENGINE_PARAMS.winrateMinShare ? -2 : 0)
+      : ENGINE_PARAMS.priorPickWeight * Math.sqrt(share)
+        + ENGINE_PARAMS.priorWinWeight * delta * 100
+        + (coreIndex != null ? ENGINE_PARAMS.coreBonus[coreIndex] ?? 0 : 0)
     priors.set(id, { value, games, share, shrunk, delta, coreIndex })
   }
   return priors
@@ -515,7 +563,7 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
 
   // 2) 流派（真实统计）+ 海克斯倾向 → 选流派
   const perBuild = builds.map((build, index) => {
-    const priors = computeBuildPriors(build, itemIndex)
+    const priors = computeBuildPriors(build, itemIndex, input.priorMode ?? 'pick')
     const { vector, tags } = archetypeVector(priors, itemIndex)
     return { build, index, priors, vector, tags, ...buildGames(build), label: buildLabel(build, index) }
   })
@@ -553,7 +601,22 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
     }
   })
   const ranked = [...archetypes].sort((a, b) => b.score - a.score)
-  const archetype = ranked[0] ?? null
+  let archetype = ranked[0] ?? null
+  const mode = input.archetype ?? 'auto'
+  if (mode === 'popular') {
+    archetype = [...archetypes].sort((a, b) => b.games - a.games)[0] ?? archetype
+  } else if (mode === 'winrate') {
+    const minGames = Math.max(ENGINE_PARAMS.winrateRouteMinGames, champGames * ENGINE_PARAMS.winrateRouteMinShare)
+    const shrunkOf = (entry: ArchetypeChoice) => {
+      const build = perBuild[entry.index]
+      return (build.wins + ENGINE_PARAMS.buildAlpha * champBase) / (build.games + ENGINE_PARAMS.buildAlpha)
+    }
+    archetype = archetypes
+      .filter((entry) => entry.games >= minGames)
+      .sort((a, b) => shrunkOf(b) - shrunkOf(a))[0] ?? archetype
+  } else if (typeof mode === 'number') {
+    archetype = archetypes.find((entry) => entry.index === mode) ?? archetype
+  }
   const chosen = archetype ? perBuild[archetype.index] : null
   const damageType = chosen ? damageTypeOf(chosen.vector) : 'AD'
   const mappedWeights = mapAdaptive(weights, damageType)
@@ -587,10 +650,11 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
         .sort((a, b) => b.prior.value - a.prior.value)[0]
       if (other) {
         prior = other.prior
-        priorValue = other.prior.value - ENGINE_PARAMS.offArchetypePenalty
+        // 高胜率方案只看所选路线自己的统计：别的路线的装备罚得更重
+        priorValue = other.prior.value - (input.priorMode === 'winrate' ? ENGINE_PARAMS.winrateOffRoutePenalty : ENGINE_PARAMS.offArchetypePenalty)
         priorReason = `数据：${localizeArchetype(other.entry.label)}流派 ${pct(other.prior.share)} 场出（非当前流派，打折）`
       } else {
-        priorValue = ENGINE_PARAMS.unseenPrior
+        priorValue = ENGINE_PARAMS.unseenPrior - (input.priorMode === 'winrate' ? 1.5 : 0)
         priorReason = '该英雄统计里很少出现（纯模型推荐）'
       }
     }
@@ -735,10 +799,69 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
   }
   const order = [...ownedPart, ...rest]
 
+  // 6) 用户换装：原位替换（保持格位），只接受同为鞋/非鞋、不与其他格唯一被动冲突的
+  const swappedFrom = new Map<number, number>()
+  const passivesExcept = (index: number) => {
+    const used = new Set<string>()
+    order.forEach((id, position) => {
+      if (position !== index) itemIndex.get(id)?.uniquePassives.forEach((name) => used.add(name))
+    })
+    return used
+  }
+  for (const swap of input.swaps ?? []) {
+    const from = toId(swap?.from)
+    const to = toId(swap?.to)
+    if (from == null || to == null || from === to) continue
+    const index = order.indexOf(from)
+    const target = candidates.get(to)
+    if (index < 0 || !target || order.includes(to) || ownedSet.has(from)) continue
+    if (target.item.boots !== Boolean(itemIndex.get(from)?.boots)) continue
+    const used = passivesExcept(index)
+    if (target.item.uniquePassives.some((name) => used.has(name))) continue
+    order[index] = to
+    target.effective = effectiveTotal(target)
+    swappedFrom.set(to, from)
+  }
+
+  const alternativesFor = (index: number): ItemAlternative[] => {
+    const current = candidates.get(order[index])!
+    const currentTotal = current.effective ?? current.total
+    const used = passivesExcept(index)
+    const boots = current.item.boots
+    const original = swappedFrom.get(order[index])
+    const ranked = [...candidates.values()]
+      .filter((candidate) => !order.includes(candidate.item.id)
+        && candidate.item.boots === boots
+        && !candidate.item.uniquePassives.some((name) => used.has(name)))
+      .map((candidate) => ({ candidate, total: effectiveTotal(candidate) }))
+      .sort((a, b) => b.total - a.total)
+    // 换过的格：原推荐永远排第一，方便换回
+    if (original != null) {
+      const position = ranked.findIndex((entry) => entry.candidate.item.id === original)
+      if (position > 0) ranked.unshift(...ranked.splice(position, 1))
+    }
+    return ranked
+      .slice(0, ENGINE_PARAMS.alternativesPerSlot)
+      .map(({ candidate, total }) => {
+        const synergy = [...candidate.synergyReasons].sort((a, b) => b.value - a.value)[0]
+        return {
+          itemId: candidate.item.id,
+          name: candidate.item.name,
+          total: round1(total),
+          delta: round1(total - currentTotal),
+          reason: synergy && synergy.value > 0
+            ? `「${synergy.augment}」${synergy.reason}`
+            : candidate.priorReason.replace(/^数据：/, ''),
+        }
+      })
+  }
+
   const plannedItemIds = order
-  const items: EngineItem[] = order.map((id) => {
+  const items: EngineItem[] = order.map((id, index) => {
     const candidate = candidates.get(id)!
     const reasons = [candidate.priorReason]
+    const originalId = swappedFrom.get(id)
+    if (originalId != null) reasons.unshift(`你手动换上（原推荐：${itemIndex.get(originalId)?.name ?? originalId}）`)
     const sortedSynergy = [...candidate.synergyReasons].sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
     for (const entry of sortedSynergy.slice(0, 3)) {
       reasons.push(`「${entry.augment}」${entry.reason}（${signed(entry.value)}）`)
@@ -764,6 +887,10 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
       change: null,
       baselineIndex: null,
       drivers: sortedSynergy.filter((entry) => entry.value > 0).map((entry) => entry.augment),
+      alternatives: alternativesFor(index),
+      swappedFrom: originalId ?? null,
+      priorGames: candidate.prior && chosen?.priors.get(id) === candidate.prior ? candidate.prior.games : null,
+      priorWinRate: candidate.prior && chosen?.priors.get(id) === candidate.prior ? round3(candidate.prior.shrunk) : null,
     }
   })
 
@@ -802,7 +929,7 @@ export function recommendBuild(input: EngineInput): EngineResult {
   const removed: EngineResult['removed'] = []
 
   if (augments.length && input.compareBaseline !== false) {
-    const baseline = runOnce({ ...input, augments: [] }, [], itemIndex)
+    const baseline = runOnce({ ...input, augments: [], swaps: [] }, [], itemIndex)
     const baselineOrder = baseline.items.map((item) => item.itemId)
     for (const [index, item] of result.items.entries()) {
       const baselineIndex = baselineOrder.indexOf(item.itemId)

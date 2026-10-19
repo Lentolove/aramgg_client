@@ -52,3 +52,5 @@ export function resolveAugmentProfile(
 /** CommunityDragon 生成的装备属性表（英雄数据里没有装备列表时兜底） */
 export const STORED_ITEM_PROFILES: ItemProfile[] =
   ((itemProfileData as unknown as { items?: ItemProfile[] }).items ?? (itemProfileData as unknown as ItemProfile[]))
+
+export * from './build-plans.ts'

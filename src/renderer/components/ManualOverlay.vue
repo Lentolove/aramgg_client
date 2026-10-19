@@ -361,6 +361,22 @@
           <template v-if="!isSectionCollapsed('build')">
             <div v-if="championLoading" class="mo-empty">加载英雄数据…</div>
             <template v-else-if="engine.items.length">
+              <div v-if="plans.length > 1" class="mo-plan-tabs mo-no-drag" role="tablist">
+                <button
+                  v-for="plan in plans"
+                  :key="plan.key"
+                  class="mo-plan-tab"
+                  :class="{ 'mo-plan-tab-active': activePlan?.key === plan.key }"
+                  role="tab"
+                  :title="`${plan.description}\n路线：${plan.routeLabel} · ${plan.routeGames} 场 · 胜率 ${formatPercent(plan.routeWinRate)}`"
+                  @click="selectPlan(plan.key)"
+                >{{ planTabLabel(plan) }}</button>
+              </div>
+              <div v-if="planHint" class="mo-plan-hint mo-no-drag">
+                <span>{{ planHint }}</span>
+                <button class="mo-link mo-link-active" @click="selectPlan('adapted')">查看</button>
+                <button class="mo-link" @click="dismissPlanHint">×</button>
+              </div>
               <div class="mo-slots mo-no-drag" @mouseleave="hoverItemId = null">
                 <div
                   v-for="item in engine.items"
@@ -370,10 +386,11 @@
                     'mo-slot-next': item.isNext,
                     'mo-slot-owned': item.owned,
                     'mo-slot-focus': focusItem && focusItem.itemId === item.itemId && !item.isNext,
+                    'mo-slot-open': slotMenuItemId === item.itemId,
                   }"
                   :title="itemTooltip(item)"
                   @mouseenter="hoverItemId = item.itemId"
-                  @click="pinnedItemId = pinnedItemId === item.itemId ? null : item.itemId"
+                  @click="toggleSlotMenu(item)"
                 >
                   <img :src="getItemIconUrl(item.itemId)" alt="">
                   <span
@@ -382,9 +399,36 @@
                     :class="changeBadge(item)!.cls"
                   >{{ changeBadge(item)!.text }}</span>
                   <span v-if="item.owned" class="mo-slot-check">✓</span>
+                  <span v-if="item.swappedFrom" class="mo-slot-swapped" title="你换过这一格">换</span>
                 </div>
               </div>
-              <div v-if="focusItem" class="mo-focus">
+              <div v-if="slotMenuItem" class="mo-slot-menu mo-no-drag">
+                <div class="mo-slot-menu-head">
+                  <span>第 {{ engine.items.indexOf(slotMenuItem) + 1 }} 格：{{ slotMenuItem.name }}</span>
+                  <button class="mo-link" @click="slotMenuItemId = null">关闭</button>
+                </div>
+                <div v-if="slotMenuItem.owned" class="mo-empty">已经买了，不能换</div>
+                <template v-else>
+                  <button
+                    v-for="alt in slotMenuItem.alternatives"
+                    :key="`slot-alt-${alt.itemId}`"
+                    class="mo-slot-alt"
+                    @click="swapSlot(slotMenuItem, alt)"
+                  >
+                    <img :src="getItemIconUrl(alt.itemId)" alt="">
+                    <span class="mo-slot-alt-main">
+                      <span class="mo-slot-alt-name">
+                        {{ alt.name }}
+                        <span v-if="alt.itemId === slotMenuItem.swappedFrom" class="mo-slot-alt-tag">原推荐</span>
+                      </span>
+                      <span class="mo-slot-alt-reason">{{ alt.reason }}</span>
+                    </span>
+                    <span class="mo-slot-alt-delta" :class="alt.delta >= 0 ? 'mo-up' : 'mo-muted'">{{ formatSigned(alt.delta) }}</span>
+                  </button>
+                  <div v-if="!slotMenuItem.alternatives.length" class="mo-empty">没有合规的备选</div>
+                </template>
+              </div>
+              <div v-if="focusItem && !slotMenuItem" class="mo-focus">
                 <div class="mo-focus-head">
                   <span class="mo-focus-tag">{{ focusItem.isNext ? '下一件' : focusItem.owned ? '已有' : `第 ${focusIndex + 1} 件` }}</span>
                   <span class="mo-focus-name">{{ focusItem.name }}</span>
@@ -402,6 +446,13 @@
                 >{{ reason }}</div>
               </div>
               <div v-if="buildDetails" class="mo-build-details">
+                <div class="mo-detail-plans">
+                  <div v-for="plan in plans" :key="`plan-detail-${plan.key}`" class="mo-detail-plan" :class="{ 'mo-detail-plan-active': activePlan?.key === plan.key }">
+                    <b>{{ planTabLabel(plan) }}</b>
+                    <span>{{ plan.routeLabel }} · {{ plan.routeGames }} 场 · 胜率 {{ formatPercent(plan.routeWinRate) }}{{ plan.usesAugments ? ' · 含海克斯模型' : ' · 纯数据' }}</span>
+                    <span class="mo-detail-plan-desc">{{ plan.description }}</span>
+                  </div>
+                </div>
                 <div v-if="tagSummary" class="mo-detail-line">海克斯偏好：{{ tagSummary }}</div>
                 <ol class="mo-detail-items">
                   <li v-for="item in engine.items" :key="`detail-${item.itemId}`">
@@ -439,8 +490,16 @@ import {
 } from '../../shared/augment-choice-ranking.ts'
 import {
   applyCardSynergy,
+  applySwap,
+  generateBuildPlans,
   localizeArchetype,
+  planDifference,
   recommendBuild,
+  resolvePlan,
+  type BuildPlan,
+  type BuildPlanKey,
+  type ItemAlternative,
+  type ItemSwap,
   resolveAugmentProfile,
   scoreCardSynergy,
   STORED_ITEM_PROFILES,
@@ -618,13 +677,116 @@ function profileOf(augment: { id: number | string; name?: string }): AugmentProf
 const heldProfiles = computed(() => state.value.picked.map((augment) => profileOf(augment)))
 
 /** 海克斯感知出装引擎：每次已选海克斯 / 2999 装备 / 敌方装备变化都会重新计算 */
-const engine = computed(() => recommendBuild({
+const engineInput = computed(() => ({
   builds: championData.value?.builds || [],
   items: engineItems.value,
   augments: heldProfiles.value,
   ownedItemIds: live.value?.found ? live.value.ownedItemIds : [],
   enemyItemIds: live.value?.found ? live.value.enemyItemIds : [],
 }))
+
+// ------------------------------------------------------------- 方案切换 + 换装（每局记住）
+interface BuildPrefs {
+  gameRevision: number
+  championId: number | null
+  plan: BuildPlanKey | null
+  swaps: Partial<Record<BuildPlanKey, ItemSwap[]>>
+  /** 选方案时持有的海克斯（之后海克斯变了才提示） */
+  planAugmentKey?: string | null
+  /** 已关闭提示的海克斯组合 */
+  hintDismissedKey?: string | null
+  savedAt?: number
+}
+/** 超过这么久没动过的记录视为上一局的（应用重启后 gameRevision 会从头计数） */
+const BUILD_PREFS_MAX_AGE_MS = 90 * 60 * 1000
+const BUILD_PREFS_KEY = 'aramgg.manualOverlay.buildPrefs'
+
+function loadBuildPrefs(): BuildPrefs {
+  try {
+    const raw = JSON.parse(localStorage.getItem(BUILD_PREFS_KEY) || 'null')
+    if (raw && typeof raw === 'object') return { gameRevision: -1, championId: null, plan: null, swaps: {}, ...raw }
+  } catch {
+    // ignore
+  }
+  return { gameRevision: -1, championId: null, plan: null, swaps: {} }
+}
+const buildPrefs = ref<BuildPrefs>(loadBuildPrefs())
+
+function saveBuildPrefs(patch: Partial<BuildPrefs>) {
+  buildPrefs.value = { ...buildPrefs.value, ...patch, savedAt: Date.now() }
+  try {
+    localStorage.setItem(BUILD_PREFS_KEY, JSON.stringify(buildPrefs.value))
+  } catch {
+    // ignore
+  }
+}
+
+/** 新的一局或换了英雄：清空方案选择和换装（英雄还没加载出来时不算换英雄） */
+let stateLoaded = !hasElectronAPI()
+watch(() => [state.value.gameRevision, championId.value] as const, ([revision, id]) => {
+  if (!stateLoaded) return
+  const prefs = buildPrefs.value
+  const stale = !prefs.savedAt || Date.now() - prefs.savedAt > BUILD_PREFS_MAX_AGE_MS
+  const championChanged = id != null && prefs.championId != null && id !== prefs.championId
+  if (prefs.gameRevision !== revision || championChanged || stale) {
+    saveBuildPrefs({ gameRevision: revision, championId: id, plan: null, swaps: {} })
+  } else if (id != null && prefs.championId == null) {
+    saveBuildPrefs({ championId: id })
+  }
+})
+
+const plans = computed<BuildPlan[]>(() => generateBuildPlans(engineInput.value, { swaps: buildPrefs.value.swaps }))
+const activePlan = computed(() => resolvePlan(plans.value, buildPrefs.value.plan))
+
+const engine = computed(() => activePlan.value?.result ?? recommendBuild(engineInput.value))
+
+const augmentKey = computed(() => state.value.picked.map((augment) => String(augment.id)).sort().join(','))
+
+function selectPlan(key: BuildPlanKey) {
+  slotMenuItemId.value = null
+  saveBuildPrefs({ plan: key, planAugmentKey: augmentKey.value, hintDismissedKey: null })
+}
+
+function dismissPlanHint() {
+  saveBuildPrefs({ hintDismissedKey: augmentKey.value })
+}
+
+function planTabLabel(plan: BuildPlan) {
+  return [plan.label, ...plan.aliases].join(' · ')
+}
+
+/** 选了别的方案之后海克斯又变了，且「海克斯适配」与当前方案相差很多：提示（可关闭） */
+const planHint = computed(() => {
+  const prefs = buildPrefs.value
+  const current = activePlan.value
+  const adapted = plans.value.find((plan) => plan.key === 'adapted')
+  if (!current || !adapted || current.key === 'adapted') return null
+  if (prefs.planAugmentKey == null || prefs.planAugmentKey === augmentKey.value) return null
+  if (prefs.hintDismissedKey === augmentKey.value) return null
+  const difference = planDifference(current.result, adapted.result)
+  return difference >= 3 ? `海克斯变了：「海克斯适配」与当前方案差 ${difference} 件` : null
+})
+
+// 格位备选：点格子展开，点备选换装
+const slotMenuItemId = ref<number | null>(null)
+const slotMenuItem = computed(() => engine.value.items.find((item) => item.itemId === slotMenuItemId.value) ?? null)
+
+function toggleSlotMenu(item: EngineItem) {
+  slotMenuItemId.value = slotMenuItemId.value === item.itemId ? null : item.itemId
+}
+
+function swapSlot(item: EngineItem, alternative: ItemAlternative | { itemId: number }) {
+  const plan = activePlan.value
+  if (!plan) return
+  const current = buildPrefs.value.swaps[plan.key] ?? []
+  const next = applySwap(current, item.itemId, item.swappedFrom, alternative.itemId)
+  saveBuildPrefs({ swaps: { ...buildPrefs.value.swaps, [plan.key]: next } })
+  slotMenuItemId.value = alternative.itemId
+}
+
+function formatSigned(value: number) {
+  return `${value > 0 ? '+' : value < 0 ? '−' : '±'}${Math.abs(value).toFixed(1)}`
+}
 
 function rankCards(candidates: ManualOverlayCandidate[]) {
   const base = rankAugmentChoices(toCardInputs(candidates), championStatList.value, { alpha: settings.shrinkageAlpha })
@@ -654,7 +816,6 @@ const collapsed = computed(() => state.value.collapsed === true)
 const cardDetails = ref(false)
 const buildDetails = ref(false)
 const hoverItemId = ref<number | null>(null)
-const pinnedItemId = ref<number | null>(null)
 
 const frameStyle = computed(() => ({
   zoom: String(settings.scale || 1),
@@ -699,7 +860,7 @@ async function setCollapsed(value: boolean) {
 
 const nextItem = computed(() => engine.value.items.find((item) => item.isNext) ?? engine.value.items[0] ?? null)
 const focusItem = computed(() => {
-  const id = hoverItemId.value ?? pinnedItemId.value
+  const id = hoverItemId.value ?? slotMenuItemId.value
   return engine.value.items.find((item) => item.itemId === id) ?? nextItem.value
 })
 const focusIndex = computed(() => engine.value.items.findIndex((item) => item.itemId === focusItem.value?.itemId))
@@ -1099,6 +1260,11 @@ onMounted(async () => {
     electronAPI.lcu.getChampionMonitorState(),
   ])
   applyState(initialState)
+  stateLoaded = true
+  if (buildPrefs.value.gameRevision !== state.value.gameRevision ||
+    !buildPrefs.value.savedAt || Date.now() - buildPrefs.value.savedAt > BUILD_PREFS_MAX_AGE_MS) {
+    saveBuildPrefs({ gameRevision: state.value.gameRevision, championId: null, plan: null, swaps: {} })
+  }
   Object.assign(settings, initialSettings)
   applyChampionMonitor(monitor)
 
@@ -1486,6 +1652,69 @@ onBeforeUnmount(() => {
 .mo-change-up { background: #24543a; color: #a6f0c2; }
 .mo-change-down { background: #5a2b26; color: #f6b8ac; }
 
+.mo-plan-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 7px;
+  padding: 2px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(120, 140, 170, 0.18);
+}
+.mo-plan-tab {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 22px;
+  padding: 0 4px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--mo-muted);
+  font: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.mo-plan-tab:hover { color: var(--mo-ivory); }
+.mo-plan-tab-active {
+  color: #1a1408;
+  font-weight: 700;
+  background: linear-gradient(180deg, #e4c77f, #b48d47);
+  border-color: rgba(240, 216, 154, 0.6);
+}
+.mo-plan-hint {
+  display: flex; align-items: center; gap: 4px; margin-bottom: 6px; padding: 3px 6px; border-radius: 6px;
+  background: rgba(10, 200, 185, 0.1); border: 1px solid rgba(10, 200, 185, 0.35); color: var(--mo-blue); font-size: 11px;
+}
+.mo-plan-hint span { flex: 1; min-width: 0; }
+.mo-slot-open { border-color: var(--mo-blue); box-shadow: 0 0 8px rgba(10, 200, 185, 0.45); }
+.mo-slot-swapped {
+  position: absolute; left: 1px; bottom: 1px; padding: 0 3px; border-radius: 4px;
+  background: rgba(10, 200, 185, 0.85); color: #04201d; font-size: 9px; font-weight: 700; line-height: 13px;
+}
+.mo-slot-menu {
+  margin-top: 8px; padding: 6px; border-radius: 8px;
+  border: 1px solid rgba(10, 200, 185, 0.4); background: rgba(6, 12, 22, 0.92);
+}
+.mo-slot-menu-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; color: var(--mo-ivory); font-size: 11px; font-weight: 600; }
+.mo-slot-alt {
+  display: flex; align-items: center; gap: 8px; width: 100%; padding: 4px; border-radius: 6px;
+  border: 1px solid transparent; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.mo-slot-alt:hover { border-color: var(--mo-gold-dim); background: rgba(200, 170, 110, 0.08); }
+.mo-slot-alt img { width: 28px; height: 28px; flex: none; border-radius: 4px; border: 1px solid rgba(120, 140, 170, 0.35); }
+.mo-slot-alt-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.mo-slot-alt-name { color: var(--mo-ivory); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-slot-alt-tag { margin-left: 4px; font-size: 9px; padding: 0 4px; border-radius: 4px; background: rgba(200, 170, 110, 0.2); color: var(--mo-gold-bright); font-weight: 400; }
+.mo-slot-alt-reason { color: var(--mo-muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-slot-alt-delta { flex: none; font-size: 11px; font-variant-numeric: tabular-nums; }
+.mo-detail-plans { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+.mo-detail-plan { display: flex; flex-direction: column; padding: 3px 6px; border-left: 2px solid rgba(120, 140, 170, 0.3); }
+.mo-detail-plan b { color: var(--mo-ivory); font-size: 11px; }
+.mo-detail-plan-active { border-left-color: var(--mo-gold); }
+.mo-detail-plan-desc { color: #6f7a8c; }
 .mo-focus {
   margin-top: 8px;
   padding: 6px 8px;
