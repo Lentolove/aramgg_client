@@ -1,323 +1,430 @@
 <template>
-  <div class="mo-root">
-    <header class="mo-header">
+  <div
+    ref="frameRef"
+    class="mo-frame"
+    :class="{ 'mo-collapsed': collapsed }"
+    :style="frameStyle"
+  >
+    <!-- 收起：小条 -->
+    <div v-if="collapsed" class="mo-shell mo-bar">
       <img
         v-if="championId"
-        class="mo-champion-icon"
+        class="mo-bar-champion"
         :src="getChampionSquareIconUrl(championId)"
+        :title="championLabel"
         alt=""
       >
-      <div class="mo-title">
-        <div class="mo-champion-name">{{ championLabel }}</div>
-        <div class="mo-subtitle">{{ phaseLabel }}</div>
+      <div class="mo-bar-next" :title="nextItem ? `下一件：${nextItem.name}` : '暂无出装'">
+        <img v-if="nextItem" :src="getItemIconUrl(nextItem.itemId)" alt="">
+        <span v-else class="mo-bar-empty">?</span>
       </div>
+      <div class="mo-bar-text">
+        <span class="mo-bar-label">下一件</span>
+        <span class="mo-bar-name">{{ nextItem?.name || '—' }}</span>
+      </div>
+      <span v-if="state.candidates.length" class="mo-bar-dot" title="有三选一待处理，展开查看" />
       <button
-        class="mo-btn mo-btn-primary mo-no-drag"
+        class="mo-icon-btn mo-icon-primary mo-no-drag"
+        :class="{ 'mo-spin': state.refreshing }"
         :disabled="state.refreshing"
-        :title="`快捷键：${hotkeyLabel}`"
+        :title="`刷新（${hotkeyLabel}）`"
         @click="refresh"
-      >
-        {{ state.refreshing ? '识别中…' : '刷新' }}
-      </button>
-      <button class="mo-btn mo-icon-btn mo-no-drag" title="设置" @click="showSettings = !showSettings">⚙</button>
-      <button class="mo-btn mo-icon-btn mo-no-drag" title="隐藏（快捷键可再次唤出）" @click="hide">×</button>
-    </header>
-
-    <div
-      v-if="reminder?.active"
-      class="mo-reminder mo-no-drag"
-      :class="{ 'mo-reminder-urgent': reminder.urgent }"
-    >
-      <span class="mo-reminder-text">
-        <b v-if="reminder.urgent">可以刷新了</b>
-        <span>{{ reminder.reason }}</span>
-      </span>
-      <button class="mo-btn mo-btn-primary" :disabled="state.refreshing" @click="refresh">刷新</button>
-      <button class="mo-btn" title="本次已处理，不再提醒" @click="acknowledgeReminder">忽略</button>
+      >⟳</button>
+      <button class="mo-icon-btn mo-no-drag" :title="`展开${collapseHotkeyLabel ? `（${collapseHotkeyLabel}）` : ''}`" @click="setCollapsed(false)">▾</button>
     </div>
 
-    <div class="mo-body">
-      <div class="mo-hint">
-        <span>三选一出现时点「刷新」或按 <b>{{ hotkeyLabel }}</b></span>
-        <span v-if="state.autoWatching" class="mo-watching">· 自动跟拍中，关掉三选一后自动记录</span>
-        <span v-if="!state.hotkeyRegistered" class="mo-warn">（{{ state.hotkeyError || '快捷键未注册' }}）</span>
+    <!-- 展开 -->
+    <div v-else class="mo-shell" :style="shellStyle">
+      <header class="mo-header">
+        <img
+          v-if="championId"
+          class="mo-champion-icon"
+          :src="getChampionSquareIconUrl(championId)"
+          alt=""
+        >
+        <div class="mo-title">
+          <div class="mo-champion-name">{{ championLabel }}</div>
+          <div class="mo-subtitle">
+            <span>{{ phaseLabel }}</span>
+            <span v-if="state.autoWatching" class="mo-watching" title="识别到三选一后每 2.5 秒自动再拍，关闭三选一后自动记录所选">· 自动跟拍</span>
+          </div>
+        </div>
+        <button
+          class="mo-btn mo-btn-primary mo-no-drag"
+          :disabled="state.refreshing"
+          :title="`三选一出现时刷新（${hotkeyLabel}）`"
+          @click="refresh"
+        >{{ state.refreshing ? '识别中' : '刷新' }}</button>
+        <button
+          class="mo-icon-btn mo-no-drag"
+          :title="`收起${collapseHotkeyLabel ? `（${collapseHotkeyLabel}）` : ''}`"
+          @click="setCollapsed(true)"
+        >▴</button>
+        <button
+          class="mo-icon-btn mo-no-drag"
+          :class="{ 'mo-icon-active': showSettings }"
+          title="设置"
+          @click="showSettings = !showSettings"
+        >⚙</button>
+        <button class="mo-icon-btn mo-no-drag" title="隐藏（快捷键可再次唤出）" @click="hide">×</button>
+      </header>
+
+      <div
+        v-if="reminder?.active"
+        class="mo-reminder mo-no-drag"
+        :class="{ 'mo-reminder-urgent': reminder.urgent }"
+      >
+        <span class="mo-reminder-text">
+          <b v-if="reminder.urgent">可以刷新了</b>
+          <span>{{ reminder.reason }}</span>
+        </span>
+        <button class="mo-btn mo-btn-primary mo-btn-small" :disabled="state.refreshing" @click="refresh">刷新</button>
+        <button class="mo-btn mo-btn-small" title="本次已处理，不再提醒" @click="acknowledgeReminder">忽略</button>
       </div>
-      <div v-if="state.lastError" class="mo-status mo-warn">{{ state.lastError }}</div>
-      <div v-if="championError" class="mo-status mo-warn">{{ championError }}</div>
 
-      <!-- 设置 -->
-      <section v-if="showSettings" class="mo-section mo-settings mo-no-drag">
-        <label class="mo-setting">
-          <input v-model="settings.autoScreenshot" type="checkbox" @change="saveSettings">
-          <span>持续自动截图（旧模式，默认关闭）</span>
-        </label>
-        <label class="mo-setting">
-          <input v-model="settings.showInChampSelect" type="checkbox" @change="saveSettings">
-          <span>选人阶段也显示浮窗</span>
-        </label>
-        <label class="mo-setting">
-          <span>刷新快捷键</span>
-          <select v-model="settings.hotkey" @change="saveSettings">
-            <option v-for="option in hotkeyOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-          </select>
-        </label>
-        <label class="mo-setting">
-          <span>样本收缩强度 α</span>
-          <select v-model.number="settings.shrinkageAlpha" @change="saveSettings">
-            <option v-for="value in alphaOptions" :key="value" :value="value">{{ value }}</option>
-          </select>
-        </label>
-        <label class="mo-setting">
-          <input v-model="settings.focusable" type="checkbox" @change="saveSettings">
-          <span>浮窗可获得焦点（重启生效；默认关闭以免抢游戏焦点）</span>
-        </label>
-        <label class="mo-setting">
-          <input v-model="settings.autoFollowUp" type="checkbox" @change="saveSettings">
-          <span>刷新后自动跟拍三选一（2.5 秒一次，最多 45 秒），关闭时自动记录所选</span>
-        </label>
-        <label class="mo-setting">
-          <input v-model="settings.iconMatchEnabled" type="checkbox" @change="saveSettings">
-          <span>卡片图标匹配（与文字识别交叉校验）</span>
-        </label>
-        <label class="mo-setting">
-          <input v-model="settings.reminderEnabled" type="checkbox" @change="saveSettings">
-          <span>「可以刷新了」提醒（读 2999 等级/阵亡状态，不截图）</span>
-        </label>
-        <label class="mo-setting">
-          <span>海克斯等级</span>
-          <select v-model="settings.augmentLevels" @change="saveSettings">
-            <option v-for="value in levelOptions" :key="value" :value="value">{{ value }}</option>
-          </select>
-        </label>
-        <label class="mo-setting">
-          <span>开局提醒窗口</span>
-          <select v-model.number="settings.startWindowSec" @change="saveSettings">
-            <option v-for="value in startWindowOptions" :key="value" :value="value">{{ value }} 秒</option>
-          </select>
-        </label>
-        <label class="mo-setting">
-          <input v-model="settings.reminderOnlyWhenDead" type="checkbox" @change="saveSettings">
-          <span>只在阵亡时提醒（关闭则有待选就常驻提示，阵亡时闪烁）</span>
-        </label>
-        <div class="mo-setting">
-          <button class="mo-btn" @click="resetGame">清空本局记录</button>
-          <span class="mo-muted">{{ iconIndexLabel }}</span>
+      <div class="mo-body">
+        <div v-if="statusMessages.length" class="mo-status">
+          <div v-for="(message, index) in statusMessages" :key="index">{{ message }}</div>
         </div>
-      </section>
 
-      <!-- 三选一 -->
-      <section v-if="rankedCards.length" class="mo-section">
-        <div class="mo-section-title">
-          <span>本次三选一</span>
-          <span class="mo-muted">{{ ranking.summary }}</span>
-        </div>
-        <div class="mo-cards">
-          <template v-for="entry in rankedCards" :key="`${entry.card.slot}-${entry.card.id}`">
-          <div
-            class="mo-card mo-no-drag"
-            :class="cardClass(entry)"
-            role="button"
-            tabindex="0"
-            title="点击标记为已选；点卡名可更正"
-            @click="pick(entry.card)"
-          >
-            <img v-if="entry.card.iconPath" class="mo-card-icon" :src="getAugmentIconUrl(entry.card.iconPath)" alt="">
-            <div class="mo-card-main">
-              <div class="mo-card-name">
-                <span
-                  class="mo-card-title"
-                  title="识别错了？点这里更正"
-                  @click.stop="openCorrection({ kind: 'slot', slot: entry.card.slot, currentId: entry.card.id })"
-                >{{ entry.card.name }} ▾</span>
-                <span v-if="entry.relativeLabel" class="mo-badge" :class="badgeClass(entry)">{{ entry.relativeLabel }}</span>
-                <span
-                  v-if="sourceLabel(entry.card)"
-                  class="mo-source"
-                  :class="`mo-source-${entry.card.source}`"
-                  :title="sourceTitle(entry.card)"
-                >{{ sourceLabel(entry.card) }}</span>
+        <!-- 设置 -->
+        <section v-if="showSettings" class="mo-section mo-settings mo-no-drag">
+          <div class="mo-settings-grid">
+            <label class="mo-setting-row">
+              <span>刷新快捷键</span>
+              <select v-model="settings.hotkey" @change="saveSettings">
+                <option v-for="option in hotkeyOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+              </select>
+            </label>
+            <label class="mo-setting-row">
+              <span>收起快捷键</span>
+              <select v-model="settings.collapseHotkey" @change="saveSettings">
+                <option v-for="option in collapseHotkeyOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+              </select>
+            </label>
+            <label class="mo-setting-row">
+              <span>背景不透明度</span>
+              <input v-model.number="settings.opacity" type="range" min="0.5" max="1" step="0.02" @change="saveSettings">
+              <span class="mo-setting-value">{{ Math.round(settings.opacity * 100) }}%</span>
+            </label>
+            <label class="mo-setting-row">
+              <span>界面缩放</span>
+              <input v-model.number="settings.scale" type="range" min="0.8" max="1.4" step="0.05" @change="saveSettings">
+              <span class="mo-setting-value">{{ Math.round(settings.scale * 100) }}%</span>
+            </label>
+            <label class="mo-setting-row">
+              <span>样本收缩强度 α</span>
+              <select v-model.number="settings.shrinkageAlpha" @change="saveSettings">
+                <option v-for="value in alphaOptions" :key="value" :value="value">{{ value }}</option>
+              </select>
+            </label>
+            <label class="mo-setting-row">
+              <span>海克斯等级</span>
+              <select v-model="settings.augmentLevels" @change="saveSettings">
+                <option v-for="value in levelOptions" :key="value" :value="value">{{ value }}</option>
+              </select>
+            </label>
+            <label class="mo-setting-row">
+              <span>开局提醒窗口</span>
+              <select v-model.number="settings.startWindowSec" @change="saveSettings">
+                <option v-for="value in startWindowOptions" :key="value" :value="value">{{ value }} 秒</option>
+              </select>
+            </label>
+          </div>
+          <label class="mo-check">
+            <input v-model="settings.minimalMode" type="checkbox" @change="saveSettings">
+            <span>极简模式：识别到三选一自动展开，关闭后自动收起</span>
+          </label>
+          <label class="mo-check">
+            <input v-model="settings.autoFollowUp" type="checkbox" @change="saveSettings">
+            <span>刷新后自动跟拍三选一，关闭时自动记录所选</span>
+          </label>
+          <label class="mo-check">
+            <input v-model="settings.iconMatchEnabled" type="checkbox" @change="saveSettings">
+            <span>卡片图标匹配（与文字识别交叉校验）</span>
+          </label>
+          <label class="mo-check">
+            <input v-model="settings.reminderEnabled" type="checkbox" @change="saveSettings">
+            <span>「可以刷新了」提醒（读 2999，不截图）</span>
+          </label>
+          <label class="mo-check">
+            <input v-model="settings.reminderOnlyWhenDead" type="checkbox" @change="saveSettings">
+            <span>只在阵亡时提醒</span>
+          </label>
+          <label class="mo-check">
+            <input v-model="settings.showInChampSelect" type="checkbox" @change="saveSettings">
+            <span>选人阶段也显示浮窗</span>
+          </label>
+          <label class="mo-check">
+            <input v-model="settings.focusable" type="checkbox" @change="saveSettings">
+            <span>浮窗可获得焦点（重启生效）</span>
+          </label>
+          <label class="mo-check">
+            <input v-model="settings.autoScreenshot" type="checkbox" @change="saveSettings">
+            <span>持续自动截图（旧模式）</span>
+          </label>
+          <div class="mo-settings-foot">
+            <button class="mo-btn mo-btn-small" @click="resetGame">清空本局记录</button>
+            <span class="mo-muted">{{ iconIndexLabel }}</span>
+          </div>
+        </section>
+
+        <!-- 三选一 -->
+        <section v-if="rankedCards.length" class="mo-section">
+          <div class="mo-section-head mo-no-drag">
+            <button class="mo-section-toggle" @click="toggleSection('cards')">
+              <span class="mo-chevron" :class="{ 'mo-chevron-closed': isSectionCollapsed('cards') }">▾</span>
+              <span class="mo-section-title">本次三选一</span>
+            </button>
+            <button v-if="!isSectionCollapsed('cards')" class="mo-link" :class="{ 'mo-link-active': cardDetails }" @click="cardDetails = !cardDetails">详情</button>
+          </div>
+          <div v-if="!isSectionCollapsed('cards')" class="mo-cards">
+            <template v-for="entry in rankedCards" :key="`${entry.card.slot}-${entry.card.id}`">
+              <div
+                class="mo-card mo-no-drag"
+                :class="cardClass(entry)"
+                role="button"
+                tabindex="0"
+                :title="cardTooltip(entry)"
+                @click="pick(entry.card)"
+              >
+                <div class="mo-card-icon-wrap">
+                  <img v-if="entry.card.iconPath" class="mo-card-icon" :src="getAugmentIconUrl(entry.card.iconPath)" alt="">
+                </div>
+                <div class="mo-card-main">
+                  <div class="mo-card-name">
+                    <span
+                      class="mo-card-title"
+                      title="识别错了？点这里更正"
+                      @click.stop="openCorrection({ kind: 'slot', slot: entry.card.slot, currentId: entry.card.id })"
+                    >{{ entry.card.name }}</span>
+                    <span v-if="entry.card.source === 'icon-low'" class="mo-warn-dot" title="只有图标匹配且把握不大，点名字确认">!</span>
+                  </div>
+                  <div class="mo-card-stats">
+                    <template v-if="entry.method === 'shrunk'">
+                      <span class="mo-wr">{{ formatPercent(entry.shrunkWinRate) }}</span>
+                      <span class="mo-delta" :class="deltaClass(entry.delta)">{{ formatDelta(entry.delta) }}</span>
+                      <span
+                        v-if="synergyText(entry)"
+                        class="mo-synergy"
+                        :class="(entry.synergy?.score ?? 0) > 0 ? 'mo-synergy-up' : 'mo-synergy-down'"
+                      >{{ synergyText(entry) }}</span>
+                    </template>
+                    <span v-else class="mo-muted">{{ entry.note }}</span>
+                  </div>
+                  <div v-if="cardDetails" class="mo-card-detail">
+                    <div v-if="entry.method === 'shrunk'">{{ entry.games }} 场 · 原始胜率 {{ formatPercent(entry.rawWinRate) }}</div>
+                    <div v-if="entry.card.source && entry.card.source !== 'icon+ocr'">识别：{{ sourceTitle(entry.card) }}</div>
+                    <div v-if="entry.synergy?.reasons?.length" class="mo-card-detail-synergy">{{ entry.synergy.reasons.join('；') }}</div>
+                  </div>
+                </div>
+                <span v-if="entry.relativeLabel" class="mo-rank" :class="badgeClass(entry)">{{ entry.relativeLabel }}</span>
               </div>
-              <div class="mo-card-stats">
-                <template v-if="entry.method === 'shrunk'">
-                  <span title="收缩后胜率">{{ formatPercent(entry.shrunkWinRate) }}</span>
-                  <span
-                    v-if="synergyText(entry)"
-                    class="mo-synergy"
-                    :class="(entry.synergy?.score ?? 0) > 0 ? 'mo-up' : 'mo-down'"
-                    :title="(entry.synergy?.reasons || []).join('；')"
-                  >{{ synergyText(entry) }}</span>
-                  <span :class="deltaClass(entry.delta)" title="相对基准（百分点）">{{ formatDelta(entry.delta) }}</span>
-                  <span class="mo-muted">{{ entry.games }} 场 · 原始 {{ formatPercent(entry.rawWinRate) }}</span>
-                </template>
-                <span v-else class="mo-muted">{{ entry.note }}</span>
+              <div
+                v-if="correction && correction.kind === 'slot' && correction.slot === entry.card.slot"
+                class="mo-correction mo-no-drag"
+              >
+                <div class="mo-correction-title">
+                  <span>更正第 {{ entry.card.slot + 1 }} 张</span>
+                  <button class="mo-link" @click="closeCorrection">关闭</button>
+                </div>
+                <div v-if="(entry.card.alternatives || []).length" class="mo-alt-list">
+                  <button
+                    v-for="alt in entry.card.alternatives"
+                    :key="`alt-${alt.source}-${alt.id}`"
+                    class="mo-alt"
+                    :class="{ 'mo-alt-current': String(alt.id) === String(entry.card.id) }"
+                    @click="applyCorrection(alt)"
+                  >
+                    <img v-if="alt.iconPath" :src="getAugmentIconUrl(alt.iconPath)" alt="">
+                    <span class="mo-alt-name">{{ alt.name }}</span>
+                    <span class="mo-muted">{{ alt.source === 'icon' ? '图标' : '文字' }} {{ formatScore(alt.score) }}</span>
+                  </button>
+                </div>
+                <input
+                  ref="searchInput"
+                  v-model="searchQuery"
+                  class="mo-search"
+                  placeholder="按名字搜索海克斯…"
+                  @mousedown="onSearchFocus"
+                  @keydown.esc="closeCorrection"
+                  @keydown.enter="applyFirstSearchResult"
+                >
+                <div class="mo-alt-list">
+                  <button
+                    v-for="result in searchResults"
+                    :key="`search-${result.id}`"
+                    class="mo-alt"
+                    @click="applyCorrection(result)"
+                  >
+                    <img v-if="result.iconPath" :src="getAugmentIconUrl(result.iconPath)" alt="">
+                    <span class="mo-alt-name">{{ result.name }}</span>
+                  </button>
+                </div>
               </div>
-              <div v-if="entry.synergy?.reasons?.length" class="mo-card-reason">{{ entry.synergy.reasons[0] }}</div>
+            </template>
+            <div v-if="cardDetails" class="mo-footnote">
+              <div v-if="ranking.method === 'rank-fallback'">无胜率数据：按热度排序，仅供参考</div>
+              <div v-else-if="ranking.baselineWinRate != null">
+                收缩胜率 = (胜场 + α×{{ ranking.baselineSource === 'cards' ? '三卡平均' : '英雄平均' }}) / (场次 + α)，α={{ ranking.alpha }}，基准 {{ formatPercent(ranking.baselineWinRate) }}；契合度最多调整 ±2 个百分点
+              </div>
+              <div>{{ ranking.summary }}</div>
+              <div v-if="captureLabel">{{ captureLabel }}</div>
+              <button class="mo-link mo-no-drag" @click="clearCandidates">清除本次三选一</button>
             </div>
           </div>
-          <div
-            v-if="correction && correction.kind === 'slot' && correction.slot === entry.card.slot"
-            class="mo-correction mo-no-drag"
-          >
-            <div class="mo-correction-title">
-              <span>更正第 {{ entry.card.slot + 1 }} 张</span>
-              <button class="mo-link" @click="closeCorrection">关闭</button>
-            </div>
-            <div v-if="(entry.card.alternatives || []).length" class="mo-alt-list">
-              <button
-                v-for="alt in entry.card.alternatives"
-                :key="`alt-${alt.source}-${alt.id}`"
-                class="mo-alt"
-                :class="{ 'mo-alt-current': String(alt.id) === String(entry.card.id) }"
-                @click="applyCorrection(alt)"
-              >
-                <img v-if="alt.iconPath" :src="getAugmentIconUrl(alt.iconPath)" alt="">
-                <span class="mo-alt-name">{{ alt.name }}</span>
-                <span class="mo-muted">{{ alt.source === 'icon' ? '图标' : '文字' }} {{ formatScore(alt.score) }}</span>
-              </button>
-            </div>
-            <input
-              ref="searchInput"
-              v-model="searchQuery"
-              class="mo-search"
-              placeholder="按名字搜索海克斯…"
-              @mousedown="onSearchFocus"
-              @keydown.esc="closeCorrection"
-              @keydown.enter="applyFirstSearchResult"
-            >
-            <div class="mo-alt-list">
-              <button
-                v-for="result in searchResults"
-                :key="`search-${result.id}`"
-                class="mo-alt"
-                @click="applyCorrection(result)"
-              >
-                <img v-if="result.iconPath" :src="getAugmentIconUrl(result.iconPath)" alt="">
-                <span class="mo-alt-name">{{ result.name }}</span>
-              </button>
-            </div>
+        </section>
+
+        <!-- 已选海克斯 -->
+        <section class="mo-section">
+          <div class="mo-section-head mo-no-drag">
+            <button class="mo-section-toggle" @click="toggleSection('picked')">
+              <span class="mo-chevron" :class="{ 'mo-chevron-closed': isSectionCollapsed('picked') }">▾</span>
+              <span class="mo-section-title">已选海克斯</span>
+              <span v-if="state.picked.length" class="mo-count">{{ state.picked.length }}</span>
+            </button>
+            <span v-if="isSectionCollapsed('picked') && state.picked.length" class="mo-mini-icons">
+              <img v-for="augment in state.picked" :key="`mini-${augment.id}`" :src="getAugmentIconUrl(augment.iconPath || '')" :title="augment.name" alt="">
+            </span>
           </div>
+          <template v-if="!isSectionCollapsed('picked')">
+            <div v-if="state.picked.length" class="mo-chips">
+              <span
+                v-for="augment in state.picked"
+                :key="augment.id"
+                class="mo-chip"
+                :class="{ 'mo-chip-inferred': augment.inferred === 'recommended' }"
+              >
+                <img v-if="augment.iconPath" :src="getAugmentIconUrl(augment.iconPath)" alt="">
+                <span
+                  class="mo-chip-name mo-no-drag"
+                  :title="inferredTitle(augment) || '点这里换成别的海克斯'"
+                  @click="openCorrection({ kind: 'picked', currentId: augment.id })"
+                >{{ augment.name }}</span>
+                <span v-if="augment.inferred === 'recommended'" class="mo-chip-tag" :title="inferredTitle(augment)">推断</span>
+                <span v-else-if="augment.inferred === 'live-client'" class="mo-chip-tag" :title="inferredTitle(augment)">自动</span>
+                <button class="mo-chip-x mo-no-drag" title="移除" @click="unpick(augment.id)">×</button>
+              </span>
+            </div>
+            <div v-else class="mo-empty">点三选一的卡片记录；关掉三选一后也会自动记录</div>
+            <div v-if="correction && correction.kind === 'picked'" class="mo-correction mo-no-drag">
+              <div class="mo-correction-title">
+                <span>把「{{ pickedName(correction.currentId) }}」换成</span>
+                <button class="mo-link" @click="closeCorrection">关闭</button>
+              </div>
+              <div v-if="pickedAlternatives(correction.currentId).length" class="mo-alt-list">
+                <button
+                  v-for="alt in pickedAlternatives(correction.currentId)"
+                  :key="`picked-alt-${alt.id}`"
+                  class="mo-alt"
+                  @click="applyCorrection(alt)"
+                >
+                  <img v-if="alt.iconPath" :src="getAugmentIconUrl(alt.iconPath)" alt="">
+                  <span class="mo-alt-name">{{ alt.name }}</span>
+                  <span class="mo-muted">同一轮</span>
+                </button>
+              </div>
+              <input
+                ref="searchInput"
+                v-model="searchQuery"
+                class="mo-search"
+                placeholder="按名字搜索海克斯…"
+                @mousedown="onSearchFocus"
+                @keydown.esc="closeCorrection"
+                @keydown.enter="applyFirstSearchResult"
+              >
+              <div class="mo-alt-list">
+                <button
+                  v-for="result in searchResults"
+                  :key="`search-${result.id}`"
+                  class="mo-alt"
+                  @click="applyCorrection(result)"
+                >
+                  <img v-if="result.iconPath" :src="getAugmentIconUrl(result.iconPath)" alt="">
+                  <span class="mo-alt-name">{{ result.name }}</span>
+                </button>
+              </div>
+            </div>
           </template>
-        </div>
-        <div class="mo-footnote">
-          <span v-if="ranking.method === 'rank-fallback'">⚠ 无胜率数据：按热度排序，仅供参考</span>
-          <span v-else-if="ranking.baselineWinRate != null">
-            收缩胜率 = (胜场 + α×{{ ranking.baselineSource === 'cards' ? '三卡平均' : '英雄平均' }}) / (场次 + α)，α={{ ranking.alpha }}，基准 {{ formatPercent(ranking.baselineWinRate) }}
-          </span>
-          <button class="mo-link mo-no-drag" @click="clearCandidates">清除</button>
-        </div>
-        <div v-if="captureLabel" class="mo-timing">{{ captureLabel }}</div>
-      </section>
+        </section>
 
-      <!-- 已选海克斯 -->
-      <section class="mo-section">
-        <div class="mo-section-title">
-          <span>本局已选海克斯</span>
-          <span class="mo-muted">{{ state.picked.length ? '点名字更正 · 点 × 移除' : '点上方卡片标记，或关掉三选一后自动记录' }}</span>
-        </div>
-        <div v-if="state.picked.length" class="mo-chips">
-          <span
-            v-for="augment in state.picked"
-            :key="augment.id"
-            class="mo-chip"
-            :class="{ 'mo-chip-inferred': augment.inferred === 'recommended' }"
-          >
-            <img v-if="augment.iconPath" :src="getAugmentIconUrl(augment.iconPath)" alt="">
-            <span
-              class="mo-chip-name mo-no-drag"
-              :title="inferredTitle(augment) || '点这里换成别的海克斯'"
-              @click="openCorrection({ kind: 'picked', currentId: augment.id })"
-            >{{ augment.name }}<span v-if="augment.inferred === 'recommended'" class="mo-chip-tag">推断</span><span v-else-if="augment.inferred === 'live-client'" class="mo-chip-tag">自动</span></span>
-            <button class="mo-chip-x mo-no-drag" title="移除" @click="unpick(augment.id)">×</button>
-          </span>
-        </div>
-        <div v-else class="mo-muted mo-empty">还没有记录</div>
-        <div v-if="correction && correction.kind === 'picked'" class="mo-correction mo-no-drag">
-          <div class="mo-correction-title">
-            <span>把「{{ pickedName(correction.currentId) }}」换成</span>
-            <button class="mo-link" @click="closeCorrection">关闭</button>
-          </div>
-          <div v-if="pickedAlternatives(correction.currentId).length" class="mo-alt-list">
-            <button
-              v-for="alt in pickedAlternatives(correction.currentId)"
-              :key="`picked-alt-${alt.id}`"
-              class="mo-alt"
-              @click="applyCorrection(alt)"
-            >
-              <img v-if="alt.iconPath" :src="getAugmentIconUrl(alt.iconPath)" alt="">
-              <span class="mo-alt-name">{{ alt.name }}</span>
-              <span class="mo-muted">同一轮</span>
+        <!-- 出装 -->
+        <section class="mo-section">
+          <div class="mo-section-head mo-no-drag">
+            <button class="mo-section-toggle" @click="toggleSection('build')">
+              <span class="mo-chevron" :class="{ 'mo-chevron-closed': isSectionCollapsed('build') }">▾</span>
+              <span class="mo-section-title">推荐出装</span>
+              <span v-if="archetypeName" class="mo-archetype" :class="{ 'mo-archetype-changed': archetypeChanged }">{{ archetypeName }}</span>
             </button>
+            <button v-if="!isSectionCollapsed('build')" class="mo-link" :class="{ 'mo-link-active': buildDetails }" @click="buildDetails = !buildDetails">详情</button>
           </div>
-          <input
-            ref="searchInput"
-            v-model="searchQuery"
-            class="mo-search"
-            placeholder="按名字搜索海克斯…"
-            @mousedown="onSearchFocus"
-            @keydown.esc="closeCorrection"
-            @keydown.enter="applyFirstSearchResult"
-          >
-          <div class="mo-alt-list">
-            <button
-              v-for="result in searchResults"
-              :key="`search-${result.id}`"
-              class="mo-alt"
-              @click="applyCorrection(result)"
-            >
-              <img v-if="result.iconPath" :src="getAugmentIconUrl(result.iconPath)" alt="">
-              <span class="mo-alt-name">{{ result.name }}</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- 出装 -->
-      <section class="mo-section">
-        <div class="mo-section-title">
-          <span>推荐出装</span>
-          <span class="mo-muted">{{ liveLabel }}</span>
-        </div>
-        <div v-if="championLoading" class="mo-muted mo-empty">加载英雄数据…</div>
-        <template v-else>
-          <div v-if="archetypeLabel || tagSummary" class="mo-tags">
-            <span v-if="archetypeLabel">流派：<b>{{ archetypeLabel }}</b></span>
-            <span v-if="tagSummary"> · 海克斯偏好：{{ tagSummary }}</span>
-          </div>
-          <ol v-if="engine.items.length" class="mo-items">
-            <li
-              v-for="item in engine.items"
-              :key="item.itemId"
-              class="mo-item"
-              :class="{ 'mo-item-owned': item.owned, 'mo-item-next': item.isNext }"
-            >
-              <img class="mo-item-icon" :src="getItemIconUrl(item.itemId)" alt="">
-              <div class="mo-item-main">
-                <div class="mo-item-name">
-                  <span>{{ item.name }}</span>
+          <template v-if="!isSectionCollapsed('build')">
+            <div v-if="championLoading" class="mo-empty">加载英雄数据…</div>
+            <template v-else-if="engine.items.length">
+              <div class="mo-slots mo-no-drag" @mouseleave="hoverItemId = null">
+                <div
+                  v-for="item in engine.items"
+                  :key="item.itemId"
+                  class="mo-slot"
+                  :class="{
+                    'mo-slot-next': item.isNext,
+                    'mo-slot-owned': item.owned,
+                    'mo-slot-focus': focusItem && focusItem.itemId === item.itemId && !item.isNext,
+                  }"
+                  :title="itemTooltip(item)"
+                  @mouseenter="hoverItemId = item.itemId"
+                  @click="pinnedItemId = pinnedItemId === item.itemId ? null : item.itemId"
+                >
+                  <img :src="getItemIconUrl(item.itemId)" alt="">
                   <span
                     v-if="changeBadge(item)"
-                    class="mo-change"
+                    class="mo-slot-badge"
                     :class="changeBadge(item)!.cls"
-                    :title="changeBadge(item)!.title"
                   >{{ changeBadge(item)!.text }}</span>
-                  <span v-if="item.isNext" class="mo-badge mo-badge-next">下一件</span>
-                  <span v-else-if="item.owned" class="mo-badge mo-badge-owned">已有</span>
-                  <span class="mo-item-score" :title="scoreTitle(item)">
-                    {{ item.score.total.toFixed(1) }}<span v-if="Math.abs(item.score.synergy) >= 0.3" :class="item.score.synergy > 0 ? 'mo-up' : 'mo-down'">（海克斯{{ item.score.synergy > 0 ? '+' : '' }}{{ item.score.synergy.toFixed(1) }}）</span>
-                  </span>
+                  <span v-if="item.owned" class="mo-slot-check">✓</span>
                 </div>
-                <div v-for="(reason, index) in item.reasons.slice(0, 2)" :key="index" class="mo-item-reason">{{ reason }}</div>
               </div>
-            </li>
-          </ol>
-          <div v-if="state.picked.length && engine.removed.length" class="mo-removed">
-            <span class="mo-muted">被挤掉：</span>
-            <span v-for="removed in engine.removed" :key="`removed-${removed.itemId}`" class="mo-removed-item" :title="removed.reason">{{ removed.name }}</span>
-          </div>
-          <div v-for="(note, index) in engine.notes" :key="`note-${index}`" class="mo-muted mo-note">{{ note }}</div>
-          <div class="mo-muted mo-note">海克斯加成是规则模型（数据源没有海克斯×装备胜率），先验来自该英雄的真实出装统计</div>
-        </template>
-      </section>
+              <div v-if="focusItem" class="mo-focus">
+                <div class="mo-focus-head">
+                  <span class="mo-focus-tag">{{ focusItem.isNext ? '下一件' : focusItem.owned ? '已有' : `第 ${focusIndex + 1} 件` }}</span>
+                  <span class="mo-focus-name">{{ focusItem.name }}</span>
+                  <span
+                    v-if="Math.abs(focusItem.score.synergy) >= 0.3"
+                    class="mo-synergy"
+                    :class="focusItem.score.synergy > 0 ? 'mo-synergy-up' : 'mo-synergy-down'"
+                  >海克斯 {{ focusItem.score.synergy > 0 ? '+' : '' }}{{ focusItem.score.synergy.toFixed(1) }}</span>
+                </div>
+                <div
+                  v-for="(reason, index) in focusReasons"
+                  :key="index"
+                  class="mo-focus-reason"
+                  :class="{ 'mo-focus-reason-secondary': index > 0 }"
+                >{{ reason }}</div>
+              </div>
+              <div v-if="buildDetails" class="mo-build-details">
+                <div v-if="tagSummary" class="mo-detail-line">海克斯偏好：{{ tagSummary }}</div>
+                <ol class="mo-detail-items">
+                  <li v-for="item in engine.items" :key="`detail-${item.itemId}`">
+                    <div class="mo-detail-item-head">
+                      <img :src="getItemIconUrl(item.itemId)" alt="">
+                      <span>{{ item.name }}</span>
+                      <span class="mo-muted mo-detail-score" :title="scoreTitle(item)">{{ item.score.total.toFixed(1) }}</span>
+                    </div>
+                    <div v-for="(reason, index) in item.reasons" :key="index" class="mo-detail-reason">{{ reason }}</div>
+                  </li>
+                </ol>
+                <div v-if="state.picked.length && engine.removed.length" class="mo-detail-line">
+                  被挤掉：<span v-for="removed in engine.removed" :key="`removed-${removed.itemId}`" class="mo-removed-item" :title="removed.reason">{{ removed.name }}</span>
+                </div>
+                <div v-for="(note, index) in engine.notes" :key="`note-${index}`" class="mo-detail-line">{{ note }}</div>
+                <div class="mo-detail-line">{{ liveLabel }}</div>
+                <div class="mo-detail-line mo-disclaimer">海克斯加成是规则模型（数据源没有海克斯×装备胜率）；先验来自该英雄的真实出装统计。</div>
+              </div>
+            </template>
+            <div v-else class="mo-empty">暂无该英雄的出装数据</div>
+          </template>
+        </section>
+      </div>
     </div>
   </div>
 </template>
@@ -345,6 +452,7 @@ import { MECHANIC_LABELS, STAT_LABELS, type WeightKey } from '../../shared/recom
 import { AUGMENT_LEVEL_PRESETS } from '../../shared/refresh-reminder.ts'
 import type {
   ChampionMonitorState,
+  ManualOverlaySection,
   ManualOverlayAugmentRef,
   ManualOverlayCandidate,
   ManualOverlayPickedAugment,
@@ -386,6 +494,10 @@ const state = ref<ManualOverlayState>({
   liveGame: false,
   pendingChoice: null,
   autoWatching: false,
+  collapsed: false,
+  collapseHotkey: 'CommandOrControl+Shift+H',
+  collapseHotkeyRegistered: false,
+  collapseHotkeyError: null,
   revision: 0,
 })
 const settings = reactive<ManualOverlaySettings>({
@@ -400,6 +512,11 @@ const settings = reactive<ManualOverlaySettings>({
   startWindowSec: 90,
   iconMatchEnabled: true,
   autoFollowUp: true,
+  collapseHotkey: 'CommandOrControl+Shift+H',
+  minimalMode: false,
+  opacity: 0.92,
+  scale: 1,
+  collapsedSections: [],
 })
 const showSettings = ref(false)
 const championId = ref<number | null>(null)
@@ -415,6 +532,13 @@ const hotkeyOptions = [
   { value: 'F8', label: 'F8' },
   { value: 'F10', label: 'F10' },
   { value: 'Pause', label: 'Pause' },
+]
+const collapseHotkeyOptions = [
+  { value: 'CommandOrControl+Shift+H', label: 'Ctrl+Shift+H' },
+  { value: 'CommandOrControl+Alt+H', label: 'Ctrl+Alt+H' },
+  { value: 'F9', label: 'F9' },
+  { value: 'F7', label: 'F7' },
+  { value: '', label: '不使用' },
 ]
 const alphaOptions = [0, 100, 300, 600, 1000, 3000]
 const levelOptions = computed(() => Array.from(new Set([...AUGMENT_LEVEL_PRESETS, settings.augmentLevels])))
@@ -518,12 +642,107 @@ const ranking = computed(() => rankCards(state.value.candidates))
 /** 按游戏里的左右顺序展示，标签来自三卡相对排序（胜率 + 契合度） */
 const rankedCards = computed(() => [...ranking.value.choices].sort((a, b) => a.slot - b.slot))
 
-const archetypeLabel = computed(() => {
+const archetypeName = computed(() => {
   const archetype = engine.value.archetype
-  if (!archetype) return ''
-  const changed = archetype.baselineIndex !== 0 && state.value.picked.length > 0
-  return `${localizeArchetype(archetype.label)}${changed ? '（海克斯改变了流派）' : ''}`
+  return archetype ? `${localizeArchetype(archetype.label)}流` : ''
 })
+const archetypeChanged = computed(() => !!engine.value.archetype && engine.value.archetype.baselineIndex !== 0 && state.value.picked.length > 0)
+
+// ------------------------------------------------------------- 布局：收起 / 分区折叠 / 缩放
+const frameRef = ref<HTMLElement | null>(null)
+const collapsed = computed(() => state.value.collapsed === true)
+const cardDetails = ref(false)
+const buildDetails = ref(false)
+const hoverItemId = ref<number | null>(null)
+const pinnedItemId = ref<number | null>(null)
+
+const frameStyle = computed(() => ({
+  zoom: String(settings.scale || 1),
+  '--mo-bg-alpha': String(settings.opacity ?? 0.92),
+}))
+/** 展开时最高不超过屏幕可用高度的 90%（超出部分在内容区滚动） */
+const shellStyle = computed(() => {
+  const available = typeof window !== 'undefined' && window.screen?.availHeight ? window.screen.availHeight : 1000
+  return { maxHeight: `${Math.round((available * 0.9) / (settings.scale || 1)) - 16}px` }
+})
+
+const collapseHotkeyLabel = computed(() => (state.value.collapseHotkey || '').replace('CommandOrControl', 'Ctrl'))
+
+const statusMessages = computed(() => [
+  state.value.lastError,
+  championError.value,
+  state.value.hotkeyRegistered ? null : `刷新快捷键：${state.value.hotkeyError || '未注册'}`,
+  state.value.collapseHotkey && !state.value.collapseHotkeyRegistered && state.value.collapseHotkeyError
+    ? `收起快捷键：${state.value.collapseHotkeyError}`
+    : null,
+].filter((message): message is string => !!message))
+
+function isSectionCollapsed(section: ManualOverlaySection) {
+  return (settings.collapsedSections || []).includes(section)
+}
+
+function toggleSection(section: ManualOverlaySection) {
+  const current = new Set(settings.collapsedSections || [])
+  if (current.has(section)) current.delete(section)
+  else current.add(section)
+  settings.collapsedSections = (['cards', 'picked', 'build'] as ManualOverlaySection[]).filter((entry) => current.has(entry))
+  void saveSettings()
+}
+
+async function setCollapsed(value: boolean) {
+  closeCorrection()
+  showSettings.value = false
+  // 先本地切换，界面立即响应；主进程状态随后广播回来
+  state.value = { ...state.value, collapsed: value }
+  applyState(await electronAPI.manualOverlay.setCollapsed(value))
+}
+
+const nextItem = computed(() => engine.value.items.find((item) => item.isNext) ?? engine.value.items[0] ?? null)
+const focusItem = computed(() => {
+  const id = hoverItemId.value ?? pinnedItemId.value
+  return engine.value.items.find((item) => item.itemId === id) ?? nextItem.value
+})
+const focusIndex = computed(() => engine.value.items.findIndex((item) => item.itemId === focusItem.value?.itemId))
+/** 焦点装备：最关键的海克斯原因在前，数据先验在后 */
+const focusReasons = computed(() => {
+  const reasons = focusItem.value?.reasons || []
+  return reasons.length > 1 ? [reasons[1], reasons[0]] : reasons.slice(0, 1)
+})
+
+function itemTooltip(item: EngineItem) {
+  return [item.name, ...item.reasons, scoreTitle(item)].join('\n')
+}
+
+function cardTooltip(entry: SynergyRankedChoice<CardInput>) {
+  const lines = [`${entry.card.name}（点击记录为已选）`]
+  if (entry.method === 'shrunk') {
+    lines.push(`收缩胜率 ${formatPercent(entry.shrunkWinRate)}（相对基准 ${formatDelta(entry.delta)}）`)
+    lines.push(`${entry.games} 场 · 原始胜率 ${formatPercent(entry.rawWinRate)}`)
+  }
+  if (entry.synergy?.reasons?.length) lines.push(`契合：${entry.synergy.reasons.join('；')}`)
+  const source = sourceTitle(entry.card)
+  if (source) lines.push(source)
+  return lines.join('\n')
+}
+
+// 窗口尺寸跟随内容：收起成小条、分区折叠、缩放都会让窗口实际变小
+let resizeObserver: ResizeObserver | null = null
+let fitFrame = 0
+let lastFit = ''
+function scheduleFit() {
+  if (!hasElectronAPI() || fitFrame) return
+  fitFrame = requestAnimationFrame(() => {
+    fitFrame = 0
+    const element = frameRef.value
+    if (!element) return
+    const rect = element.getBoundingClientRect()
+    const size = { width: Math.ceil(rect.width), height: Math.ceil(rect.height) }
+    const key = `${size.width}x${size.height}`
+    if (key === lastFit) return
+    lastFit = key
+    void electronAPI.manualOverlay.fitContent(size).catch(() => {})
+  })
+}
 
 const tagSummary = computed(() => {
   const weights = Object.entries(engine.value.weights || {})
@@ -642,17 +861,6 @@ const searchResults = computed(() => {
 function formatScore(value: number | null | undefined) {
   const number = Number(value)
   return value != null && Number.isFinite(number) ? `${Math.round(number * 100)}` : ''
-}
-
-function sourceLabel(card: ManualOverlayCandidate) {
-  const labels: Record<string, string> = {
-    'icon+ocr': '✓',
-    icon: '图标',
-    ocr: '文字',
-    'icon-low': '待确认',
-    manual: '手动',
-  }
-  return card.source ? labels[card.source] || '' : ''
 }
 
 function sourceTitle(card: ManualOverlayCandidate) {
@@ -872,6 +1080,12 @@ watch(() => [state.value.picked.length, state.value.acknowledgedStage], () => {
 })
 
 onMounted(async () => {
+  document.documentElement.classList.add('manual-overlay-window')
+  document.body.classList.add('manual-overlay-window')
+  if (typeof ResizeObserver !== 'undefined' && frameRef.value) {
+    resizeObserver = new ResizeObserver(scheduleFit)
+    resizeObserver.observe(frameRef.value)
+  }
   if (!hasElectronAPI()) return
   unsubscribers.push(electronAPI.events.on('manual-overlay-state', applyState))
   unsubscribers.push(electronAPI.events.on('champion-monitor-changed', applyChampionMonitor))
@@ -894,7 +1108,16 @@ onMounted(async () => {
   }, LIVE_POLL_INTERVAL_MS)
 })
 
+watch(() => [collapsed.value, settings.scale], () => {
+  lastFit = ''
+  void nextTick(scheduleFit)
+})
+
 onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
+  if (fitFrame) cancelAnimationFrame(fitFrame)
+  document.documentElement.classList.remove('manual-overlay-window')
+  document.body.classList.remove('manual-overlay-window')
   for (const unsubscribe of unsubscribers.splice(0)) unsubscribe()
   if (livePollTimer) clearInterval(livePollTimer)
   closeCorrection()
@@ -902,135 +1125,420 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.mo-root {
+/* ---------- 基础：透明窗口 + 海克斯风格外壳 ---------- */
+.mo-frame {
+  --mo-gold: #c8aa6e;
+  --mo-gold-bright: #f0d89a;
+  --mo-gold-dim: rgba(200, 170, 110, 0.35);
+  --mo-ivory: #ece3cf;
+  --mo-text: #cfd6e0;
+  --mo-muted: #8590a2;
+  --mo-blue: #0ac8b9;
+  --mo-up: #5fd08a;
+  --mo-down: #ef6f6f;
+  --mo-radius: 10px;
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 8px;
+  font-family: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Segoe UI", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--mo-text);
+  -webkit-font-smoothing: antialiased;
+}
+.mo-frame *, .mo-frame *::before, .mo-frame *::after { box-sizing: border-box; }
+
+.mo-shell {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  width: 320px;
   overflow: hidden;
-  background: rgba(12, 16, 24, 0.94);
-  color: #e8e1cf;
-  font-size: 12px;
-  border: 1px solid rgba(200, 170, 110, 0.45);
-  box-sizing: border-box;
-  user-select: none;
+  border-radius: var(--mo-radius);
+  border: 1px solid var(--mo-gold-dim);
+  background:
+    linear-gradient(180deg, rgba(16, 24, 40, var(--mo-bg-alpha)) 0%, rgba(8, 12, 22, var(--mo-bg-alpha)) 100%);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(240, 216, 154, 0.08);
+  -webkit-app-region: drag;
 }
+.mo-no-drag, .mo-frame button, .mo-frame input, .mo-frame select { -webkit-app-region: no-drag; }
+
+/* ---------- 收起的小条 ---------- */
+.mo-bar {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  height: 48px;
+  padding: 0 8px;
+}
+.mo-bar-champion {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--mo-gold-dim);
+  flex: none;
+}
+.mo-bar-next {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 6px;
+  border: 1px solid var(--mo-gold);
+  box-shadow: 0 0 8px rgba(240, 216, 154, 0.35);
+  overflow: hidden;
+  background: #0b1220;
+}
+.mo-bar-next img { width: 100%; height: 100%; display: block; }
+.mo-bar-empty { display: flex; height: 100%; align-items: center; justify-content: center; color: var(--mo-muted); }
+.mo-bar-text { display: flex; flex-direction: column; min-width: 0; max-width: 104px; }
+.mo-bar-label { font-size: 10px; color: var(--mo-gold); letter-spacing: 0.5px; }
+.mo-bar-name { color: var(--mo-ivory); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-bar-dot {
+  width: 8px; height: 8px; flex: none; border-radius: 50%;
+  background: var(--mo-blue); box-shadow: 0 0 6px var(--mo-blue);
+}
+
+/* ---------- 按钮 ---------- */
+.mo-btn {
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--mo-gold-dim);
+  background: rgba(30, 40, 60, 0.8);
+  color: var(--mo-ivory);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mo-btn:hover:not(:disabled) { border-color: var(--mo-gold); }
+.mo-btn:disabled { opacity: 0.55; cursor: default; }
+.mo-btn-primary {
+  border-color: var(--mo-gold);
+  background: linear-gradient(180deg, #2a3c55 0%, #18263a 100%);
+  color: var(--mo-gold-bright);
+}
+.mo-btn-small { height: 22px; padding: 0 8px; font-size: 11px; }
+.mo-icon-btn {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--mo-muted);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.mo-icon-btn:hover:not(:disabled), .mo-icon-active { color: var(--mo-gold-bright); border-color: var(--mo-gold-dim); background: rgba(200, 170, 110, 0.08); }
+.mo-icon-primary { color: var(--mo-gold-bright); border-color: var(--mo-gold-dim); }
+.mo-spin { animation: mo-spin 0.9s linear infinite; }
+@keyframes mo-spin { to { transform: rotate(360deg); } }
+.mo-link {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  color: var(--mo-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.mo-link:hover, .mo-link-active { color: var(--mo-gold-bright); }
+
+/* ---------- 头部 ---------- */
 .mo-header {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 8px 8px 8px 10px;
+  border-bottom: 1px solid rgba(200, 170, 110, 0.18);
+  background: linear-gradient(90deg, rgba(200, 170, 110, 0.08), transparent 70%);
+}
+.mo-champion-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--mo-gold);
+  flex: none;
+}
+.mo-title { flex: 1; min-width: 0; margin-left: 2px; }
+.mo-champion-name { color: var(--mo-ivory); font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-subtitle { color: var(--mo-muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-watching { color: var(--mo-blue); }
+
+.mo-reminder {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 10px 0;
   padding: 6px 8px;
-  background: rgba(30, 35, 45, 0.95);
-  border-bottom: 1px solid rgba(200, 170, 110, 0.3);
-  -webkit-app-region: drag;
+  border-radius: 8px;
+  border: 1px solid rgba(10, 200, 185, 0.4);
+  background: rgba(10, 200, 185, 0.08);
 }
-.mo-no-drag { -webkit-app-region: no-drag; }
-.mo-champion-icon { width: 28px; height: 28px; border-radius: 4px; }
-.mo-title { flex: 1; min-width: 0; }
-.mo-champion-name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mo-subtitle { color: #8c8c8c; font-size: 11px; }
-.mo-body { flex: 1; overflow-y: auto; padding: 6px 8px 10px; }
-.mo-btn {
-  border: 1px solid rgba(200, 170, 110, 0.5);
-  background: rgba(40, 45, 55, 0.9);
-  color: #e8e1cf;
-  border-radius: 4px;
-  padding: 3px 8px;
-  cursor: pointer;
-  font-size: 12px;
+.mo-reminder-urgent { border-color: var(--mo-blue); animation: mo-pulse 1.2s ease-in-out infinite; }
+@keyframes mo-pulse { 50% { background: rgba(10, 200, 185, 0.22); } }
+.mo-reminder-text { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 11px; }
+.mo-reminder-text b { color: var(--mo-blue); font-size: 12px; }
+
+/* ---------- 内容区与分区 ---------- */
+.mo-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 10px 10px;
 }
-.mo-btn:disabled { opacity: 0.6; cursor: default; }
-.mo-btn-primary { background: #1e6f8f; border-color: #3aa0c8; color: #fff; font-weight: 600; }
-.mo-icon-btn { padding: 2px 6px; }
-.mo-link { background: none; border: 0; color: #6fb3d2; cursor: pointer; font-size: 11px; padding: 0; }
-.mo-hint { color: #9aa0a6; font-size: 11px; margin-bottom: 4px; }
-.mo-status { font-size: 11px; margin-bottom: 4px; }
-.mo-warn { color: #e0a84a; }
-.mo-muted { color: #8c8c8c; font-size: 11px; }
+.mo-body::-webkit-scrollbar { width: 6px; }
+.mo-body::-webkit-scrollbar-thumb { background: rgba(200, 170, 110, 0.3); border-radius: 3px; }
+.mo-body::-webkit-scrollbar-track { background: transparent; }
+
+.mo-status {
+  margin-top: 6px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: rgba(239, 111, 111, 0.1);
+  border: 1px solid rgba(239, 111, 111, 0.3);
+  color: #f2b0a5;
+  font-size: 11px;
+}
+
 .mo-section { margin-top: 8px; }
-.mo-section-title { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; font-weight: 600; margin-bottom: 4px; color: #c8aa6e; }
-.mo-settings { display: flex; flex-direction: column; gap: 6px; padding: 6px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; }
-.mo-setting { display: flex; align-items: center; gap: 6px; }
-.mo-setting select { background: #1b1f27; color: #e8e1cf; border: 1px solid #444; border-radius: 3px; }
-.mo-cards { display: flex; flex-direction: column; gap: 4px; }
+.mo-section + .mo-section { padding-top: 8px; border-top: 1px solid rgba(200, 170, 110, 0.12); }
+.mo-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 22px;
+  margin-bottom: 6px;
+}
+.mo-section-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.mo-section-title { color: var(--mo-gold); font-weight: 700; font-size: 12px; letter-spacing: 1px; }
+.mo-chevron { display: inline-block; width: 10px; color: var(--mo-gold); font-size: 10px; transition: transform 0.15s; }
+.mo-chevron-closed { transform: rotate(-90deg); }
+.mo-count {
+  min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px;
+  background: rgba(200, 170, 110, 0.18); color: var(--mo-gold-bright); font-size: 10px; line-height: 16px; text-align: center;
+}
+.mo-muted { color: var(--mo-muted); }
+.mo-empty { color: var(--mo-muted); font-size: 11px; padding: 2px 0 4px; }
+
+/* ---------- 三选一卡片 ---------- */
+.mo-cards { display: flex; flex-direction: column; gap: 6px; }
 .mo-card {
   display: flex;
-  gap: 6px;
   align-items: center;
-  text-align: left;
-  padding: 5px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.03);
-  color: inherit;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(120, 140, 170, 0.22);
+  background: rgba(20, 30, 48, 0.75);
   cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
 }
-.mo-card:hover { border-color: rgba(200, 170, 110, 0.6); }
-.mo-card-best { border-color: rgba(88, 190, 120, 0.8); background: rgba(88, 190, 120, 0.08); }
-.mo-card-tie { border-color: rgba(224, 168, 74, 0.7); }
-.mo-card-icon { width: 30px; height: 30px; border-radius: 4px; }
+.mo-card:hover { border-color: var(--mo-gold-dim); background: rgba(28, 40, 62, 0.9); }
+.mo-card-best {
+  border-color: var(--mo-gold);
+  background: linear-gradient(90deg, rgba(200, 170, 110, 0.16), rgba(20, 30, 48, 0.8) 70%);
+  box-shadow: 0 0 10px rgba(200, 170, 110, 0.15);
+}
+.mo-card-tie { border-color: rgba(10, 200, 185, 0.5); }
+.mo-card-icon-wrap {
+  width: 36px; height: 36px; flex: none; border-radius: 50%;
+  background: radial-gradient(circle, rgba(60, 80, 120, 0.6), rgba(10, 16, 28, 0.9));
+  display: flex; align-items: center; justify-content: center;
+}
+.mo-card-icon { width: 32px; height: 32px; }
 .mo-card-main { flex: 1; min-width: 0; }
-.mo-card-name { display: flex; align-items: center; gap: 4px; font-weight: 600; }
-.mo-card-stats { display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; }
-.mo-up { color: #58be78; }
-.mo-down { color: #e06060; }
-.mo-badge { font-size: 10px; padding: 0 4px; border-radius: 3px; font-weight: 600; }
-.mo-badge-best { background: #2f7d4a; color: #fff; }
-.mo-badge-tie { background: #8a6420; color: #fff; }
-.mo-badge-plain { background: #3a3f4a; color: #ccc; }
-.mo-badge-next { background: #1e6f8f; color: #fff; }
-.mo-badge-owned { background: #3a3f4a; color: #aaa; }
-.mo-footnote { display: flex; justify-content: space-between; gap: 6px; color: #8c8c8c; font-size: 10px; margin-top: 3px; }
-.mo-chips { display: flex; flex-wrap: wrap; gap: 4px; }
-.mo-chip { display: inline-flex; align-items: center; gap: 3px; padding: 1px 4px; background: rgba(200, 170, 110, 0.15); border-radius: 10px; }
-.mo-chip img { width: 16px; height: 16px; border-radius: 50%; }
-.mo-chip-x { background: none; border: 0; color: #c8aa6e; cursor: pointer; padding: 0 2px; }
-.mo-empty { padding: 2px 0; }
-.mo-tags { color: #b0b6c0; font-size: 11px; margin-bottom: 4px; }
-.mo-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
-.mo-item { display: flex; gap: 6px; padding: 3px 4px; border-radius: 4px; }
-.mo-item-icon { width: 28px; height: 28px; border-radius: 3px; flex-shrink: 0; }
-.mo-item-main { min-width: 0; }
-.mo-item-name { display: flex; align-items: center; gap: 4px; }
-.mo-item-reason { color: #9aa0a6; font-size: 10px; line-height: 1.35; }
-.mo-item-owned { opacity: 0.5; }
-.mo-item-next { background: rgba(30, 111, 143, 0.25); border: 1px solid rgba(58, 160, 200, 0.6); }
-.mo-note { margin-top: 3px; }
-.mo-card-title { cursor: pointer; border-bottom: 1px dashed rgba(200, 170, 110, 0.5); }
-.mo-card-title:hover { color: #f0d79a; }
-.mo-source { font-size: 10px; padding: 0 3px; border-radius: 3px; background: #2b3038; color: #9aa0a6; }
-.mo-source-icon\+ocr { color: #58be78; }
-.mo-source-icon-low { background: #6b4a12; color: #ffd48a; }
-.mo-source-manual { color: #6fb3d2; }
-.mo-correction { margin: 0 0 4px 12px; padding: 5px 6px; border-left: 2px solid #c8aa6e; background: rgba(255, 255, 255, 0.05); border-radius: 0 4px 4px 0; display: flex; flex-direction: column; gap: 4px; }
-.mo-correction-title { display: flex; justify-content: space-between; color: #c8aa6e; font-size: 11px; }
-.mo-alt-list { display: flex; flex-direction: column; gap: 2px; }
-.mo-alt { display: flex; align-items: center; gap: 5px; text-align: left; padding: 2px 4px; border: 1px solid transparent; border-radius: 3px; background: rgba(255, 255, 255, 0.03); color: inherit; cursor: pointer; font-size: 12px; }
-.mo-alt:hover { border-color: rgba(200, 170, 110, 0.6); }
-.mo-alt img { width: 18px; height: 18px; border-radius: 3px; }
-.mo-alt-name { flex: 1; min-width: 0; }
-.mo-alt-current { border-color: rgba(88, 190, 120, 0.6); }
-.mo-search { background: #1b1f27; color: #e8e1cf; border: 1px solid #555; border-radius: 3px; padding: 3px 5px; font-size: 12px; user-select: text; }
-.mo-chip-name { cursor: pointer; }
-.mo-chip-name:hover { color: #f0d79a; }
-.mo-timing { color: #6c727a; font-size: 10px; margin-top: 2px; }
-.mo-reminder { display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: rgba(30, 111, 143, 0.35); border-bottom: 1px solid rgba(58, 160, 200, 0.6); }
-.mo-reminder-text { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 11px; }
-.mo-reminder-text b { font-size: 14px; color: #fff; }
-.mo-reminder-urgent { animation: mo-flash 0.9s ease-in-out infinite alternate; }
-@keyframes mo-flash {
-  from { background: rgba(30, 111, 143, 0.35); }
-  to { background: rgba(214, 150, 40, 0.75); }
+.mo-card-name { display: flex; align-items: center; gap: 4px; }
+.mo-card-title {
+  color: var(--mo-ivory); font-weight: 700; font-size: 13px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border-bottom: 1px dashed transparent;
 }
-.mo-watching { color: #7fd1a8; }
-.mo-synergy { font-weight: 600; }
-.mo-card-reason { font-size: 11px; color: #a9b3c4; margin-top: 2px; }
-.mo-chip-inferred { border-style: dashed !important; }
-.mo-chip-tag { margin-left: 4px; font-size: 10px; padding: 0 3px; border-radius: 3px; background: rgba(200, 170, 110, 0.25); color: #e8d6a8; }
-.mo-change { font-size: 10px; font-weight: 700; padding: 0 4px; border-radius: 3px; }
-.mo-change-new { background: #2f7d4f; color: #fff; }
-.mo-change-up { background: rgba(47, 125, 79, 0.35); color: #9fe3b9; }
-.mo-change-down { background: rgba(160, 80, 60, 0.35); color: #f0b3a3; }
-.mo-item-score { margin-left: auto; font-size: 11px; color: #a9b3c4; }
-.mo-removed { margin-top: 4px; font-size: 11px; }
+.mo-card-title:hover { border-bottom-color: var(--mo-gold-dim); }
+.mo-warn-dot {
+  width: 14px; height: 14px; flex: none; border-radius: 50%; background: #c98a2e; color: #10141c;
+  font-size: 10px; font-weight: 700; line-height: 14px; text-align: center;
+}
+.mo-card-stats { display: flex; align-items: baseline; gap: 6px; margin-top: 1px; }
+.mo-wr { color: var(--mo-ivory); font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mo-delta { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.mo-up { color: var(--mo-up); }
+.mo-down { color: var(--mo-down); }
+.mo-synergy { font-size: 10px; padding: 0 5px; border-radius: 8px; line-height: 16px; white-space: nowrap; }
+.mo-synergy-up { background: rgba(95, 208, 138, 0.14); color: var(--mo-up); }
+.mo-synergy-down { background: rgba(239, 111, 111, 0.14); color: var(--mo-down); }
+.mo-card-detail { margin-top: 3px; color: var(--mo-muted); font-size: 10px; line-height: 1.45; }
+.mo-card-detail-synergy { color: #a9c7b4; }
+.mo-rank {
+  flex: none;
+  min-width: 44px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 1px;
+}
+.mo-badge-best { background: linear-gradient(180deg, #e4c77f, #b48d47); color: #1a1408; box-shadow: 0 0 8px rgba(240, 216, 154, 0.35); }
+.mo-badge-tie { background: rgba(10, 200, 185, 0.18); color: var(--mo-blue); border: 1px solid rgba(10, 200, 185, 0.45); }
+.mo-badge-plain { background: rgba(120, 140, 170, 0.14); color: var(--mo-muted); border: 1px solid rgba(120, 140, 170, 0.25); }
+.mo-footnote {
+  padding: 6px 8px; border-radius: 6px; background: rgba(0, 0, 0, 0.2);
+  color: var(--mo-muted); font-size: 10px; line-height: 1.5;
+}
+
+/* ---------- 更正面板 ---------- */
+.mo-correction {
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--mo-gold-dim);
+  background: rgba(6, 10, 18, 0.9);
+}
+.mo-correction-title { display: flex; justify-content: space-between; align-items: center; color: var(--mo-gold); font-size: 11px; margin-bottom: 4px; }
+.mo-search {
+  width: 100%; height: 26px; margin: 4px 0; padding: 0 8px; border-radius: 6px;
+  border: 1px solid var(--mo-gold-dim); background: rgba(16, 24, 40, 0.9); color: var(--mo-ivory); font: inherit;
+}
+.mo-search:focus { outline: none; border-color: var(--mo-gold); }
+.mo-alt-list { display: flex; flex-direction: column; gap: 2px; }
+.mo-alt {
+  display: flex; align-items: center; gap: 6px; width: 100%; padding: 3px 6px; border-radius: 6px;
+  border: 1px solid transparent; background: transparent; color: var(--mo-text); font: inherit; text-align: left; cursor: pointer;
+}
+.mo-alt:hover { background: rgba(200, 170, 110, 0.1); border-color: var(--mo-gold-dim); }
+.mo-alt img { width: 20px; height: 20px; }
+.mo-alt-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-alt-current { border-color: var(--mo-gold-dim); }
+
+/* ---------- 已选海克斯 ---------- */
+.mo-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.mo-chip {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 100%;
+  height: 24px; padding: 0 4px 0 3px; border-radius: 12px;
+  border: 1px solid rgba(200, 170, 110, 0.3); background: rgba(24, 34, 52, 0.85);
+}
+.mo-chip img { width: 18px; height: 18px; border-radius: 50%; }
+.mo-chip-name { color: var(--mo-ivory); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-chip-name:hover { color: var(--mo-gold-bright); }
+.mo-chip-inferred { border-style: dashed; }
+.mo-chip-tag { font-size: 9px; padding: 0 4px; border-radius: 6px; background: rgba(200, 170, 110, 0.2); color: var(--mo-gold-bright); line-height: 14px; }
+.mo-chip-x { border: none; background: none; color: var(--mo-muted); font-size: 13px; line-height: 1; padding: 0 2px; cursor: pointer; }
+.mo-chip-x:hover { color: var(--mo-down); }
+.mo-mini-icons { display: inline-flex; gap: 2px; }
+.mo-mini-icons img { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--mo-gold-dim); }
+
+/* ---------- 出装：6 格 ---------- */
+.mo-archetype {
+  font-size: 10px; padding: 0 6px; border-radius: 8px; line-height: 16px;
+  background: rgba(120, 140, 170, 0.15); color: var(--mo-text);
+}
+.mo-archetype-changed { background: rgba(10, 200, 185, 0.16); color: var(--mo-blue); }
+.mo-slots { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.mo-slot {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  border: 1px solid rgba(120, 140, 170, 0.35);
+  background: #0b1220;
+  cursor: pointer;
+  overflow: visible;
+}
+.mo-slot img { width: 100%; height: 100%; display: block; border-radius: 5px; }
+.mo-slot:hover { border-color: var(--mo-gold-dim); }
+.mo-slot-next {
+  border: 2px solid var(--mo-gold-bright);
+  box-shadow: 0 0 10px rgba(240, 216, 154, 0.55);
+}
+.mo-slot-focus { border-color: var(--mo-gold); }
+.mo-slot-owned img { filter: grayscale(0.7) brightness(0.55); }
+.mo-slot-check {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: var(--mo-up); font-size: 16px; font-weight: 700; text-shadow: 0 1px 2px #000;
+}
+.mo-slot-badge {
+  position: absolute; top: 1px; right: 1px; min-width: 15px; height: 15px; padding: 0 3px;
+  border-radius: 8px; font-size: 9px; font-weight: 700; line-height: 15px; text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+.mo-change-new { background: #2f9e5e; color: #fff; }
+.mo-change-up { background: #24543a; color: #a6f0c2; }
+.mo-change-down { background: #5a2b26; color: #f6b8ac; }
+
+.mo-focus {
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(200, 170, 110, 0.07);
+  border: 1px solid rgba(200, 170, 110, 0.18);
+}
+.mo-focus-head { display: flex; align-items: center; gap: 6px; }
+.mo-focus-tag {
+  flex: none; font-size: 10px; padding: 0 6px; line-height: 16px; border-radius: 4px;
+  background: var(--mo-gold); color: #1a1408; font-weight: 700;
+}
+.mo-focus-name { flex: 1; min-width: 0; color: var(--mo-ivory); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-focus-reason { margin-top: 3px; font-size: 11px; color: var(--mo-text); line-height: 1.45; }
+.mo-focus-reason-secondary { color: var(--mo-muted); font-size: 10px; margin-top: 1px; }
+
+.mo-build-details {
+  margin-top: 8px; padding: 6px 8px; border-radius: 8px; background: rgba(0, 0, 0, 0.22);
+  font-size: 10px; color: var(--mo-muted); line-height: 1.5;
+}
+.mo-detail-items { list-style: none; margin: 0; padding: 0; }
+.mo-detail-items li { padding: 4px 0; border-bottom: 1px solid rgba(120, 140, 170, 0.12); }
+.mo-detail-items li:last-child { border-bottom: none; }
+.mo-detail-item-head { display: flex; align-items: center; gap: 6px; color: var(--mo-ivory); font-size: 11px; font-weight: 600; }
+.mo-detail-item-head img { width: 18px; height: 18px; border-radius: 3px; }
+.mo-detail-score { margin-left: auto; font-weight: 400; }
+.mo-detail-reason { padding-left: 24px; }
+.mo-detail-line { margin-top: 3px; }
 .mo-removed-item { text-decoration: line-through; color: #b98c84; margin-right: 6px; }
+.mo-disclaimer { font-style: italic; }
+
+/* ---------- 设置 ---------- */
+.mo-settings {
+  padding: 8px; border-radius: 8px; border: 1px solid rgba(200, 170, 110, 0.2); background: rgba(0, 0, 0, 0.22);
+}
+.mo-settings-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
+.mo-setting-row { display: grid; grid-template-columns: 92px 1fr auto; align-items: center; gap: 6px; font-size: 11px; }
+.mo-setting-row select, .mo-setting-row input[type="range"] { grid-column: 2 / span 1; width: 100%; }
+.mo-setting-row select {
+  height: 22px; border-radius: 4px; border: 1px solid var(--mo-gold-dim); background: #111a2a; color: var(--mo-ivory); font: inherit;
+}
+.mo-setting-row input[type="range"] { accent-color: var(--mo-gold); }
+.mo-setting-value { min-width: 34px; text-align: right; color: var(--mo-gold-bright); font-variant-numeric: tabular-nums; }
+.mo-check { display: flex; align-items: flex-start; gap: 6px; margin-top: 3px; font-size: 11px; cursor: pointer; }
+.mo-check input { margin: 2px 0 0; accent-color: var(--mo-gold); }
+.mo-settings-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 8px; font-size: 10px; }
+
+:global(html.manual-overlay-window),
+:global(body.manual-overlay-window),
+:global(html.manual-overlay-window #app) {
+  background: transparent !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+:global(body.manual-overlay-window) { margin: 0; overflow: hidden; }
 </style>

@@ -76,6 +76,8 @@ export const electronAPI: ElectronAPI = {
   manualOverlay: {
     getState: (...args) => requireElectronAPI().manualOverlay.getState(...args),
     refresh: (...args) => requireElectronAPI().manualOverlay.refresh(...args),
+    setCollapsed: (...args) => requireElectronAPI().manualOverlay.setCollapsed(...args),
+    fitContent: (...args) => requireElectronAPI().manualOverlay.fitContent(...args),
     pick: (...args) => requireElectronAPI().manualOverlay.pick(...args),
     unpick: (...args) => requireElectronAPI().manualOverlay.unpick(...args),
     clearCandidates: (...args) => requireElectronAPI().manualOverlay.clearCandidates(...args),

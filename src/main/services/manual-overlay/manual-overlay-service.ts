@@ -16,6 +16,7 @@ import type {
   ManualOverlayLiveData,
   ManualOverlayPickedAugment,
   ManualOverlayReminder,
+  ManualOverlaySection,
   ManualOverlaySettings,
   ManualOverlayState,
 } from '../../../shared/ipc-contract.ts'
@@ -36,6 +37,9 @@ import { DEFAULT_SHRINKAGE_ALPHA } from '../../../shared/augment-choice-ranking.
 export const DEFAULT_MANUAL_OVERLAY_HOTKEY = 'CommandOrControl+Shift+R'
 export const MANUAL_OVERLAY_SETTINGS_KEY = 'manualOverlay.settings'
 export const AUTO_SCREENSHOT_SETTING_KEY = 'autoScreenshot'
+export const MANUAL_OVERLAY_COLLAPSED_KEY = 'manualOverlay.collapsed'
+export const DEFAULT_COLLAPSE_HOTKEY = 'CommandOrControl+Shift+H'
+const SECTIONS: ManualOverlaySection[] = ['cards', 'picked', 'build']
 
 export const DEFAULT_MANUAL_OVERLAY_SETTINGS: ManualOverlaySettings = {
   autoScreenshot: false,
@@ -49,6 +53,17 @@ export const DEFAULT_MANUAL_OVERLAY_SETTINGS: ManualOverlaySettings = {
   startWindowSec: DEFAULT_START_WINDOW_SEC,
   iconMatchEnabled: true,
   autoFollowUp: true,
+  collapseHotkey: DEFAULT_COLLAPSE_HOTKEY,
+  minimalMode: false,
+  opacity: 0.92,
+  scale: 1,
+  collapsedSections: [],
+}
+
+function clampNumber(value: unknown, min: number, max: number, fallback: number, step = 0.01): number {
+  const number = Number(value)
+  if (value == null || !Number.isFinite(number)) return fallback
+  return Math.round(Math.min(max, Math.max(min, number)) / step) * step
 }
 
 /** 自动跟拍：每次识别完成后隔多久再拍、最长跟多久 */
@@ -154,6 +169,15 @@ function sanitizeSettings(raw: unknown, legacyAutoScreenshot: unknown): ManualOv
       : DEFAULT_START_WINDOW_SEC,
     iconMatchEnabled: value.iconMatchEnabled !== false,
     autoFollowUp: value.autoFollowUp !== false,
+    collapseHotkey: typeof value.collapseHotkey === 'string'
+      ? value.collapseHotkey.trim()
+      : DEFAULT_COLLAPSE_HOTKEY,
+    minimalMode: value.minimalMode === true,
+    opacity: Number(clampNumber(value.opacity, 0.5, 1, 0.92).toFixed(2)),
+    scale: Number(clampNumber(value.scale, 0.8, 1.4, 1, 0.05).toFixed(2)),
+    collapsedSections: Array.isArray(value.collapsedSections)
+      ? SECTIONS.filter((section) => (value.collapsedSections as unknown[]).includes(section))
+      : [],
   }
 }
 
@@ -308,6 +332,7 @@ export class ManualOverlayService {
   private state: ManualOverlayState
   private settings: ManualOverlaySettings
   private registeredHotkey: string | null = null
+  private registeredCollapseHotkey: string | null = null
   private refreshPromise: Promise<ManualOverlayState> | null = null
   private warmedUp = false
 
@@ -334,7 +359,42 @@ export class ManualOverlayService {
       liveGame: false,
       pendingChoice: null,
       autoWatching: false,
+      collapsed: deps.store.get(MANUAL_OVERLAY_COLLAPSED_KEY) === true,
+      collapseHotkey: this.settings.collapseHotkey,
+      collapseHotkeyRegistered: false,
+      collapseHotkeyError: null,
       revision: 0,
+    }
+  }
+
+  // ------------------------------------------------------------------ collapse
+
+  isCollapsed(): boolean {
+    return this.state.collapsed
+  }
+
+  /** 收起/展开（记住到下次启动）。source=auto 来自极简模式。 */
+  setCollapsed(value: unknown, source: 'user' | 'hotkey' | 'auto' = 'user'): ManualOverlayState {
+    const collapsed = value === true
+    if (collapsed === this.state.collapsed) return this.getState()
+    this.deps.store.set(MANUAL_OVERLAY_COLLAPSED_KEY, collapsed)
+    this.deps.logger?.debug(`[manual-overlay] ${collapsed ? 'collapse' : 'expand'} (${source})`)
+    return this.update({ collapsed })
+  }
+
+  toggleCollapsed(source: 'user' | 'hotkey' = 'user'): ManualOverlayState {
+    return this.setCollapsed(!this.state.collapsed, source)
+  }
+
+  /** 极简模式：卡片出现 → 展开；卡片消失 → 收起 */
+  private applyMinimalMode(previousCount: number, nextCount: number): void {
+    if (!this.settings.minimalMode || previousCount === nextCount) return
+    if (previousCount === 0 && nextCount > 0 && this.state.collapsed) {
+      this.state = { ...this.state, collapsed: false }
+      this.deps.store.set(MANUAL_OVERLAY_COLLAPSED_KEY, false)
+    } else if (previousCount > 0 && nextCount === 0 && !this.state.collapsed) {
+      this.state = { ...this.state, collapsed: true }
+      this.deps.store.set(MANUAL_OVERLAY_COLLAPSED_KEY, true)
     }
   }
 
@@ -456,7 +516,9 @@ export class ManualOverlayService {
   }
 
   private update(patch: Partial<ManualOverlayState>): ManualOverlayState {
+    const previousCount = this.state.candidates.length
     this.state = { ...this.state, ...patch, revision: this.state.revision + 1 }
+    if (patch.candidates) this.applyMinimalMode(previousCount, this.state.candidates.length)
     const snapshot = this.getState()
     try {
       this.deps.broadcast(snapshot)
@@ -493,7 +555,8 @@ export class ManualOverlayService {
       { ...this.settings, ...(patch && typeof patch === 'object' ? patch : {}) },
       this.settings.autoScreenshot,
     )
-    const hotkeyChanged = merged.hotkey !== this.settings.hotkey
+    const hotkeyChanged = merged.hotkey !== this.settings.hotkey ||
+      merged.collapseHotkey !== this.settings.collapseHotkey
     this.settings = merged
     this.deps.store.set(MANUAL_OVERLAY_SETTINGS_KEY, { ...merged })
     this.deps.store.set(AUTO_SCREENSHOT_SETTING_KEY, merged.autoScreenshot)
@@ -538,6 +601,46 @@ export class ManualOverlayService {
       this.deps.logger?.warn(`[manual-overlay] hotkey registration failed: ${accelerator} (${error})`)
     }
     this.update({ hotkey: accelerator, hotkeyRegistered: ok, hotkeyError: error })
+    this.registerCollapseHotkey()
+    return ok
+  }
+
+  private registerCollapseHotkey(): boolean {
+    if (this.registeredCollapseHotkey) {
+      try {
+        this.deps.shortcuts.unregister(this.registeredCollapseHotkey)
+      } catch {
+        // ignore
+      }
+      this.registeredCollapseHotkey = null
+    }
+    const accelerator = this.settings.collapseHotkey
+    if (!accelerator) {
+      this.update({ collapseHotkey: '', collapseHotkeyRegistered: false, collapseHotkeyError: null })
+      return false
+    }
+    let ok = false
+    let error: string | null = null
+    if (accelerator === this.settings.hotkey) {
+      error = '与刷新快捷键相同'
+    } else {
+      try {
+        ok = this.deps.shortcuts.register(accelerator, () => {
+          if (this.state.collapsed) {
+            this.setCollapsed(false, 'hotkey')
+            this.showOverlay('collapse-hotkey')
+          } else {
+            this.setCollapsed(true, 'hotkey')
+          }
+        })
+        if (!ok) error = '快捷键已被其他程序占用'
+      } catch (registerError) {
+        error = `快捷键格式无效：${registerError instanceof Error ? registerError.message : String(registerError)}`
+      }
+    }
+    if (ok) this.registeredCollapseHotkey = accelerator
+    else this.deps.logger?.warn(`[manual-overlay] collapse hotkey registration failed: ${accelerator} (${error})`)
+    this.update({ collapseHotkey: accelerator, collapseHotkeyRegistered: ok, collapseHotkeyError: error })
     return ok
   }
 
@@ -660,6 +763,14 @@ export class ManualOverlayService {
 
   dispose(): void {
     this.stopLiveGameWatch()
+    if (this.registeredCollapseHotkey) {
+      try {
+        this.deps.shortcuts.unregister(this.registeredCollapseHotkey)
+      } catch {
+        // ignore
+      }
+      this.registeredCollapseHotkey = null
+    }
     if (this.registeredHotkey) {
       try {
         this.deps.shortcuts.unregister(this.registeredHotkey)

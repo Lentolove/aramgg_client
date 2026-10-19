@@ -196,6 +196,11 @@ describe('ManualOverlayService', () => {
       startWindowSec: 90,
       iconMatchEnabled: true,
       autoFollowUp: true,
+      collapseHotkey: 'CommandOrControl+Shift+H',
+      minimalMode: false,
+      opacity: 0.92,
+      scale: 1,
+      collapsedSections: [],
     })
     expect(service.isAutoScreenshotEnabled()).toBe(true)
   })

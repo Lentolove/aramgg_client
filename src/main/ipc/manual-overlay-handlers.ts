@@ -1,6 +1,7 @@
 import { trustedIpcMain as ipcMain } from '../security/trusted-ipc.ts'
 import { getManualOverlayService } from '../services/manual-overlay/manual-overlay-runtime.ts'
 import {
+    fitManualOverlayToContent,
     setManualOverlayFocusable,
 } from '../modules/window-manager.ts'
 
@@ -9,6 +10,8 @@ export function registerManualOverlayIpcHandlers(): void {
 
     ipcMain.handle('manual-overlay-get-state', () => service().getState())
     ipcMain.handle('manual-overlay-refresh', () => service().refresh('button'))
+    ipcMain.handle('manual-overlay-set-collapsed', (_event, collapsed: unknown) => service().setCollapsed(collapsed === true))
+    ipcMain.handle('manual-overlay-fit-content', (_event, size: unknown) => fitManualOverlayToContent(size))
     ipcMain.handle('manual-overlay-pick', (_event, augment: unknown) => service().pick(augment))
     ipcMain.handle('manual-overlay-unpick', (_event, augmentId: unknown) => service().unpick(augmentId))
     ipcMain.handle('manual-overlay-clear-candidates', () => service().clearCandidates())

@@ -363,7 +363,19 @@ export interface ManualOverlaySettings {
   iconMatchEnabled: boolean
   /** 识别到三选一后自动跟拍（每 2.5 秒，最多 45 秒），三选一关闭时自动记录选择 */
   autoFollowUp: boolean
+  /** 收起/展开浮窗的全局快捷键（空字符串 = 不注册） */
+  collapseHotkey: string
+  /** 极简模式：识别到三选一自动展开，三选一关闭后自动收起 */
+  minimalMode: boolean
+  /** 背景不透明度 0.5..1 */
+  opacity: number
+  /** 界面缩放 0.8..1.4 */
+  scale: number
+  /** 折叠的分区 */
+  collapsedSections: ManualOverlaySection[]
 }
+
+export type ManualOverlaySection = 'cards' | 'picked' | 'build'
 
 export interface ManualOverlayAugmentRef {
   id: number | string
@@ -446,6 +458,11 @@ export interface ManualOverlayState {
   pendingChoice: ManualOverlayPendingChoice | null
   /** 正在自动跟拍三选一 */
   autoWatching: boolean
+  /** 浮窗收起成小条（跨会话记住） */
+  collapsed: boolean
+  collapseHotkey: string
+  collapseHotkeyRegistered: boolean
+  collapseHotkeyError: string | null
   revision: number
 }
 
@@ -569,6 +586,9 @@ export interface ElectronAPI {
   manualOverlay: {
     getState(): Promise<ManualOverlayState>
     refresh(): Promise<ManualOverlayState>
+    setCollapsed(collapsed: boolean): Promise<ManualOverlayState>
+    /** 渲染端测得的内容尺寸（CSS px × 缩放），主进程据此调整窗口大小并保持锚点 */
+    fitContent(size: { width: number; height: number }): Promise<boolean>
     pick(augment: ManualOverlayAugmentRef & { inferred?: ManualOverlayInferredSource | null; alternatives?: ManualOverlayAugmentRef[] }): Promise<ManualOverlayState>
     unpick(augmentId: number | string): Promise<ManualOverlayState>
     clearCandidates(): Promise<ManualOverlayState>

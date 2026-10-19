@@ -17,6 +17,7 @@ import {
 } from '../security/renderer-origin.ts'
 import store from './app-store.ts'
 import {
+    anchoredResize,
     fitWindowPositionToWorkArea,
     parseWindowPosition,
 } from './window-position.ts'
@@ -776,17 +777,17 @@ export const createManualOverlayWindow = async (
     manualOverlayWindow = new BrowserWindow({
         show: false,
         frame: false,
-        transparent: false,
-        backgroundColor: '#10141c',
+        // 透明背景：圆角、阴影和可调不透明度由页面绘制；窗口尺寸跟随内容（收起/展开/分区折叠）
+        transparent: true,
+        backgroundColor: '#00000000',
+        hasShadow: false,
         skipTaskbar: true,
-        resizable: true,
+        resizable: false,
         minimizable: false,
         maximizable: false,
         fullscreenable: false,
         alwaysOnTop: true,
         focusable: store.get('manualOverlay.settings.focusable') === true,
-        minWidth: 280,
-        minHeight: 260,
         ...bounds,
         webPreferences,
     })
@@ -945,6 +946,39 @@ export const getFloatingWindow = () => floatingWindow
 export const getAugmentSidePanelWindow = () => augmentSidePanelWindow
 
 export const getManualOverlayWindow = () => manualOverlayWindow
+
+const MANUAL_OVERLAY_MIN_SIZE = { width: 120, height: 40 }
+
+/** 按渲染端测得的内容尺寸调整浮窗（保持锚点，夹在所在屏幕的工作区内） */
+export function fitManualOverlayToContent(size: unknown): boolean {
+    const window = manualOverlayWindow
+    if (!window || window.isDestroyed() || !size || typeof size !== 'object') {
+        return false
+    }
+    const record = size as Record<string, unknown>
+    const width = Number(record.width)
+    const height = Number(record.height)
+    if (!Number.isFinite(width) || !Number.isFinite(height)) {
+        return false
+    }
+    const current = window.getBounds()
+    const display = screen.getDisplayMatching(current)
+    const area = display.workArea || display.bounds
+    const next = anchoredResize(current, {
+        width: Math.max(MANUAL_OVERLAY_MIN_SIZE.width, Math.ceil(width)),
+        height: Math.max(MANUAL_OVERLAY_MIN_SIZE.height, Math.ceil(height)),
+    }, area)
+    if (
+        Math.abs(next.width - current.width) <= 1 &&
+        Math.abs(next.height - current.height) <= 1 &&
+        next.x === current.x && next.y === current.y
+    ) {
+        return true
+    }
+    window.setBounds(next)
+    store.set(MANUAL_OVERLAY_WINDOW_POSITION_KEY, { x: next.x, y: next.y })
+    return true
+}
 
 function getRendererRuntime(): [boolean, string] {
     const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged
