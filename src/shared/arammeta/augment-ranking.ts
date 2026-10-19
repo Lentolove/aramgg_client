@@ -10,6 +10,7 @@
 
 import {
   computeChampionAugmentBaseline,
+  NO_DATA_LABEL,
   type AugmentChoiceInput,
   type AugmentChoiceRanking,
   type ChampionAugmentStatInput,
@@ -170,7 +171,7 @@ export function rankAugmentChoicesArammeta<T extends AugmentChoiceInput>(
       standardError: entry.sd,
       games: entry.games,
       order,
-      relativeLabel: entry.score == null ? null : (topTie && order < 2 ? '差不多' : labels[order] ?? '末选'),
+      relativeLabel: entry.score == null ? NO_DATA_LABEL : (topTie && order < 2 ? '差不多' : labels[order] ?? '末选'),
       note,
       // 排序用「基线 + 保守分」，契合度的 λ 调整叠加在它上面
       sortWinRate: entry.score != null && entry.base != null ? entry.base + entry.score : null,

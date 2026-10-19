@@ -82,9 +82,13 @@ describe('augment choice ranking', () => {
       { x: { winRate: 0.5, games: 10000 } },
     )
     expect(ranking.choices).toHaveLength(2)
-    expect(ranking.choices[0].card.id).toBe(2)
-    expect(ranking.choices[0].method).toBe('prior-only')
-    expect(ranking.choices[0].note).toContain('场次不足')
+    // 没数据的卡排最后、标「无数据」，不参与首选/次选/末选
+    expect(ranking.choices[0].card.id).toBe(1)
+    expect(ranking.choices[0].relativeLabel).toBe('首选')
+    expect(ranking.choices[1].card.id).toBe(2)
+    expect(ranking.choices[1].method).toBe('prior-only')
+    expect(ranking.choices[1].relativeLabel).toBe('无数据')
+    expect(ranking.choices[1].note).toContain('场次不足')
   })
 
   it('uses the three-card mean when the champion baseline is missing', () => {

@@ -1378,6 +1378,7 @@ function cardClass(entry: SynergyRankedChoice<CardInput>) {
 function badgeClass(entry: SynergyRankedChoice<CardInput>) {
   if (entry.relativeLabel === '差不多') return 'mo-badge-tie'
   if (entry.relativeLabel === '首选') return 'mo-badge-best'
+  if (entry.relativeLabel === '无数据') return 'mo-badge-nodata'
   return 'mo-badge-plain'
 }
 
@@ -1825,6 +1826,7 @@ onBeforeUnmount(() => {
 }
 .mo-badge-best { background: linear-gradient(180deg, #e4c77f, #b48d47); color: #1a1408; box-shadow: 0 0 8px rgba(240, 216, 154, 0.35); }
 .mo-badge-tie { background: rgba(10, 200, 185, 0.18); color: var(--mo-blue); border: 1px solid rgba(10, 200, 185, 0.45); }
+.mo-badge-nodata { background: transparent; color: rgba(205, 190, 145, 0.55); border: 1px dashed rgba(205, 190, 145, 0.35); }
 .mo-badge-plain { background: rgba(120, 140, 170, 0.14); color: var(--mo-muted); border: 1px solid rgba(120, 140, 170, 0.25); }
 .mo-footnote {
   padding: 6px 8px; border-radius: 6px; background: rgba(0, 0, 0, 0.2);

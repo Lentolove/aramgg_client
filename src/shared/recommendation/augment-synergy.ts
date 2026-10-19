@@ -2,7 +2,7 @@
  * 反向：给三选一的海克斯卡加「与当前局面的契合度」。
  *
  *   契合 = 与当前/计划装备的协同（同一套 海克斯×装备 模型）
- *        + 与英雄当前流派属性的契合（英雄出装统计得出的属性构成）
+ *        + 与当前路线属性的契合（当前方案所选路线的出装属性构成；已有装备锁定路线时跟着已有装备走）
  *        + 与已持有海克斯的机制重合
  *        + augmentTrios 命中（真实统计：该英雄这三个海克斯组合的胜率，样本少，收缩）
  *        + 阵容（模型：缺前排时坦度卡、对面法伤高时魔抗卡、对面回复多时重伤卡…，有上限）
@@ -10,7 +10,7 @@
  * 最终排序 = 收缩胜率（真实统计）+ λ × 契合（模型），λ 很小：契合只在胜率接近时改变排序。
  */
 
-import type { AugmentChoiceInput, AugmentChoiceRanking, ChoiceRelativeLabel, RankedAugmentChoice } from '../augment-choice-ranking.ts'
+import { NO_DATA_LABEL, type AugmentChoiceInput, type AugmentChoiceRanking, type ChoiceRelativeLabel, type RankedAugmentChoice } from '../augment-choice-ranking.ts'
 import { augmentItemSynergy, type EngineContext } from './build-engine.ts'
 import { MECHANIC_LABELS, STAT_LABELS, type AugmentProfile, type StatKey, type WeightKey } from './profiles.ts'
 
@@ -87,7 +87,7 @@ export function scoreCardSynergy(
     archetype -= 0.6
     reasons.push(`偏${context.damageType === 'AP' ? '物理' : '法强'}，与本英雄${context.damageType === 'AP' ? '法强' : '物理'}出装不搭`)
   } else if (topStat && topStat.value >= 0.4) {
-    reasons.push(`英雄出装 ${Math.round((context.archetypeVector[topStat.key] ?? 0) * 100)}% 是${STAT_LABELS[topStat.key]}`)
+    reasons.push(`当前路线${context.routeLabel ? `「${context.routeLabel}」` : ''}出装 ${Math.round((context.archetypeVector[topStat.key] ?? 0) * 100)}% 是${STAT_LABELS[topStat.key]}`)
   }
 
   // 3) 与已持有海克斯的机制重合
@@ -174,16 +174,19 @@ export function applyCardSynergy<T extends AugmentChoiceInput>(
   if (ranking.method !== 'shrunk') {
     return { ...ranking, choices: enriched }
   }
-  const sorted = [...enriched].sort((a, b) => (b.combinedWinRate ?? 0) - (a.combinedWinRate ?? 0))
+  // 没有胜率数据的卡排最后、标「无数据」，不参与首选/次选/末选
+  const withData = enriched.filter((choice) => choice.combinedWinRate != null).sort((a, b) => b.combinedWinRate! - a.combinedWinRate!)
+  const noData = enriched.filter((choice) => choice.combinedWinRate == null)
+  const sorted = [...withData, ...noData]
   const labels: ChoiceRelativeLabel[] = ['首选', '次选', '末选']
-  const topTie = sorted.length >= 2
-    && Math.abs((sorted[0].combinedWinRate ?? 0) - (sorted[1].combinedWinRate ?? 0))
-      <= Math.hypot(sorted[0].standardError ?? 0, sorted[1].standardError ?? 0)
+  const topTie = withData.length >= 2
+    && Math.abs(withData[0].combinedWinRate! - withData[1].combinedWinRate!)
+      <= Math.hypot(withData[0].standardError ?? 0, withData[1].standardError ?? 0)
   const choices = sorted.map((choice, order) => ({
     ...choice,
     reordered: order !== choice.order,
     order,
-    relativeLabel: (topTie && order < 2 ? '差不多' : labels[order] ?? '末选') as ChoiceRelativeLabel,
+    relativeLabel: (choice.combinedWinRate == null ? NO_DATA_LABEL : topTie && order < 2 ? '差不多' : labels[order] ?? '末选') as ChoiceRelativeLabel,
   }))
   const summary = topTie
     ? '前两张差距在噪声范围内，差不多'

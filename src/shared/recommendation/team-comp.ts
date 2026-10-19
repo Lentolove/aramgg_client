@@ -169,6 +169,8 @@ export interface TeamAnalysis {
   frontlineDelta?: number | null
   /** 用了实测伤害构成的英雄数 */
   measuredDamageCount?: number
+  /** 自己的前排程度（画像 + 实时装备；≥0.65 视为坦克） */
+  selfFrontline?: number | null
 }
 
 export interface TeamAdvice {
@@ -254,7 +256,8 @@ function modelPlayer(input: TeamPlayerInput, itemIndex?: Map<number, ItemProfile
   }
   const kills = Number(input.kills) || 0
   const deaths = Number(input.deaths) || 0
-  const feed = Math.max(-0.3, Math.min(0.8, (kills - deaths) * 0.1))
+  // 击杀加权封顶：一个人超神不该把整队的伤害构成「洗」成他的类型
+  const feed = Math.max(-0.3, Math.min(TEAM_PARAMS.feedCap, (kills - deaths) * 0.1))
   const weight = Math.max(0.3, (1 + feed) * (1 - 0.5 * frontline))
   return {
     input,
@@ -334,12 +337,25 @@ function sideLine(side: TeamSideSummary, prefix: string): string {
   return parts.join('，')
 }
 
+export const TEAM_PARAMS = {
+  feedCap: 0.4,
+  /** 抗性需求：加权伤害占比超过 threshold 开始计，再 +span 到满 */
+  resistThreshold: 0.45,
+  resistSpan: 0.3,
+  /** 按人数保底：≥3 个法系（物理）输出位 → 魔抗（护甲）需求至少 0.5，≥4 个 → 0.8 */
+  resistFloor3: 0.5,
+  resistFloor4: 0.8,
+} as const
+
+const resistFloor = (count: number) => (count >= 4 ? TEAM_PARAMS.resistFloor4 : count >= 3 ? TEAM_PARAMS.resistFloor3 : 0)
+
 export function analyzeTeamComp(input: TeamCompInput): TeamAnalysis {
   const allyModels = input.allies.map((player) => modelPlayer(player, input.itemIndex, input.measuredDamage))
   const enemyModels = input.enemies.map((player) => modelPlayer(player, input.itemIndex, input.measuredDamage))
   const enemy = summarize(enemyModels)
   const ally = summarize(allyModels)
   const others = allyModels.filter((m) => !m.input.isSelf)
+  const selfModel = allyModels.find((m) => m.input.isSelf) ?? null
   const allyOthers = summarize(others)
 
   const needs: TeamNeeds = {
@@ -348,8 +364,12 @@ export function analyzeTeamComp(input: TeamCompInput): TeamAnalysis {
   if (enemyModels.length) {
     // 敌方是 5 人时按比例；不足 5 人（还没看全）时按已知比例但打折
     const coverage = Math.min(1, enemyModels.length / 5)
-    needs.mr = clamp01((enemy.ap - 0.5) / 0.3) * coverage
-    needs.armor = clamp01((enemy.ad - 0.5) / 0.3) * coverage
+    // 人数保底只数输出位（前排坦克的伤害不算：例如肉赛恩不算一个物理核心）
+    const dealers = enemyModels.filter((m) => m.frontline < 0.65)
+    const apDealers = dealers.filter((m) => m.ap >= 0.6).length
+    const adDealers = dealers.filter((m) => m.ad >= 0.6).length
+    needs.mr = Math.max(clamp01((enemy.ap - TEAM_PARAMS.resistThreshold) / TEAM_PARAMS.resistSpan), resistFloor(apDealers)) * coverage
+    needs.armor = Math.max(clamp01((enemy.ad - TEAM_PARAMS.resistThreshold) / TEAM_PARAMS.resistSpan), resistFloor(adDealers)) * coverage
     const healScore = enemyModels.reduce((sum, m) => sum + m.sustain, 0)
     needs.antiHeal = clamp01((healScore - 0.6) / 1.4)
     const shieldScore = enemyModels.reduce((sum, m) => sum + m.shield, 0)
@@ -386,6 +406,7 @@ export function analyzeTeamComp(input: TeamCompInput): TeamAnalysis {
     allyLine: sideLine(allyOthers, '队友'),
     frontlineMeasured,
     frontlineDelta: frontlineMeasured ? input.measuredFrontline!.delta : null,
+    selfFrontline: selfModel ? round2(selfModel.frontline) : null,
     measuredDamageCount: all.filter((m) => m.measured).length,
   }
 }
@@ -394,14 +415,23 @@ export function analyzeTeamComp(input: TeamCompInput): TeamAnalysis {
  * 结合「我能不能偏肉/偏输出」（来自该英雄的数据路线）给出建议文字。
  * canTank：该英雄有肉装路线（例如墨菲特、慎）；canDamage：有输出路线。
  */
-export function adviseTeamComp(analysis: TeamAnalysis, flex: { canTank: boolean; canDamage: boolean }): TeamAdvice {
+export function adviseTeamComp(
+  analysis: TeamAnalysis,
+  flex: { canTank: boolean; canDamage: boolean },
+  options: { selfTank?: boolean | null } = {},
+): TeamAdvice {
   const { needs } = analysis
+  // 坦克不推中娅/女妖/守护天使：保命需求改成双抗（按对面伤害构成）
+  const selfTank = options.selfTank ?? (analysis.selfFrontline != null && analysis.selfFrontline >= 0.65)
   const priorities: Array<[number, string]> = []
   if (needs.mr >= 0.3) priorities.push([needs.mr, '魔抗'])
   if (needs.armor >= 0.3) priorities.push([needs.armor, '护甲'])
   if (needs.antiHeal >= 0.35) priorities.push([needs.antiHeal + 0.1, '重伤'])
   if (needs.penetration >= 0.35) priorities.push([needs.penetration, '穿透/百分比伤害'])
-  if (needs.stasis >= 0.35) priorities.push([needs.stasis, '保命（中娅/女妖/守护天使）'])
+  if (needs.stasis >= 0.35) {
+    if (!selfTank) priorities.push([needs.stasis, '保命（中娅/女妖/守护天使）'])
+    else if (needs.mr < 0.3 && needs.armor < 0.3) priorities.push([needs.stasis * 0.8, analysis.enemy.ap >= analysis.enemy.ad ? '魔抗' : '护甲'])
+  }
   if (needs.antiShield >= 0.4) priorities.push([needs.antiShield * 0.8, '破盾'])
   if (needs.tenacity >= 0.4) priorities.push([needs.tenacity * 0.7, '韧性/解控'])
   priorities.sort((a, b) => b[0] - a[0])
@@ -432,7 +462,7 @@ export function adviseTeamComp(analysis: TeamAnalysis, flex: { canTank: boolean;
     else chips.push({ label: '伤害均衡', tone: 'info' })
   }
   if (needs.antiHeal >= 0.35) chips.push({ label: '要重伤', tone: 'warn' })
-  if (needs.stasis >= 0.35) chips.push({ label: '防爆发', tone: 'warn' })
+  if (needs.stasis >= 0.35 && !selfTank) chips.push({ label: '防爆发', tone: 'warn' })
   if (needs.penetration >= 0.35) chips.push({ label: '对面肉', tone: 'info' })
   if (lean === 'tank') chips.push({ label: '偏肉', tone: 'info' })
   if (lean === 'damage') chips.push({ label: '偏输出', tone: 'info' })

@@ -12,7 +12,9 @@ export const DEFAULT_SHRINKAGE_ALPHA = 300
 export const DEFAULT_NOISE_Z = 1
 
 export type ChoiceRankingMethod = 'shrunk' | 'prior-only' | 'rank-fallback' | 'none'
-export type ChoiceRelativeLabel = '首选' | '次选' | '末选' | '差不多'
+export type ChoiceRelativeLabel = '首选' | '次选' | '末选' | '差不多' | '无数据'
+/** 没有任何胜率数据的卡：不参与相对排名 */
+export const NO_DATA_LABEL: ChoiceRelativeLabel = '无数据'
 
 export interface AugmentChoiceInput {
   id?: number | string | null
@@ -242,22 +244,26 @@ export function rankAugmentChoices<T extends AugmentChoiceInput>(
     }
   })
 
+  // 有场次的卡在前（按收缩胜率），没场次的（prior-only）排最后、标「无数据」
   scored.sort((a, b) => {
+    const dataDiff = Number(b.method === 'shrunk') - Number(a.method === 'shrunk')
+    if (dataDiff) return dataDiff
     const diff = b.shrunkWinRate - a.shrunkWinRate
     if (Math.abs(diff) > 1e-12) return diff
     return compareFallback(a.card, b.card)
   })
+  const ranked = scored.filter((entry) => entry.method === 'shrunk')
 
   let topTie = false
-  if (scored.length >= 2) {
-    const [first, second] = scored
+  if (ranked.length >= 2) {
+    const [first, second] = ranked
     const noise = noiseZ * Math.sqrt(first.standardError ** 2 + second.standardError ** 2)
     topTie = first.shrunkWinRate - second.shrunkWinRate <= noise
   }
 
   const labels: ChoiceRelativeLabel[] = ['首选', '次选', '末选']
   const choices: RankedAugmentChoice<T>[] = scored.map((entry, order) => {
-    const relativeLabel: ChoiceRelativeLabel = topTie && order < 2 ? '差不多' : labels[order] ?? '末选'
+    const relativeLabel: ChoiceRelativeLabel = entry.method !== 'shrunk' ? NO_DATA_LABEL : topTie && order < 2 ? '差不多' : labels[order] ?? '末选'
     const note = entry.method === 'prior-only'
       ? `场次不足（服务端未给胜率），按${baselineLabel}估计`
       : `${entry.games} 场，相对${baselineLabel} ${formatPoints(entry.delta)}`

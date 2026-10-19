@@ -46,3 +46,4 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+scripts/eval-real-matches/.*.bundle.mjs

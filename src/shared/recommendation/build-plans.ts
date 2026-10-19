@@ -1,13 +1,13 @@
 /**
  * 可切换的出装方案：
  *   adapted   局势适配：统计先验 + 当前海克斯模型 + 对局阵容（有海克斯或阵容信息时默认）
- *   popular   主流：场次最多的流派、按出场率选装（纯真实数据，不考虑海克斯）
+ *   popular   主流：场次最多的流派、每格只按出场率选装（纯真实数据，不考虑海克斯）
  *   winrate   高胜率：样本足够的流派里收缩胜率最高的，按装备收缩胜率选装（纯真实数据）
  *   alternate 海克斯/阵容把流派切走时，原流派 + 海克斯/阵容模型（例如墨菲特：坦克 vs 法强）
  * 结果完全相同（同一套 6 件）的方案合并，合并后的方案带上别名。
  */
 
-import { localizeArchetype, recommendBuild, type EngineInput, type EngineResult, type ItemSwap } from './build-engine.ts'
+import { buildItemProfileIndex, itemDamageClass, localizeArchetype, recommendBuild, type EngineInput, type EngineResult, type ItemSwap } from './build-engine.ts'
 
 export type BuildPlanKey = 'adapted' | 'popular' | 'winrate' | 'alternate'
 
@@ -42,6 +42,32 @@ export function planSignature(result: EngineResult): string {
   return result.items.map((item) => item.itemId).sort((a, b) => a - b).join(',')
 }
 
+/**
+ * 流派名与方案里的装备保持一致：同名路线带的「（核心A+核心B）」只列方案里真有的核心装，
+ * 都不在（例如已有装备把方案带离了核心）时去掉括号。
+ */
+export function planRouteLabel(input: EngineInput, result: EngineResult): string {
+  const route = result.archetype
+  if (!route) return ''
+  const label = localizeArchetype(route.label)
+  const build = (input.builds ?? [])[route.index]
+  const core = (build?.coreItems?.[0]?.itemIds ?? build?.coreItems?.[0]?.items ?? []).map(Number).filter((id) => Number.isInteger(id) && id > 0)
+  const match = /^(.*)（([^）]*)）$/.exec(label)
+  if (!match || !core.length) return label
+  const planned = new Set(result.items.map((item) => item.itemId))
+  if (core.every((id) => planned.has(id))) return label
+  const index = buildItemProfileIndex(input.items)
+  const present = core.filter((id) => planned.has(id)).map((id) => index.get(id)?.name ?? String(id))
+  return present.length ? `${match[1]}（${present.join('+')}）` : match[1]
+}
+
+/** 新推荐（不含已有装备）里法强装与物理装各 ≥2 件 = 混搭 */
+export function isMixedBuild(input: EngineInput, result: EngineResult): boolean {
+  const index = buildItemProfileIndex(input.items)
+  const fresh = result.items.filter((item) => !item.owned).map((item) => itemDamageClass(index.get(item.itemId)))
+  return Math.min(fresh.filter((c) => c === 'AP').length, fresh.filter((c) => c === 'AD').length) >= 2
+}
+
 export function generateBuildPlans(input: EngineInput, options: BuildPlanOptions = {}): BuildPlan[] {
   const swaps = options.swaps ?? {}
   const hasAugments = (input.augments ?? []).length > 0
@@ -56,7 +82,7 @@ export function generateBuildPlans(input: EngineInput, options: BuildPlanOptions
       label,
       aliases: [],
       description,
-      routeLabel: route ? localizeArchetype(route.label) : '',
+      routeLabel: planRouteLabel(engineInput, result),
       routeGames: route?.games ?? 0,
       routeWinRate: route?.winRate ?? null,
       usesAugments,
@@ -66,7 +92,7 @@ export function generateBuildPlans(input: EngineInput, options: BuildPlanOptions
   }
 
   const pure: EngineInput = { ...input, augments: [], team: null, compareBaseline: false }
-  make('popular', '主流', '场次最多的出装路线，按出场率选装（真实数据，不考虑海克斯）', { ...pure, archetype: 'popular' }, false)
+  make('popular', '主流', '场次最多的出装路线，每格按出场率选装（真实数据，不考虑海克斯）', { ...pure, archetype: 'popular', priorMode: 'popular' }, false)
   make('winrate', '高胜率', '样本足够的路线里收缩胜率最高的，按装备收缩胜率选装（真实数据，不考虑海克斯）', { ...pure, archetype: 'winrate', priorMode: 'winrate' }, false)
 
   if (adaptive) {
@@ -75,9 +101,12 @@ export function generateBuildPlans(input: EngineInput, options: BuildPlanOptions
     const adapted = raw.get('adapted')!.result
     const baselineRoute = recommendBuild({ ...pure, archetype: 'auto' }).archetype
     if (adapted.archetype && baselineRoute && adapted.archetype.index !== baselineRoute.index) {
-      const name = localizeArchetype(baselineRoute.label)
+      const name = localizeArchetype(baselineRoute.label).replace(/（[^）]*）$/, '')
       const by = [hasAugments ? '海克斯' : '', hasTeam ? '阵容' : ''].filter(Boolean).join('/')
       make('alternate', `${name.split('·')[0].split('（')[0].split('/')[0]}流`, `${by}把流派切到了「${localizeArchetype(adapted.archetype.label)}」；这是原「${name}」路线 + ${inputs}`, { ...input, archetype: baselineRoute.index }, hasAugments)
+      // 原路线 + 海克斯 组出来的是混搭（例如「升级：无尽之刃」硬塞进 AP 路线）：这个方案没有意义，不展示
+      const alternate = raw.get('alternate')
+      if (alternate && isMixedBuild(input, alternate.result)) raw.delete('alternate')
     }
   }
 
