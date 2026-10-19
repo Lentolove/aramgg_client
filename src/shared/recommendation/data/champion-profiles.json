@@ -1,0 +1,4735 @@
+{
+ "meta": {
+  "version": 1,
+  "ddragonVersion": "16.20.1",
+  "generatedFrom": {
+   "ddragon": "DDragon 16.20.1 zh_CN champion.json（tags / info / attackrange）",
+   "roles": "CommunityDragon champion-summary.json（roles，兜底）",
+   "curated": "champion-profile-overrides.json（158 个 ARAM 常见英雄，人工整理）"
+  },
+  "note": "0–1 相对强度（cc≈硬控个数）；curated 置信度 0.8，按标签推断 0.4。模型，不是统计。"
+ },
+ "champions": [
+  {
+   "id": 1,
+   "key": "Annie",
+   "name": "安妮",
+   "title": "黑暗之女",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 0.95,
+    "ad": 0.05,
+    "true": 0
+   },
+   "frontline": 0.1,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 2,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.3,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 625,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 2,
+   "key": "Olaf",
+   "name": "奥拉夫",
+   "title": "狂战士",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 0.8,
+    "true": 0.2
+   },
+   "frontline": 0.5,
+   "sustain": 0.6,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.3,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 3,
+   "key": "Galio",
+   "name": "加里奥",
+   "title": "正义巨像",
+   "roles": [
+    "tank",
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.8,
+   "sustain": 0,
+   "shield": 0.5,
+   "cc": 2.5,
+   "burst": 0.4,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 4,
+   "key": "TwistedFate",
+   "name": "崔斯特",
+   "title": "卡牌大师",
+   "roles": [
+    "mage",
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.2,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 5,
+   "key": "XinZhao",
+   "name": "赵信",
+   "title": "德邦总管",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0.3,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.5,
+   "dps": 0.6,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 6,
+   "key": "Urgot",
+   "name": "厄加特",
+   "title": "无畏战车",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.2,
+   "shield": 0.4,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.3,
+   "poke": 0,
+   "percentHp": 0.4,
+   "range": 350,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 7,
+   "key": "Leblanc",
+   "name": "乐芙兰",
+   "title": "诡术妖姬",
+   "roles": [
+    "assassin",
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.7,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 8,
+   "key": "Vladimir",
+   "name": "弗拉基米尔",
+   "title": "猩红收割者",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0.9,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 450,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 9,
+   "key": "Fiddlesticks",
+   "name": "费德提克",
+   "title": "远古恐惧",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.4,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 480,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 10,
+   "key": "Kayle",
+   "name": "凯尔",
+   "title": "正义天使",
+   "roles": [
+    "marksman",
+    "mage"
+   ],
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.3,
+    "true": 0.1
+   },
+   "frontline": 0,
+   "sustain": 0.1,
+   "shield": 0,
+   "cc": 0.3,
+   "burst": 0.2,
+   "dps": 0.8,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 11,
+   "key": "MasterYi",
+   "name": "易",
+   "title": "无极剑圣",
+   "roles": [
+    "assassin",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 0.7,
+    "true": 0.3
+   },
+   "frontline": 0,
+   "sustain": 0.5,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.4,
+   "dps": 0.9,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 12,
+   "key": "Alistar",
+   "name": "阿利斯塔",
+   "title": "牛头酋长",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0.4,
+   "shield": 0,
+   "cc": 3,
+   "burst": 0.2,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 13,
+   "key": "Ryze",
+   "name": "瑞兹",
+   "title": "符文法师",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.6,
+   "dive": 0.3,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 14,
+   "key": "Sion",
+   "name": "赛恩",
+   "title": "亡灵战神",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.3,
+    "ad": 0.7,
+    "true": 0
+   },
+   "frontline": 1,
+   "sustain": 0,
+   "shield": 0.5,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 15,
+   "key": "Sivir",
+   "name": "希维尔",
+   "title": "战争女神",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.5,
+   "cc": 0.3,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 500,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 16,
+   "key": "Soraka",
+   "name": "索拉卡",
+   "title": "众星之子",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 1,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0,
+   "dps": 0.1,
+   "dive": 0,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 17,
+   "key": "Teemo",
+   "name": "提莫",
+   "title": "迅捷斥候",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.2,
+   "dps": 0.5,
+   "dive": 0,
+   "poke": 0.6,
+   "percentHp": 0,
+   "range": 500,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 18,
+   "key": "Tristana",
+   "name": "崔丝塔娜",
+   "title": "麦林炮手",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.6,
+   "dps": 0.7,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 19,
+   "key": "Warwick",
+   "name": "沃里克",
+   "title": "祖安怒兽",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.9,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0.5,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 20,
+   "key": "Nunu",
+   "name": "努努和威朗普",
+   "title": "雪原双子",
+   "roles": [
+    "tank",
+    "mage"
+   ],
+   "damage": {
+    "ap": 0.64,
+    "ad": 0.36,
+    "true": 0
+   },
+   "frontline": 0.85,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 2,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0.4,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 21,
+   "key": "MissFortune",
+   "name": "厄运小姐",
+   "title": "赏金猎人",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.15,
+    "ad": 0.85,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.6,
+   "dive": 0,
+   "poke": 0.5,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 22,
+   "key": "Ashe",
+   "name": "艾希",
+   "title": "寒冰射手",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.05,
+    "ad": 0.95,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.1,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.2,
+   "dps": 0.8,
+   "dive": 0,
+   "poke": 0.5,
+   "percentHp": 0,
+   "range": 600,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 23,
+   "key": "Tryndamere",
+   "name": "泰达米尔",
+   "title": "蛮族之王",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0.4,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.4,
+   "dps": 0.9,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 24,
+   "key": "Jax",
+   "name": "贾克斯",
+   "title": "武器大师",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.3,
+    "ad": 0.7,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.4,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 25,
+   "key": "Morgana",
+   "name": "莫甘娜",
+   "title": "堕落天使",
+   "roles": [
+    "mage",
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.1,
+   "sustain": 0.1,
+   "shield": 0.8,
+   "cc": 2,
+   "burst": 0.4,
+   "dps": 0.4,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 450,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 26,
+   "key": "Zilean",
+   "name": "基兰",
+   "title": "时光守护者",
+   "roles": [
+    "enchanter",
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.4,
+   "shield": 0.2,
+   "cc": 1.5,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.5,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 27,
+   "key": "Singed",
+   "name": "辛吉德",
+   "title": "炼金术士",
+   "roles": [
+    "tank",
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.7,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.2,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 28,
+   "key": "Evelynn",
+   "name": "伊芙琳",
+   "title": "痛苦之拥",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 29,
+   "key": "Twitch",
+   "name": "图奇",
+   "title": "瘟疫之源",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.7,
+    "true": 0.1
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.3,
+   "burst": 0.4,
+   "dps": 0.9,
+   "dive": 0.2,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 30,
+   "key": "Karthus",
+   "name": "卡尔萨斯",
+   "title": "死亡颂唱者",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0,
+   "poke": 0.6,
+   "percentHp": 0,
+   "range": 450,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 31,
+   "key": "Chogath",
+   "name": "科加斯",
+   "title": "虚空恐惧",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.8,
+    "ad": 0,
+    "true": 0.2
+   },
+   "frontline": 1,
+   "sustain": 0.3,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.5,
+   "dps": 0.2,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0.5,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 32,
+   "key": "Amumu",
+   "name": "阿木木",
+   "title": "殇之木乃伊",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 2.5,
+   "burst": 0.4,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0.4,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 33,
+   "key": "Rammus",
+   "name": "拉莫斯",
+   "title": "披甲龙龟",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 34,
+   "key": "Anivia",
+   "name": "艾尼维亚",
+   "title": "冰晶凤凰",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.1,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 600,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 35,
+   "key": "Shaco",
+   "name": "萨科",
+   "title": "恶魔小丑",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 36,
+   "key": "DrMundo",
+   "name": "蒙多医生",
+   "title": "祖安狂人",
+   "roles": [
+    "tank",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0
+   },
+   "frontline": 1,
+   "sustain": 0.9,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.1,
+   "dps": 0.5,
+   "dive": 0.3,
+   "poke": 0.3,
+   "percentHp": 0.6,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 37,
+   "key": "Sona",
+   "name": "娑娜",
+   "title": "琴瑟仙女",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.7,
+   "shield": 0.4,
+   "cc": 1.5,
+   "burst": 0.3,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.5,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 38,
+   "key": "Kassadin",
+   "name": "卡萨丁",
+   "title": "虚空行者",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 0.5,
+   "burst": 0.8,
+   "dps": 0.3,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 39,
+   "key": "Irelia",
+   "name": "艾瑞莉娅",
+   "title": "刀锋舞者",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.4,
+   "sustain": 0.4,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 200,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 40,
+   "key": "Janna",
+   "name": "迦娜",
+   "title": "风暴之怒",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.3,
+   "shield": 0.9,
+   "cc": 2,
+   "burst": 0,
+   "dps": 0.1,
+   "dive": 0,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 41,
+   "key": "Gangplank",
+   "name": "普朗克",
+   "title": "海洋之灾",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.7,
+    "true": 0.2
+   },
+   "frontline": 0.2,
+   "sustain": 0.3,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.7,
+   "dps": 0.4,
+   "dive": 0,
+   "poke": 0.7,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 42,
+   "key": "Corki",
+   "name": "库奇",
+   "title": "英勇投弹手",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0,
+   "poke": 0.7,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 43,
+   "key": "Karma",
+   "name": "卡尔玛",
+   "title": "天启者",
+   "roles": [
+    "enchanter",
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.1,
+   "shield": 0.9,
+   "cc": 1,
+   "burst": 0.4,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.7,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 44,
+   "key": "Taric",
+   "name": "塔里克",
+   "title": "瓦洛兰之盾",
+   "roles": [
+    "tank",
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.6,
+   "shield": 0.6,
+   "cc": 1.5,
+   "burst": 0.1,
+   "dps": 0.2,
+   "dive": 0.3,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 45,
+   "key": "Veigar",
+   "name": "维迦",
+   "title": "邪恶小法师",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 2,
+   "burst": 1,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 48,
+   "key": "Trundle",
+   "name": "特朗德尔",
+   "title": "巨魔之王",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.6,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.2,
+   "dps": 0.7,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0.4,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 50,
+   "key": "Swain",
+   "name": "斯维因",
+   "title": "诺克萨斯统领",
+   "roles": [
+    "mage",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0.8,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.3,
+   "dps": 0.7,
+   "dive": 0.3,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 51,
+   "key": "Caitlyn",
+   "name": "凯特琳",
+   "title": "皮城女警",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0,
+   "poke": 0.7,
+   "percentHp": 0,
+   "range": 650,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 53,
+   "key": "Blitzcrank",
+   "name": "布里茨",
+   "title": "蒸汽机器人",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.7,
+    "ad": 0.3,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 2.5,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 54,
+   "key": "Malphite",
+   "name": "墨菲特",
+   "title": "熔岩巨兽",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.7,
+    "ad": 0.3,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 2,
+   "burst": 0.7,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 55,
+   "key": "Katarina",
+   "name": "卡特琳娜",
+   "title": "不祥之刃",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.8,
+   "dps": 0.4,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 56,
+   "key": "Nocturne",
+   "name": "魔腾",
+   "title": "永恒梦魇",
+   "roles": [
+    "assassin",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0.2,
+   "shield": 0.4,
+   "cc": 1,
+   "burst": 0.6,
+   "dps": 0.6,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 57,
+   "key": "Maokai",
+   "name": "茂凯",
+   "title": "扭曲树精",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0.4,
+   "shield": 0,
+   "cc": 2.5,
+   "burst": 0.2,
+   "dps": 0.2,
+   "dive": 0.4,
+   "poke": 0.2,
+   "percentHp": 0.3,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 58,
+   "key": "Renekton",
+   "name": "雷克顿",
+   "title": "荒漠屠夫",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.4,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 59,
+   "key": "JarvanIV",
+   "name": "嘉文四世",
+   "title": "德玛西亚皇子",
+   "roles": [
+    "fighter",
+    "tank"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 2,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 60,
+   "key": "Elise",
+   "name": "伊莉丝",
+   "title": "蜘蛛女皇",
+   "roles": [
+    "mage",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 61,
+   "key": "Orianna",
+   "name": "奥莉安娜",
+   "title": "发条魔灵",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.6,
+   "cc": 2,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0,
+   "poke": 0.5,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 62,
+   "key": "MonkeyKing",
+   "name": "孙悟空",
+   "title": "齐天大圣",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.4,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 63,
+   "key": "Brand",
+   "name": "布兰德",
+   "title": "复仇焰魂",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.6,
+   "dps": 0.6,
+   "dive": 0,
+   "poke": 0.4,
+   "percentHp": 0.6,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 64,
+   "key": "LeeSin",
+   "name": "李青",
+   "title": "盲僧",
+   "roles": [
+    "fighter",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.4,
+   "sustain": 0.2,
+   "shield": 0.4,
+   "cc": 1,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 67,
+   "key": "Vayne",
+   "name": "薇恩",
+   "title": "暗夜猎手",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 0.6,
+    "true": 0.4
+   },
+   "frontline": 0,
+   "sustain": 0.2,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.3,
+   "dps": 0.9,
+   "dive": 0.2,
+   "poke": 0,
+   "percentHp": 0.9,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 68,
+   "key": "Rumble",
+   "name": "兰博",
+   "title": "机械公敌",
+   "roles": [
+    "mage",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.3,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.4,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 69,
+   "key": "Cassiopeia",
+   "name": "卡西奥佩娅",
+   "title": "魔蛇之拥",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.3,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.2,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 72,
+   "key": "Skarner",
+   "name": "斯卡纳",
+   "title": "上古领主",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0.5,
+   "cc": 2.5,
+   "burst": 0.3,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.4,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 74,
+   "key": "Heimerdinger",
+   "name": "黑默丁格",
+   "title": "大发明家",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0,
+   "poke": 0.7,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 75,
+   "key": "Nasus",
+   "name": "内瑟斯",
+   "title": "沙漠死神",
+   "roles": [
+    "fighter",
+    "tank"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.7,
+   "sustain": 0.5,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.3,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 76,
+   "key": "Nidalee",
+   "name": "奈德丽",
+   "title": "狂野女猎手",
+   "roles": [
+    "mage",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.4,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.5,
+   "dps": 0.2,
+   "dive": 0.4,
+   "poke": 0.9,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 77,
+   "key": "Udyr",
+   "name": "乌迪尔",
+   "title": "兽灵行者",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.3,
+   "shield": 0.4,
+   "cc": 1,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 78,
+   "key": "Poppy",
+   "name": "波比",
+   "title": "圣锤之毅",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.8,
+    "true": 0
+   },
+   "frontline": 0.8,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 2,
+   "burst": 0.4,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 79,
+   "key": "Gragas",
+   "name": "古拉加斯",
+   "title": "酒桶",
+   "roles": [
+    "fighter",
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.3,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 80,
+   "key": "Pantheon",
+   "name": "潘森",
+   "title": "不屈之枪",
+   "roles": [
+    "fighter",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.3,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 81,
+   "key": "Ezreal",
+   "name": "伊泽瑞尔",
+   "title": "探险家",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.35,
+    "ad": 0.65,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.4,
+   "dps": 0.5,
+   "dive": 0.2,
+   "poke": 0.9,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 82,
+   "key": "Mordekaiser",
+   "name": "莫德凯撒",
+   "title": "铁铠冥魂",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.7,
+   "sustain": 0.3,
+   "shield": 0.6,
+   "cc": 1,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 83,
+   "key": "Yorick",
+   "name": "约里克",
+   "title": "牧魂人",
+   "roles": [
+    "fighter",
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0
+   },
+   "frontline": 0.85,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 84,
+   "key": "Akali",
+   "name": "阿卡丽",
+   "title": "离群之刺",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0.9,
+    "ad": 0.1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.8,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 85,
+   "key": "Kennen",
+   "name": "凯南",
+   "title": "狂暴之心",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 86,
+   "key": "Garen",
+   "name": "盖伦",
+   "title": "德玛西亚之力",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.8,
+    "true": 0
+   },
+   "frontline": 0.7,
+   "sustain": 0.4,
+   "shield": 0.4,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 89,
+   "key": "Leona",
+   "name": "蕾欧娜",
+   "title": "曙光女神",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0.2,
+   "cc": 3,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 90,
+   "key": "Malzahar",
+   "name": "玛尔扎哈",
+   "title": "虚空先知",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 2,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 500,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 91,
+   "key": "Talon",
+   "name": "泰隆",
+   "title": "刀锋之影",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.9,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 92,
+   "key": "Riven",
+   "name": "锐雯",
+   "title": "放逐之刃",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.3,
+   "sustain": 0,
+   "shield": 0.5,
+   "cc": 1.5,
+   "burst": 0.7,
+   "dps": 0.5,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 96,
+   "key": "KogMaw",
+   "name": "克格莫",
+   "title": "深渊巨口",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.3,
+   "burst": 0.2,
+   "dps": 0.9,
+   "dive": 0,
+   "poke": 0.4,
+   "percentHp": 0.7,
+   "range": 500,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 98,
+   "key": "Shen",
+   "name": "慎",
+   "title": "暮光之眼",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.2,
+    "true": 0.3
+   },
+   "frontline": 0.7,
+   "sustain": 0,
+   "shield": 0.7,
+   "cc": 1.5,
+   "burst": 0.2,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 99,
+   "key": "Lux",
+   "name": "拉克丝",
+   "title": "光辉女郎",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.5,
+   "cc": 2,
+   "burst": 0.8,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.8,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 101,
+   "key": "Xerath",
+   "name": "泽拉斯",
+   "title": "远古巫灵",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.6,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 1,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 102,
+   "key": "Shyvana",
+   "name": "希瓦娜",
+   "title": "龙血武姬",
+   "roles": [
+    "fighter",
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.27,
+    "ad": 0.73,
+    "true": 0
+   },
+   "frontline": 0.85,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 150,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 103,
+   "key": "Ahri",
+   "name": "阿狸",
+   "title": "九尾妖狐",
+   "roles": [
+    "mage",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.2,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.5,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 104,
+   "key": "Graves",
+   "name": "格雷福斯",
+   "title": "法外狂徒",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.6,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 425,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 105,
+   "key": "Fizz",
+   "name": "菲兹",
+   "title": "潮汐海灵",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 106,
+   "key": "Volibear",
+   "name": "沃利贝尔",
+   "title": "不灭狂雷",
+   "roles": [
+    "fighter",
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0
+   },
+   "frontline": 0.8,
+   "sustain": 0.4,
+   "shield": 0.3,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.5,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 107,
+   "key": "Rengar",
+   "name": "雷恩加尔",
+   "title": "傲之追猎者",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.2,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.9,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 110,
+   "key": "Varus",
+   "name": "韦鲁斯",
+   "title": "惩戒之箭",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0,
+   "poke": 0.9,
+   "percentHp": 0.4,
+   "range": 575,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 111,
+   "key": "Nautilus",
+   "name": "诺提勒斯",
+   "title": "深海泰坦",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0.5,
+   "cc": 3,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 112,
+   "key": "Viktor",
+   "name": "维克托",
+   "title": "奥术先驱",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0,
+   "poke": 0.6,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 113,
+   "key": "Sejuani",
+   "name": "瑟庄妮",
+   "title": "北地之怒",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0.5,
+   "cc": 2.5,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 114,
+   "key": "Fiora",
+   "name": "菲奥娜",
+   "title": "无双剑姬",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 0.7,
+    "true": 0.3
+   },
+   "frontline": 0.4,
+   "sustain": 0.5,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.8,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 115,
+   "key": "Ziggs",
+   "name": "吉格斯",
+   "title": "爆破鬼才",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.9,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 117,
+   "key": "Lulu",
+   "name": "璐璐",
+   "title": "仙灵女巫",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.1,
+   "shield": 0.9,
+   "cc": 1.5,
+   "burst": 0.1,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 119,
+   "key": "Draven",
+   "name": "德莱文",
+   "title": "荣耀行刑官",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.1,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.8,
+   "dive": 0,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 120,
+   "key": "Hecarim",
+   "name": "赫卡里姆",
+   "title": "战争之影",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.9,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.3,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.5,
+   "dps": 0.4,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 121,
+   "key": "Khazix",
+   "name": "卡兹克",
+   "title": "虚空掠夺者",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.9,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 122,
+   "key": "Darius",
+   "name": "德莱厄斯",
+   "title": "诺克萨斯之手",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.9,
+    "true": 0
+   },
+   "frontline": 0.7,
+   "sustain": 0.5,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 126,
+   "key": "Jayce",
+   "name": "杰斯",
+   "title": "未来守护者",
+   "roles": [
+    "fighter",
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.2,
+   "poke": 0.9,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 127,
+   "key": "Lissandra",
+   "name": "丽桑卓",
+   "title": "冰霜女巫",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 2.5,
+   "burst": 0.6,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 131,
+   "key": "Diana",
+   "name": "黛安娜",
+   "title": "皎月女神",
+   "roles": [
+    "assassin",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.3,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 1,
+   "burst": 0.8,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 133,
+   "key": "Quinn",
+   "name": "奎因",
+   "title": "德玛西亚之翼",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 134,
+   "key": "Syndra",
+   "name": "辛德拉",
+   "title": "暗黑元首",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.5,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 136,
+   "key": "AurelionSol",
+   "name": "奥瑞利安·索尔",
+   "title": "铸星龙王",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.15,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 141,
+   "key": "Kayn",
+   "name": "凯隐",
+   "title": "影流之镰",
+   "roles": [
+    "fighter",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 0.5,
+   "burst": 0.8,
+   "dps": 0.5,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 142,
+   "key": "Zoe",
+   "name": "佐伊",
+   "title": "暮光星灵",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.8,
+   "dps": 0.1,
+   "dive": 0,
+   "poke": 0.9,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 143,
+   "key": "Zyra",
+   "name": "婕拉",
+   "title": "荆棘之兴",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.5,
+   "dive": 0,
+   "poke": 0.5,
+   "percentHp": 0,
+   "range": 575,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 145,
+   "key": "Kaisa",
+   "name": "卡莎",
+   "title": "虚空之女",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 0,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 147,
+   "key": "Seraphine",
+   "name": "萨勒芬妮",
+   "title": "星籁歌姬",
+   "roles": [
+    "enchanter",
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.5,
+   "shield": 0.6,
+   "cc": 2,
+   "burst": 0.4,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.6,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 150,
+   "key": "Gnar",
+   "name": "纳尔",
+   "title": "迷失之牙",
+   "roles": [
+    "fighter",
+    "tank"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.7,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.4,
+   "dps": 0.4,
+   "dive": 0.4,
+   "poke": 0.3,
+   "percentHp": 0.3,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 154,
+   "key": "Zac",
+   "name": "扎克",
+   "title": "生化魔人",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 1,
+   "sustain": 0.5,
+   "shield": 0,
+   "cc": 2.5,
+   "burst": 0.4,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0.4,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 157,
+   "key": "Yasuo",
+   "name": "亚索",
+   "title": "疾风剑豪",
+   "roles": [
+    "fighter",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.3,
+   "sustain": 0.2,
+   "shield": 0.4,
+   "cc": 1,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 161,
+   "key": "Velkoz",
+   "name": "维克兹",
+   "title": "虚空之眼",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 0.6,
+    "ad": 0,
+    "true": 0.4
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.6,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.9,
+   "percentHp": 0.2,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 163,
+   "key": "Taliyah",
+   "name": "塔莉垭",
+   "title": "岩雀",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.6,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.6,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 164,
+   "key": "Camille",
+   "name": "卡蜜尔",
+   "title": "青钢影",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 0.8,
+    "true": 0.2
+   },
+   "frontline": 0.4,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 1,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 166,
+   "key": "Akshan",
+   "name": "阿克尚",
+   "title": "影哨",
+   "roles": [
+    "marksman",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 0.5,
+   "burst": 0.8,
+   "dps": 0.8,
+   "dive": 0.8,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 500,
+   "ranged": true,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 200,
+   "key": "Belveth",
+   "name": "卑尔维斯",
+   "title": "虚空女皇",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.64,
+    "ad": 0.36,
+    "true": 0
+   },
+   "frontline": 0.45,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 0.5,
+   "burst": 0.3,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 150,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 201,
+   "key": "Braum",
+   "name": "布隆",
+   "title": "弗雷尔卓德之心",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0
+   },
+   "frontline": 0.8,
+   "sustain": 0,
+   "shield": 0.6,
+   "cc": 2,
+   "burst": 0.1,
+   "dps": 0.1,
+   "dive": 0.3,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 202,
+   "key": "Jhin",
+   "name": "烬",
+   "title": "戏命师",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.7,
+   "burst": 0.5,
+   "dps": 0.4,
+   "dive": 0,
+   "poke": 0.7,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 203,
+   "key": "Kindred",
+   "name": "千珏",
+   "title": "永猎双子",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.2,
+   "shield": 0,
+   "cc": 0.3,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0.3,
+   "poke": 0,
+   "percentHp": 0.5,
+   "range": 500,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 221,
+   "key": "Zeri",
+   "name": "泽丽",
+   "title": "祖安花火",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 0.3,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0.2,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 222,
+   "key": "Jinx",
+   "name": "金克丝",
+   "title": "暴走萝莉",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.9,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.2,
+   "dps": 0.9,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 223,
+   "key": "TahmKench",
+   "name": "塔姆",
+   "title": "河流之王",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.7,
+    "ad": 0.3,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0.4,
+   "shield": 0.5,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.3,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0.4,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 233,
+   "key": "Briar",
+   "name": "贝蕾亚",
+   "title": "狂厄蔷薇",
+   "roles": [
+    "fighter",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0.9,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 234,
+   "key": "Viego",
+   "name": "佛耶戈",
+   "title": "破败之王",
+   "roles": [
+    "fighter",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0.4,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0.4,
+   "range": 200,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 235,
+   "key": "Senna",
+   "name": "赛娜",
+   "title": "涤魂圣枪",
+   "roles": [
+    "marksman",
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.5,
+   "shield": 0.3,
+   "cc": 0.7,
+   "burst": 0.2,
+   "dps": 0.5,
+   "dive": 0,
+   "poke": 0.7,
+   "percentHp": 0,
+   "range": 600,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 236,
+   "key": "Lucian",
+   "name": "卢锡安",
+   "title": "圣枪游侠",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.4,
+   "dps": 0.7,
+   "dive": 0.3,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 500,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 238,
+   "key": "Zed",
+   "name": "劫",
+   "title": "影流之主",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.9,
+   "dps": 0.3,
+   "dive": 0.9,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 240,
+   "key": "Kled",
+   "name": "克烈",
+   "title": "暴怒骑士",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 1.5,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 245,
+   "key": "Ekko",
+   "name": "艾克",
+   "title": "时间刺客",
+   "roles": [
+    "assassin",
+    "mage"
+   ],
+   "damage": {
+    "ap": 0.58,
+    "ad": 0.42,
+    "true": 0
+   },
+   "frontline": 0.15,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 1,
+   "burst": 0.8,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 246,
+   "key": "Qiyana",
+   "name": "奇亚娜",
+   "title": "元素女皇",
+   "roles": [
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.2,
+   "cc": 1.5,
+   "burst": 0.8,
+   "dps": 0.2,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 254,
+   "key": "Vi",
+   "name": "蔚",
+   "title": "皮城执法官",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 2,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 266,
+   "key": "Aatrox",
+   "name": "亚托克斯",
+   "title": "暗裔剑魔",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.9,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 267,
+   "key": "Nami",
+   "name": "娜美",
+   "title": "唤潮鲛姬",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.6,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 268,
+   "key": "Azir",
+   "name": "阿兹尔",
+   "title": "沙漠皇帝",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 2,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.3,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 350,
+   "key": "Yuumi",
+   "name": "悠米",
+   "title": "魔法猫咪",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.8,
+   "shield": 0.5,
+   "cc": 1,
+   "burst": 0.1,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 425,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 360,
+   "key": "Samira",
+   "name": "莎弥拉",
+   "title": "沙漠玫瑰",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.3,
+   "shield": 0,
+   "cc": 0.3,
+   "burst": 0.6,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 500,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 412,
+   "key": "Thresh",
+   "name": "锤石",
+   "title": "魂锁典狱长",
+   "roles": [
+    "tank",
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0,
+   "shield": 0.6,
+   "cc": 2.5,
+   "burst": 0.2,
+   "dps": 0.1,
+   "dive": 0.3,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 450,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 420,
+   "key": "Illaoi",
+   "name": "俄洛伊",
+   "title": "海兽祭司",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.6,
+   "sustain": 0.7,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.2,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 421,
+   "key": "RekSai",
+   "name": "雷克塞",
+   "title": "虚空遁地兽",
+   "roles": [
+    "fighter",
+    "tank"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.85,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 427,
+   "key": "Ivern",
+   "name": "艾翁",
+   "title": "翠神",
+   "roles": [
+    "enchanter",
+    "mage"
+   ],
+   "damage": {
+    "ap": 0.7,
+    "ad": 0.3,
+    "true": 0
+   },
+   "frontline": 0.25,
+   "sustain": 0.1,
+   "shield": 0.4,
+   "cc": 1.5,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 475,
+   "ranged": true,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 429,
+   "key": "Kalista",
+   "name": "卡莉丝塔",
+   "title": "复仇之矛",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0.2,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 432,
+   "key": "Bard",
+   "name": "巴德",
+   "title": "星界游神",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.3,
+   "shield": 0,
+   "cc": 2,
+   "burst": 0.2,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 500,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 497,
+   "key": "Rakan",
+   "name": "洛",
+   "title": "幻翎",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0.3,
+   "shield": 0.4,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 300,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 498,
+   "key": "Xayah",
+   "name": "霞",
+   "title": "逆羽",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 516,
+   "key": "Ornn",
+   "name": "奥恩",
+   "title": "山隐之焰",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0
+   },
+   "frontline": 1,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 2.5,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 517,
+   "key": "Sylas",
+   "name": "塞拉斯",
+   "title": "解脱者",
+   "roles": [
+    "mage",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.3,
+   "sustain": 0.7,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 518,
+   "key": "Neeko",
+   "name": "妮蔻",
+   "title": "万花通灵",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 2,
+   "burst": 0.7,
+   "dps": 0.2,
+   "dive": 0.4,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 523,
+   "key": "Aphelios",
+   "name": "厄斐琉斯",
+   "title": "残月之肃",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.2,
+   "shield": 0,
+   "cc": 0.5,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 526,
+   "key": "Rell",
+   "name": "芮尔",
+   "title": "镕铁少女",
+   "roles": [
+    "tank"
+   ],
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0.2,
+   "cc": 3,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 555,
+   "key": "Pyke",
+   "name": "派克",
+   "title": "血港鬼影",
+   "roles": [
+    "assassin",
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.7,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 711,
+   "key": "Vex",
+   "name": "薇古丝",
+   "title": "愁云使者",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 777,
+   "key": "Yone",
+   "name": "永恩",
+   "title": "封魔剑魂",
+   "roles": [
+    "fighter",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0
+   },
+   "frontline": 0.3,
+   "sustain": 0.2,
+   "shield": 0.3,
+   "cc": 1,
+   "burst": 0.5,
+   "dps": 0.8,
+   "dive": 0.7,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 799,
+   "key": "Ambessa",
+   "name": "安蓓萨",
+   "title": "铁血狼母",
+   "roles": [
+    "fighter",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0.4,
+   "shield": 0.5,
+   "cc": 1.5,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 800,
+   "key": "Mel",
+   "name": "梅尔",
+   "title": "流光镜影",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0.3,
+   "cc": 1,
+   "burst": 0.6,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.7,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 804,
+   "key": "Yunara",
+   "name": "芸阿娜",
+   "title": "不破之誓",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.1,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 0.5,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 575,
+   "ranged": true,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 805,
+   "key": "Locke",
+   "name": "洛克",
+   "title": "灰烬驱魔人",
+   "roles": [
+    "assassin",
+    "mage"
+   ],
+   "damage": {
+    "ap": 0.25,
+    "ad": 0.75,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 1,
+   "burst": 0.8,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0.4,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 875,
+   "key": "Sett",
+   "name": "瑟提",
+   "title": "腕豪",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.9,
+    "true": 0
+   },
+   "frontline": 0.7,
+   "sustain": 0.3,
+   "shield": 0.6,
+   "cc": 1.5,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 125,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 876,
+   "key": "Lillia",
+   "name": "莉莉娅",
+   "title": "含羞蓓蕾",
+   "roles": [
+    "mage",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0.2,
+   "sustain": 0.2,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0.5,
+   "range": 325,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 887,
+   "key": "Gwen",
+   "name": "格温",
+   "title": "灵罗娃娃",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.7,
+    "ad": 0,
+    "true": 0.3
+   },
+   "frontline": 0.4,
+   "sustain": 0.5,
+   "shield": 0,
+   "cc": 0,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.7,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 888,
+   "key": "Renata",
+   "name": "烈娜塔 · 戈拉斯克",
+   "title": "炼金男爵",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.4,
+   "shield": 0.6,
+   "cc": 2,
+   "burst": 0.2,
+   "dps": 0.2,
+   "dive": 0,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 893,
+   "key": "Aurora",
+   "name": "阿萝拉",
+   "title": "双界灵兔",
+   "roles": [
+    "mage",
+    "assassin"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.1,
+   "shield": 0,
+   "cc": 1,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.3,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 895,
+   "key": "Nilah",
+   "name": "尼菈",
+   "title": "不羁之悦",
+   "roles": [
+    "fighter",
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.3,
+   "shield": 0.3,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 225,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 897,
+   "key": "KSante",
+   "name": "奎桑提",
+   "title": "纳祖芒荣耀",
+   "roles": [
+    "tank",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.8,
+    "true": 0
+   },
+   "frontline": 0.9,
+   "sustain": 0,
+   "shield": 0.4,
+   "cc": 2,
+   "burst": 0.3,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0,
+   "percentHp": 0.3,
+   "range": 150,
+   "ranged": false,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 901,
+   "key": "Smolder",
+   "name": "斯莫德",
+   "title": "炽炎雏龙",
+   "roles": [
+    "marksman"
+   ],
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.8,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 0.3,
+   "burst": 0.3,
+   "dps": 0.7,
+   "dive": 0,
+   "poke": 0.5,
+   "percentHp": 0.2,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 902,
+   "key": "Milio",
+   "name": "米利欧",
+   "title": "明烛",
+   "roles": [
+    "enchanter"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0.6,
+   "shield": 0.9,
+   "cc": 1,
+   "burst": 0,
+   "dps": 0.1,
+   "dive": 0,
+   "poke": 0.2,
+   "percentHp": 0,
+   "range": 525,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 904,
+   "key": "Zaahen",
+   "name": "亚恒",
+   "title": "不落魔锋",
+   "roles": [
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.5,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 0.5,
+   "burst": 0.3,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 175,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  },
+  {
+   "id": 910,
+   "key": "Hwei",
+   "name": "彗",
+   "title": "异画师",
+   "roles": [
+    "mage"
+   ],
+   "damage": {
+    "ap": 1,
+    "ad": 0,
+    "true": 0
+   },
+   "frontline": 0,
+   "sustain": 0,
+   "shield": 0,
+   "cc": 1.5,
+   "burst": 0.6,
+   "dps": 0.3,
+   "dive": 0,
+   "poke": 0.8,
+   "percentHp": 0,
+   "range": 550,
+   "ranged": true,
+   "source": "curated",
+   "confidence": 0.8
+  },
+  {
+   "id": 950,
+   "key": "Naafiri",
+   "name": "纳亚菲利",
+   "title": "百裂冥犬",
+   "roles": [
+    "assassin",
+    "fighter"
+   ],
+   "damage": {
+    "ap": 0,
+    "ad": 1,
+    "true": 0
+   },
+   "frontline": 0.45,
+   "sustain": 0.1,
+   "shield": 0.1,
+   "cc": 0.5,
+   "burst": 0.8,
+   "dps": 0.5,
+   "dive": 0.8,
+   "poke": 0,
+   "percentHp": 0,
+   "range": 125,
+   "ranged": false,
+   "source": "ddragon-tags",
+   "confidence": 0.4
+  }
+ ]
+}

@@ -29,7 +29,7 @@ describe('generateBuildPlans', () => {
     expect(plans.every((plan) => !plan.usesAugments)).toBe(true)
   })
 
-  it('adds 海克斯适配 first and an alternate-route plan when augments switch the archetype', () => {
+  it('adds 局势适配 first and an alternate-route plan when augments switch the archetype', () => {
     const plans = generateBuildPlans(input(54, [1013, 1152]))
     expect(plans[0].key).toBe('adapted')
     expect(plans[0].routeLabel).toBe('坦克')

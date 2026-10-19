@@ -75,6 +75,14 @@ export function getManualOverlayService(): ManualOverlayService {
         })),
         appendLog: appendRefreshLog,
         getLiveClientAllGameData: () => getLCUServiceInstance().getLiveClientAllGameData(),
+        getChampSelectTeam: async () => {
+            const snapshot = await getLCUServiceInstance().getChampSelectSnapshot()
+            if (!snapshot?.isInChampSelect) return null
+            const allyChampionIds = (snapshot.myTeam ?? [])
+                .map((member) => Number(member.championId || member.championPickIntent))
+                .filter((id) => Number.isInteger(id) && id > 0)
+            return { selfChampionId: snapshot.selfChampionId ?? null, allyChampionIds }
+        },
         store: {
             get: (key) => store.get(key),
             set: (key, value) => store.set(key, value),

@@ -54,3 +54,4 @@ export const STORED_ITEM_PROFILES: ItemProfile[] =
   ((itemProfileData as unknown as { items?: ItemProfile[] }).items ?? (itemProfileData as unknown as ItemProfile[]))
 
 export * from './build-plans.ts'
+export * from './team-comp.ts'

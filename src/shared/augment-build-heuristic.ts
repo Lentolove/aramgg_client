@@ -318,6 +318,20 @@ export interface LivePlayerLike {
   [key: string]: unknown
 }
 
+export interface ParsedLivePlayer {
+  championName: string
+  /** game_character_displayname_<DDragonId>（与客户端语言无关，用来对英雄画像） */
+  rawChampionName: string | null
+  team: string | null
+  isSelf: boolean
+  isAlly: boolean
+  itemIds: number[]
+  level: number | null
+  kills: number | null
+  deaths: number | null
+  assists: number | null
+}
+
 export interface ParsedLiveClient {
   found: boolean
   championName: string | null
@@ -325,6 +339,8 @@ export interface ParsedLiveClient {
   ownedItemIds: number[]
   enemyItemIds: number[]
   enemyChampionNames: string[]
+  /** 双方 10 人（阵容分析用；找不到自己时为空） */
+  players: ParsedLivePlayer[]
 }
 
 function normalizeIdentity(value: unknown): string {
@@ -357,10 +373,28 @@ export function parseLiveClientPlayers(
       .filter((id): id is number => id != null)
 
   if (!me) {
-    return { found: false, championName: null, team: null, ownedItemIds: [], enemyItemIds: [], enemyChampionNames: [] }
+    return { found: false, championName: null, team: null, ownedItemIds: [], enemyItemIds: [], enemyChampionNames: [], players: [] }
   }
 
   const enemies = players.filter((player) => player?.team && player.team !== me.team)
+  const numberOrNull = (value: unknown) => (typeof value === 'number' && Number.isFinite(value) ? value : null)
+  const parsedPlayers: ParsedLivePlayer[] = players
+    .filter((player) => player && (player.championName || player.rawChampionName))
+    .map((player) => {
+      const scores = (player.scores && typeof player.scores === 'object' ? player.scores : {}) as Record<string, unknown>
+      return {
+        championName: String(player.championName ?? ''),
+        rawChampionName: typeof player.rawChampionName === 'string' ? player.rawChampionName : null,
+        team: player.team ?? null,
+        isSelf: player === me,
+        isAlly: Boolean(player.team && player.team === me.team),
+        itemIds: itemIdsOf(player),
+        level: numberOrNull(player.level),
+        kills: numberOrNull(scores.kills),
+        deaths: numberOrNull(scores.deaths),
+        assists: numberOrNull(scores.assists),
+      }
+    })
   return {
     found: true,
     championName: me.championName ?? null,
@@ -368,6 +402,7 @@ export function parseLiveClientPlayers(
     ownedItemIds: itemIdsOf(me),
     enemyItemIds: enemies.flatMap(itemIdsOf),
     enemyChampionNames: enemies.map((enemy) => String(enemy.championName ?? '')).filter(Boolean),
+    players: parsedPlayers,
   }
 }
 

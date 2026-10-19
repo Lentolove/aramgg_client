@@ -5,7 +5,8 @@
  *      + Σ 海克斯画像 · 装备属性/机制（模型）
  *      + 海克斯点名装备加分（升级类）
  *      + 已有组件进度（2999 实时装备）
- *      + 敌方阵容（敌方装备的法/物比例、治疗装数量）
+ *      + 对局阵容（team-comp.ts：双方英雄画像 + 实时装备 → 魔抗/护甲/重伤/穿透/保命/补前排…，有上限）
+ *        没有阵容信息时退回到「敌方装备的法/物比例、治疗装数量」
  * 然后在约束下（一双鞋、唯一被动不重复、6 格）贪心组出整套 6 件 + 「下一件」，每件附带可解释的原因与分项分数。
  *
  * 诚实声明：数据源没有「海克斯 × 装备」的统计，海克斯部分是规则模型，不是测得的胜率。
@@ -25,6 +26,7 @@ import {
   type WeightKey,
   type WeightMap,
 } from './profiles.ts'
+import type { TeamAnalysis, TeamNeeds } from './team-comp.ts'
 
 // ---------------------------------------------------------------------------
 // 输入
@@ -74,6 +76,8 @@ export interface EngineInput {
   priorMode?: 'pick' | 'winrate'
   /** 用户手动换装：把 from 换成 to（保持格位；不合规则时忽略） */
   swaps?: ItemSwap[]
+  /** 对局阵容分析（analyzeTeamComp）；有它时代替「敌方装备」项 */
+  team?: TeamAnalysis | null
 }
 
 export interface ItemSwap {
@@ -89,6 +93,8 @@ export interface ScoreBreakdown {
   synergy: number
   progress: number
   enemy: number
+  /** 阵容项（有上限） */
+  comp: number
   total: number
 }
 
@@ -148,6 +154,21 @@ export interface EngineResult {
   notes: string[]
   /** 供反向（海克斯卡）评分复用 */
   context: EngineContext
+  /** 阵容对这套出装的影响（没有阵容信息时为 null） */
+  team: TeamImpact | null
+  /** 6 件里来自 海克斯模型 / 阵容 的分数合计 */
+  contributions: { augment: number; comp: number }
+}
+
+export interface TeamImpact {
+  needs: TeamNeeds
+  canTank: boolean
+  canDamage: boolean
+  /** 阵容让流派变了（例如墨菲特 法强 → 坦克） */
+  routeNote: string | null
+  /** 与「不看阵容」相比，因为阵容换进来 / 挤出去的装备 */
+  added: Array<{ itemId: number; name: string; reason: string }>
+  removed: Array<{ itemId: number; name: string }>
 }
 
 export interface EngineContext {
@@ -157,6 +178,8 @@ export interface EngineContext {
   damageType: 'AP' | 'AD'
   plannedItemIds: number[]
   ownedItemIds: number[]
+  /** 阵容需求（反向评分海克斯卡时用） */
+  team: { needs: TeamNeeds; canTank: boolean; canDamage: boolean } | null
 }
 
 // ---------------------------------------------------------------------------
@@ -201,7 +224,44 @@ export const ENGINE_PARAMS = {
   winrateRouteMinGames: 300,
   /** 每格展示的备选数量 */
   alternativesPerSlot: 3,
+  /** 阵容：抗性需求 × 装备抗性占比 */
+  compResistWeight: 3,
+  compAntiHealWeight: 2.2,
+  compAntiShieldWeight: 1.8,
+  compPenetrationWeight: 3,
+  compTenacityWeight: 1.6,
+  compStasisWeight: 2,
+  compFrontlineWeight: 1.8,
+  compDamageWeight: 1.2,
+  /** 单件装备阵容项上下限 */
+  compCap: 3.5,
+  compFloor: -2,
+  /** 同一需求每多一件满足：抗性/穿透 ×0.7，补前排/补输出 ×0.85（一件就够的需求只给第一件） */
+  compResistDecay: 0.7,
+  compGeneralDecay: 0.85,
+  /** 阵容对流派选择：缺前排/缺输出 × 流派坦度差 */
+  compRouteWeight: 6,
+  /** 「能偏肉」：存在 HP+双抗 占比 ≥ 此值、且场次占比 ≥ compRouteMinShare 的路线 */
+  compTankRouteShare: 0.4,
+  compRouteMinShare: 0.03,
 } as const
+
+/** 阵容用到的特定装备（id → 系数） */
+const COMP_ITEMS = {
+  antiShield: new Map([[6695, 1]]),
+  tenacity: new Map([[3111, 1], [3140, 0.8], [6035, 0.8], [3139, 0.8]]),
+  stasis: new Map([[3157, 1], [3102, 0.9], [3026, 0.9], [3814, 0.6]]),
+  /** 对坦：百分比/破甲（物理） */
+  antiTankAD: new Map([[3071, 0.8], [3153, 0.6]]),
+  /** 对坦：百分比灼烧/法穿（法系） */
+  antiTankAP: new Map([[6653, 0.9]]),
+} as const
+
+/** 一件就够的需求：拿过一件后其余装备不再从它得分 */
+const COMP_SINGLE_NEEDS = new Set<keyof TeamNeeds>(['antiHeal', 'antiShield', 'tenacity', 'stasis'])
+export const COMP_NEED_LABEL: Record<keyof TeamNeeds, string> = {
+  mr: '魔抗', armor: '护甲', antiHeal: '重伤', antiShield: '破盾', penetration: '对坦', tenacity: '韧性/解控', stasis: '保命', frontline: '补前排', damage: '补输出',
+}
 
 /** 海克斯机制 → 装备标签（及匹配系数） */
 const MECHANIC_ITEM_MATCH: Partial<Record<Mechanic, Array<[Mechanic, number]>>> = {
@@ -382,6 +442,100 @@ function archetypeVector(priors: Map<number, ItemPrior>, itemIndex: Map<number, 
   return { vector, tags }
 }
 
+const tankShareOf = (vector: Partial<Record<StatKey, number>>) => (vector.HP ?? 0) + (vector.ARMOR ?? 0) + (vector.MR ?? 0)
+const damageShareOf = (vector: Partial<Record<StatKey, number>>, damageType: 'AP' | 'AD') => (damageType === 'AP'
+  ? (vector.AP ?? 0) + (vector.MAGIC_PEN ?? 0)
+  : (vector.AD ?? 0) + (vector.CRIT ?? 0) + (vector.AS ?? 0) + (vector.LETHALITY ?? 0) + (vector.ARMOR_PEN ?? 0))
+
+export interface RouteFlex {
+  canTank: boolean
+  canDamage: boolean
+  /** 各路线坦度（HP+双抗 占比） */
+  tankShares: number[]
+}
+
+function routeFlexOf(entries: Array<{ games: number; vector: Partial<Record<StatKey, number>> }>, champGames: number): RouteFlex {
+  const tankShares = entries.map((entry) => Math.round(tankShareOf(entry.vector) * 100) / 100)
+  const eligible = entries
+    .map((entry, index) => ({ entry, share: tankShares[index] }))
+    .filter(({ entry }) => champGames <= 0 || entry.games >= champGames * ENGINE_PARAMS.compRouteMinShare)
+  return {
+    canTank: eligible.some(({ share }) => share >= ENGINE_PARAMS.compTankRouteShare),
+    canDamage: eligible.some(({ share }) => share < 0.35) || eligible.length === 0,
+    tankShares,
+  }
+}
+
+/** 该英雄的数据路线里有没有肉装 / 输出路线（决定「补前排/补输出」能不能用） */
+export function championRouteFlex(input: Pick<EngineInput, 'builds' | 'items'>): RouteFlex {
+  const itemIndex = buildItemProfileIndex(input.items)
+  const entries = (input.builds ?? []).filter((build) => build && typeof build === 'object').map((build) => {
+    const priors = computeBuildPriors(build, itemIndex, 'pick')
+    return { games: buildGames(build).games, vector: archetypeVector(priors, itemIndex).vector }
+  })
+  return routeFlexOf(entries, entries.reduce((sum, entry) => sum + entry.games, 0))
+}
+
+interface CompPart {
+  need: keyof TeamNeeds
+  value: number
+  reason: string
+}
+
+function compPartsFor(
+  item: ItemProfile,
+  team: TeamAnalysis,
+  ctx: { damageType: 'AP' | 'AD'; chosenTank: number; flex: RouteFlex },
+): CompPart[] {
+  const { needs, enemy } = team
+  const s = item.shares
+  const parts: CompPart[] = []
+  const push = (need: keyof TeamNeeds, value: number, reason: string) => {
+    if (Math.abs(value) >= 0.05) parts.push({ need, value, reason })
+  }
+  // 脆皮拿抗性的收益低一些（但仍然有用）
+  const resistScale = ctx.chosenTank >= 0.3 ? 1 : 0.7
+  if (needs.mr > 0 && (s.MR ?? 0) > 0) push('mr', needs.mr * (s.MR ?? 0) * ENGINE_PARAMS.compResistWeight * resistScale, `对面法伤 ${pct(enemy.ap)} → 魔抗`)
+  if (needs.armor > 0 && (s.ARMOR ?? 0) > 0) push('armor', needs.armor * (s.ARMOR ?? 0) * ENGINE_PARAMS.compResistWeight * resistScale, `对面物伤 ${pct(enemy.ad)} → 护甲`)
+  if (needs.antiHeal > 0 && item.tags.includes('anti-heal')) {
+    push('antiHeal', needs.antiHeal * ENGINE_PARAMS.compAntiHealWeight, enemy.healers ? `对面 ${enemy.healers} 个回复英雄 → 重伤` : '对面续航多 → 重伤')
+  }
+  if (needs.antiShield > 0 && COMP_ITEMS.antiShield.has(item.id)) {
+    push('antiShield', needs.antiShield * ENGINE_PARAMS.compAntiShieldWeight * COMP_ITEMS.antiShield.get(item.id)!, `对面 ${enemy.shielders} 个护盾英雄 → 破盾`)
+  }
+  if (needs.penetration > 0) {
+    let value = 0
+    if (ctx.damageType === 'AD') {
+      value += (s.ARMOR_PEN ?? 0) * ENGINE_PARAMS.compPenetrationWeight
+      value += (item.tags.includes('max-hp-damage') ? 0.6 : 0) + (COMP_ITEMS.antiTankAD.get(item.id) ?? 0) * 0.8
+      value -= (s.LETHALITY ?? 0) * 2
+    } else {
+      value += (s.MAGIC_PEN ?? 0) * ENGINE_PARAMS.compPenetrationWeight + (COMP_ITEMS.antiTankAP.get(item.id) ?? 0)
+    }
+    push('penetration', needs.penetration * value, value >= 0 ? `对面 ${enemy.frontliners} 个前排 → 穿透/百分比伤害` : `对面 ${enemy.frontliners} 个前排 → 穿甲（固穿）收益低`)
+  }
+  if (needs.tenacity > 0 && COMP_ITEMS.tenacity.has(item.id)) {
+    push('tenacity', needs.tenacity * ENGINE_PARAMS.compTenacityWeight * COMP_ITEMS.tenacity.get(item.id)!, '对面控制多 → 韧性/解控')
+  }
+  if (needs.stasis > 0 && COMP_ITEMS.stasis.has(item.id)) {
+    // 只给对应伤害类型的保命装（法系中娅/女妖，物理守护天使/夜刃）
+    const ap = (s.AP ?? 0) > 0.3
+    const fits = (ctx.damageType === 'AP') === ap || ctx.chosenTank >= 0.4
+    if (fits) push('stasis', needs.stasis * ENGINE_PARAMS.compStasisWeight * COMP_ITEMS.stasis.get(item.id)!, `对面 ${enemy.assassins || '多'} 个刺客/爆发 → 保命`)
+  }
+  if (needs.frontline > 0 && ctx.flex.canTank && !item.boots) {
+    const tank = (s.HP ?? 0) + (s.ARMOR ?? 0) + (s.MR ?? 0)
+    const scale = ctx.chosenTank >= 0.35 ? 1 : 0.5
+    push('frontline', needs.frontline * (tank + (item.tags.includes('tank') ? 0.3 : 0)) * ENGINE_PARAMS.compFrontlineWeight * scale, '我方缺前排 → 坦度')
+  }
+  if (needs.damage > 0 && ctx.flex.canDamage && !item.boots) {
+    push('damage', needs.damage * damageShareOf(s, ctx.damageType) * ENGINE_PARAMS.compDamageWeight, '我方缺输出 → 输出属性')
+  }
+  return parts
+}
+
+const capComp = (value: number) => Math.max(ENGINE_PARAMS.compFloor, Math.min(ENGINE_PARAMS.compCap, value))
+
 function damageTypeOf(vector: Partial<Record<StatKey, number>>): 'AP' | 'AD' {
   const ap = vector.AP ?? 0
   const ad = (vector.AD ?? 0) + (vector.CRIT ?? 0) + (vector.AS ?? 0) + (vector.LETHALITY ?? 0)
@@ -535,9 +689,13 @@ interface Candidate {
   progressNames: string[]
   enemy: number
   enemyReason: string | null
+  /** 阵容项（已封顶）与分项 */
+  comp: number
+  compParts: CompPart[]
   total: number
   /** 组装时（考虑边际递减后）的分数 */
   effective?: number
+  compEffective?: number
 }
 
 // ---------------------------------------------------------------------------
@@ -571,6 +729,11 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
   const champGames = perBuild.reduce((sum, entry) => sum + entry.games, 0)
   const champWins = perBuild.reduce((sum, entry) => sum + entry.wins, 0)
   const champBase = champGames > 0 ? champWins / champGames : 0.5
+  const team = input.team ?? null
+  const flex = routeFlexOf(perBuild, champGames)
+  const routeLean = team && flex.canTank && flex.canDamage ? team.needs.frontline - team.needs.damage : 0
+  const eligibleTank = perBuild.filter((entry) => champGames <= 0 || entry.games >= champGames * ENGINE_PARAMS.compRouteMinShare)
+  const meanTank = eligibleTank.length ? eligibleTank.reduce((sum, entry) => sum + tankShareOf(entry.vector), 0) / eligibleTank.length : 0
 
   const archetypes: ArchetypeChoice[] = perBuild.map((entry) => {
     const damageType = damageTypeOf(entry.vector)
@@ -588,14 +751,18 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
         mechanicTerm += (entry.tags[tag] ?? 0) * factor * ENGINE_PARAMS.archetypeMechanicWeight
       }
     }
+    const teamTerm = routeLean !== 0 && (champGames <= 0 || entry.games >= champGames * ENGINE_PARAMS.compRouteMinShare)
+      ? ENGINE_PARAMS.compRouteWeight * routeLean * (tankShareOf(entry.vector) - meanTank)
+      : 0
     const reasons = [`${entry.games} 场，收缩胜率 ${pct(shrunk)}`]
     if (Math.abs(statTerm + mechanicTerm) >= 0.3) reasons.push(`海克斯倾向 ${signed(statTerm + mechanicTerm)}`)
+    if (Math.abs(teamTerm) >= 0.3) reasons.push(`阵容${routeLean > 0 ? '缺前排' : '缺输出'} ${signed(teamTerm)}`)
     return {
       index: entry.index,
       label: entry.label,
       games: entry.games,
       winRate: entry.winRate,
-      score: pickTerm + winTerm + statTerm + mechanicTerm,
+      score: pickTerm + winTerm + statTerm + mechanicTerm + teamTerm,
       baselineIndex: entry.index,
       reasons,
     }
@@ -702,21 +869,25 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
 
     let enemyValue = 0
     let enemyReason: string | null = null
-    if (enemy.dominant === 'AP' && (item.shares.MR ?? 0) > 0) {
+    const compParts = team ? compPartsFor(item, team, { damageType, chosenTank: chosen ? tankShareOf(chosen.vector) : 0, flex }) : []
+    const comp = capComp(compParts.reduce((sum, part) => sum + part.value, 0))
+    if (team) {
+      // 阵容分析已经混合了敌方装备：不再重复算「敌方装备」项
+    } else if (enemy.dominant === 'AP' && (item.shares.MR ?? 0) > 0) {
       enemyValue = ENGINE_PARAMS.enemyResistWeight * (item.shares.MR ?? 0)
       enemyReason = `敌方 ${enemy.apItems}/${enemy.apItems + enemy.adItems} 件法强装 → 魔抗`
     } else if (enemy.dominant === 'AD' && (item.shares.ARMOR ?? 0) > 0) {
       enemyValue = ENGINE_PARAMS.enemyResistWeight * (item.shares.ARMOR ?? 0)
       enemyReason = `敌方 ${enemy.adItems}/${enemy.apItems + enemy.adItems} 件物理装 → 护甲`
     }
-    if (enemy.healItems >= 3 && item.tags.includes('anti-heal')) {
+    if (!team && enemy.healItems >= 3 && item.tags.includes('anti-heal')) {
       enemyValue += ENGINE_PARAMS.antiHealBonus
       enemyReason = `${enemyReason ? `${enemyReason}；` : ''}敌方 ${enemy.healItems} 件续航装 → 重伤`
     }
 
-    const total = priorValue + synergy + fit + progress + enemyValue
+    const total = priorValue + synergy + fit + progress + enemyValue + comp
     candidates.set(id, {
-      item, prior, priorValue, priorReason, synergy, synergyReasons, perAugment, fit, fitReason, progress, progressNames, enemy: enemyValue, enemyReason, total,
+      item, prior, priorValue, priorReason, synergy, synergyReasons, perAugment, fit, fitReason, progress, progressNames, enemy: enemyValue, enemyReason, comp, compParts, total,
     })
   }
 
@@ -726,16 +897,33 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
   let hasBoots = false
   let hasAntiHealBonus = false
   const augmentUses = augments.map(() => 0)
+  const needUses = new Map<keyof TeamNeeds, number>()
+  const effectiveComp = (candidate: Candidate) => {
+    let value = 0
+    for (const part of candidate.compParts) {
+      const uses = needUses.get(part.need) ?? 0
+      if (part.value <= 0) value += part.value
+      else if (COMP_SINGLE_NEEDS.has(part.need)) value += uses > 0 ? 0 : part.value
+      // 鞋只和鞋比，不受其他格已满足的需求影响
+      else if (candidate.item.boots) value += part.value
+      else value += part.value * (part.need === 'frontline' || part.need === 'damage' ? ENGINE_PARAMS.compGeneralDecay : ENGINE_PARAMS.compResistDecay) ** uses
+    }
+    return capComp(value)
+  }
   const effectiveTotal = (candidate: Candidate) => {
     let synergy = 0
     for (const { index, value } of candidate.perAugment) {
       synergy += value > 0 ? value * ENGINE_PARAMS.synergyDecay ** augmentUses[index] : value
     }
-    return candidate.total - candidate.synergy + synergy
+    return candidate.total - candidate.synergy + synergy - candidate.comp + effectiveComp(candidate)
   }
   const accept = (candidate: Candidate) => {
     chosenIds.push(candidate.item.id)
     candidate.effective = effectiveTotal(candidate)
+    candidate.compEffective = effectiveComp(candidate)
+    for (const part of candidate.compParts) {
+      if (part.value >= 0.6) needUses.set(part.need, (needUses.get(part.need) ?? 0) + 1)
+    }
     for (const { index, value } of candidate.perAugment) {
       // 只有明显受益（≥1 分）才算「用掉」这个海克斯的一份协同
       if (value >= 1) augmentUses[index] += 1
@@ -844,14 +1032,16 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
       .slice(0, ENGINE_PARAMS.alternativesPerSlot)
       .map(({ candidate, total }) => {
         const synergy = [...candidate.synergyReasons].sort((a, b) => b.value - a.value)[0]
+        const compPart = [...candidate.compParts].sort((a, b) => b.value - a.value)[0]
+        let reason = candidate.priorReason.replace(/^数据：/, '')
+        if (compPart && compPart.value >= 0.8 && (!synergy || compPart.value > synergy.value)) reason = `阵容：${compPart.reason}`
+        else if (synergy && synergy.value > 0) reason = `「${synergy.augment}」${synergy.reason}`
         return {
           itemId: candidate.item.id,
           name: candidate.item.name,
           total: round1(total),
           delta: round1(total - currentTotal),
-          reason: synergy && synergy.value > 0
-            ? `「${synergy.augment}」${synergy.reason}`
-            : candidate.priorReason.replace(/^数据：/, ''),
+          reason,
         }
       })
   }
@@ -869,15 +1059,23 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
     if (candidate.fitReason) reasons.push(`${candidate.fitReason}（${signed(candidate.fit)}）`)
     if (candidate.progressNames.length) reasons.push(`已有组件：${candidate.progressNames.join('、')}（${signed(candidate.progress)}）`)
     if (candidate.enemyReason) reasons.push(`${candidate.enemyReason}（${signed(candidate.enemy)}）`)
+    const compValue = candidate.compEffective ?? candidate.comp
+    for (const part of [...candidate.compParts].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, 2)) {
+      if (Math.abs(part.value) >= 0.3) reasons.push(`阵容：${part.reason}（${signed(part.value)}）`)
+    }
+    if (candidate.compParts.length && Math.abs(compValue - candidate.compParts.reduce((sum, part) => sum + part.value, 0)) >= 0.3) {
+      reasons.push(`阵容项合计 ${signed(compValue)}（同类需求已有装备满足 / 封顶）`)
+    }
     return {
       itemId: id,
       name: candidate.item.name,
       score: {
         prior: round1(candidate.priorValue),
         // 有效海克斯分（含同一海克斯多件装备的边际递减）
-        synergy: round1((candidate.effective ?? candidate.total) - candidate.priorValue - candidate.progress - candidate.enemy),
+        synergy: round1((candidate.effective ?? candidate.total) - candidate.priorValue - candidate.progress - candidate.enemy - compValue),
         progress: round1(candidate.progress),
         enemy: round1(candidate.enemy),
+        comp: round1(compValue),
         total: round1(candidate.effective ?? candidate.total),
       },
       reasons,
@@ -918,6 +1116,12 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
       damageType,
       plannedItemIds,
       ownedItemIds: owned,
+      team: team ? { needs: team.needs, canTank: flex.canTank, canDamage: flex.canDamage } : null,
+    },
+    team: team ? { needs: team.needs, canTank: flex.canTank, canDamage: flex.canDamage, routeNote: null, added: [], removed: [] } : null,
+    contributions: {
+      augment: round1(items.reduce((sum, item) => sum + item.score.synergy, 0)),
+      comp: round1(items.reduce((sum, item) => sum + item.score.comp, 0)),
     },
   }
 }
@@ -951,7 +1155,26 @@ export function recommendBuild(input: EngineInput): EngineResult {
       result.notes.unshift(`流派从「${localizeArchetype(baseline.archetype.label)}」切换到「${localizeArchetype(result.archetype.label)}」：${result.archetype.reasons.join('，')}`)
     }
   }
-  if (!augments.length) result.notes.push('还没有海克斯：显示该英雄数据里的主流出装')
+  if (result.team && input.team) {
+    // 与「不看阵容」（同样的海克斯）对比：阵容换进来 / 挤出去了哪些装备、流派有没有变
+    const without = runOnce({ ...input, team: null, swaps: [] }, augments, itemIndex)
+    const withoutIds = new Set(without.items.map((item) => item.itemId))
+    for (const item of result.items) {
+      if (withoutIds.has(item.itemId) || item.swappedFrom != null) continue
+      const candidate = result.candidates.get(item.itemId)
+      const part = candidate ? [...candidate.compParts].sort((a, b) => b.value - a.value)[0] : null
+      const routeChanged = result.archetype?.index !== without.archetype?.index
+      result.team.added.push({ itemId: item.itemId, name: item.name, reason: part && part.value >= 0.3 ? part.reason : routeChanged ? '流派 → 换路线的核心装' : '阵容加分' })
+    }
+    for (const item of without.items) {
+      if (!result.items.some((entry) => entry.itemId === item.itemId)) result.team.removed.push({ itemId: item.itemId, name: item.name })
+    }
+    if (result.archetype && without.archetype && result.archetype.index !== without.archetype.index) {
+      result.team.routeNote = `阵容把流派从「${localizeArchetype(without.archetype.label)}」切到「${localizeArchetype(result.archetype.label)}」`
+      result.notes.unshift(`${result.team.routeNote}：${result.archetype.reasons.join('，')}`)
+    }
+  }
+  if (!augments.length && !input.team) result.notes.push('还没有海克斯：显示该英雄数据里的主流出装')
   const { candidates: _candidates, ...rest } = result
   void _candidates
   return { ...rest, removed }

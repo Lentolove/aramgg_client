@@ -5,6 +5,7 @@
  *        + 与英雄当前流派属性的契合（英雄出装统计得出的属性构成）
  *        + 与已持有海克斯的机制重合
  *        + augmentTrios 命中（真实统计：该英雄这三个海克斯组合的胜率，样本少，收缩）
+ *        + 阵容（模型：缺前排时坦度卡、对面法伤高时魔抗卡、对面回复多时重伤卡…，有上限）
  *
  * 最终排序 = 收缩胜率（真实统计）+ λ × 契合（模型），λ 很小：契合只在胜率接近时改变排序。
  */
@@ -22,7 +23,7 @@ export interface AugmentTrioLike {
 
 export interface CardSynergy {
   score: number
-  parts: { items: number; archetype: number; held: number; trio: number }
+  parts: { items: number; archetype: number; held: number; trio: number; team: number }
   reasons: string[]
 }
 
@@ -34,6 +35,8 @@ export const SYNERGY_PARAMS = {
   trioWeight: 0.25,
   heldMechanicWeight: 0.5,
   archetypeWeight: 2,
+  teamWeight: 1.5,
+  teamCap: 1.5,
 } as const
 
 const round1 = (value: number) => Math.round(value * 10) / 10
@@ -117,10 +120,31 @@ export function scoreCardSynergy(
     }
   }
 
-  const score = items + archetype + heldScore + trio
+  // 5) 阵容（模型）
+  let teamScore = 0
+  const team = context.team
+  if (team) {
+    const w = card.weights
+    const parts: Array<[number, string]> = []
+    const tankWeight = (w.HP ?? 0) + (w.ARMOR ?? 0) + (w.MR ?? 0) + (card.mechanics.includes('tank') ? 0.5 : 0)
+    if (team.canTank && team.needs.frontline > 0 && tankWeight > 0) parts.push([team.needs.frontline * Math.min(1, tankWeight), '我方缺前排，坦度卡加分'])
+    if (team.needs.mr > 0 && (w.MR ?? 0) > 0) parts.push([team.needs.mr * Math.min(1, w.MR ?? 0), '对面法伤高，魔抗卡加分'])
+    if (team.needs.armor > 0 && (w.ARMOR ?? 0) > 0) parts.push([team.needs.armor * Math.min(1, w.ARMOR ?? 0), '对面物伤高，护甲卡加分'])
+    if (team.needs.antiHeal > 0 && card.mechanics.includes('anti-heal')) parts.push([team.needs.antiHeal, '对面回复多，重伤卡加分'])
+    if (team.needs.stasis > 0 && card.mechanics.includes('stasis')) parts.push([team.needs.stasis, '对面爆发高，保命卡加分'])
+    if (team.canDamage && team.needs.damage > 0) {
+      const dmg = (w[context.damageType] ?? 0) + (w.ADAPTIVE ?? 0)
+      if (dmg > 0) parts.push([team.needs.damage * Math.min(1, dmg), '我方缺输出，输出卡加分'])
+    }
+    teamScore = Math.min(SYNERGY_PARAMS.teamCap, parts.reduce((sum, [value]) => sum + value, 0) * SYNERGY_PARAMS.teamWeight)
+    const best = parts.sort((a, b) => b[0] - a[0])[0]
+    if (best && teamScore >= 0.5) reasons.push(`阵容：${best[1]}`)
+  }
+
+  const score = items + archetype + heldScore + trio + teamScore
   return {
     score: round1(score),
-    parts: { items: round1(items), archetype: round1(archetype), held: round1(heldScore), trio: round1(trio) },
+    parts: { items: round1(items), archetype: round1(archetype), held: round1(heldScore), trio: round1(trio), team: round1(teamScore) },
     reasons: reasons.slice(0, 3),
   }
 }

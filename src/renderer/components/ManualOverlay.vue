@@ -377,6 +377,42 @@
                 <button class="mo-link mo-link-active" @click="selectPlan('adapted')">查看</button>
                 <button class="mo-link" @click="dismissPlanHint">×</button>
               </div>
+              <div v-if="teamAdvice && teamAnalysis" class="mo-comp mo-no-drag" :class="{ 'mo-comp-open': teamExpanded }">
+                <button class="mo-comp-chip" :title="teamAdvice.summary" @click="teamExpanded = !teamExpanded">
+                  <span class="mo-comp-label">阵容</span>
+                  <span
+                    v-for="chip in teamAdvice.chips"
+                    :key="chip.label"
+                    class="mo-comp-tag"
+                    :class="`mo-comp-tag-${chip.tone}`"
+                  >{{ chip.label }}</span>
+                  <span class="mo-comp-text">{{ teamAdvice.summary }}</span>
+                  <span class="mo-chevron" :class="{ 'mo-chevron-closed': !teamExpanded }">▾</span>
+                </button>
+                <div v-if="teamExpanded" class="mo-comp-body">
+                  <div class="mo-comp-summary">{{ teamAdvice.summary }}</div>
+                  <div v-for="side in teamSides" :key="side.key" class="mo-comp-side">
+                    <span class="mo-comp-side-label" :class="`mo-comp-side-${side.key}`">{{ side.label }}</span>
+                    <div class="mo-comp-players">
+                      <div v-for="(player, index) in side.players" :key="`${side.key}-${index}`" class="mo-comp-player" :class="{ 'mo-comp-self': player.isSelf }" :title="teamPlayerTitle(player)">
+                        <img v-if="player.championId" :src="getChampionSquareIconUrl(player.championId)" alt="">
+                        <span v-else class="mo-comp-unknown">{{ player.name.slice(0, 2) }}</span>
+                        <span v-if="player.damage" class="mo-comp-dmg" :class="`mo-comp-dmg-${player.damage.toLowerCase()}`">{{ player.damage === 'MIX' ? '混' : player.damage }}</span>
+                        <span v-if="player.tags.length" class="mo-comp-ptag">{{ player.tags[0] }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-if="!teamAnalysis.enemies.length" class="mo-comp-note">进游戏后按 2999 双方阵容（含已出装备）更新</div>
+                  <div v-if="engine.team" class="mo-comp-impact">
+                    <span>本方案{{ state.picked.length ? `：海克斯 ${formatSigned(engine.contributions.augment)} · ` : '：' }}阵容 {{ formatSigned(engine.contributions.comp) }}</span>
+                    <span v-if="engine.team.routeNote" class="mo-comp-route">{{ engine.team.routeNote }}</span>
+                    <span v-for="added in engine.team.added" :key="`comp-add-${added.itemId}`" class="mo-comp-change mo-up" :title="added.reason">+{{ added.name }}<small>（{{ shortCompReason(added.reason) }}）</small></span>
+                    <span v-for="removed in engine.team.removed" :key="`comp-rm-${removed.itemId}`" class="mo-comp-change mo-muted">−{{ removed.name }}</span>
+                    <span v-if="!engine.team.added.length && !engine.team.routeNote" class="mo-muted">阵容没有改变这套 6 件（只影响排序/分数）</span>
+                  </div>
+                  <div class="mo-comp-note">英雄画像是模型（DDragon 标签 + 人工整理），没有「阵容×装备」胜率统计</div>
+                </div>
+              </div>
               <div class="mo-slots mo-no-drag" @mouseleave="hoverItemId = null">
                 <div
                   v-for="item in engine.items"
@@ -437,6 +473,10 @@
                     class="mo-synergy"
                     :class="focusItem.score.synergy > 0 ? 'mo-synergy-up' : 'mo-synergy-down'"
                   >海克斯 {{ focusItem.score.synergy > 0 ? '+' : '' }}{{ focusItem.score.synergy.toFixed(1) }}</span>
+                  <span
+                    v-if="Math.abs(focusItem.score.comp) >= 0.3"
+                    class="mo-synergy mo-synergy-comp"
+                  >阵容 {{ focusItem.score.comp > 0 ? '+' : '' }}{{ focusItem.score.comp.toFixed(1) }}</span>
                 </div>
                 <div
                   v-for="(reason, index) in focusReasons"
@@ -449,7 +489,7 @@
                 <div class="mo-detail-plans">
                   <div v-for="plan in plans" :key="`plan-detail-${plan.key}`" class="mo-detail-plan" :class="{ 'mo-detail-plan-active': activePlan?.key === plan.key }">
                     <b>{{ planTabLabel(plan) }}</b>
-                    <span>{{ plan.routeLabel }} · {{ plan.routeGames }} 场 · 胜率 {{ formatPercent(plan.routeWinRate) }}{{ plan.usesAugments ? ' · 含海克斯模型' : ' · 纯数据' }}</span>
+                    <span>{{ plan.routeLabel }} · {{ plan.routeGames }} 场 · 胜率 {{ formatPercent(plan.routeWinRate) }}{{ plan.usesAugments || plan.usesTeam ? ` · 含${[plan.usesAugments ? '海克斯' : '', plan.usesTeam ? '阵容' : ''].filter(Boolean).join('+')}模型` : ' · 纯数据' }}</span>
                     <span class="mo-detail-plan-desc">{{ plan.description }}</span>
                   </div>
                 </div>
@@ -469,7 +509,7 @@
                 </div>
                 <div v-for="(note, index) in engine.notes" :key="`note-${index}`" class="mo-detail-line">{{ note }}</div>
                 <div class="mo-detail-line">{{ liveLabel }}</div>
-                <div class="mo-detail-line mo-disclaimer">海克斯加成是规则模型（数据源没有海克斯×装备胜率）；先验来自该英雄的真实出装统计。</div>
+                <div class="mo-detail-line mo-disclaimer">海克斯/阵容加成是规则模型（数据源没有海克斯×装备、阵容×装备胜率）；先验来自该英雄的真实出装统计。</div>
               </div>
             </template>
             <div v-else class="mo-empty">暂无该英雄的出装数据</div>
@@ -489,6 +529,11 @@ import {
   type AugmentChoiceInput,
 } from '../../shared/augment-choice-ranking.ts'
 import {
+  ADAPTED_LABEL,
+  adviseTeamComp,
+  analyzeTeamComp,
+  championRouteFlex,
+  buildItemProfileIndex,
   applyCardSynergy,
   applySwap,
   generateBuildPlans,
@@ -506,6 +551,9 @@ import {
   type AugmentProfile,
   type EngineItem,
   type SynergyRankedChoice,
+  type TeamAnalysis,
+  type TeamPlayerInput,
+  type TeamPlayerTag,
 } from '../../shared/recommendation/index.ts'
 import { MECHANIC_LABELS, STAT_LABELS, type WeightKey } from '../../shared/recommendation/profiles.ts'
 import { AUGMENT_LEVEL_PRESETS } from '../../shared/refresh-reminder.ts'
@@ -676,13 +724,71 @@ function profileOf(augment: { id: number | string; name?: string }): AugmentProf
 
 const heldProfiles = computed(() => state.value.picked.map((augment) => profileOf(augment)))
 
-/** 海克斯感知出装引擎：每次已选海克斯 / 2999 装备 / 敌方装备变化都会重新计算 */
+// ------------------------------------------------------------- 对局阵容（2999 双方 10 人；选人阶段用 LCU 我方）
+const engineItemIndex = computed(() => buildItemProfileIndex(engineItems.value))
+
+const teamAnalysis = computed<TeamAnalysis | null>(() => {
+  const data = live.value
+  if (!data) return null
+  const players = data.found ? data.players ?? [] : []
+  if (players.length) {
+    const toInput = (player: (typeof players)[number]): TeamPlayerInput => ({
+      championName: player.championName,
+      rawChampionName: player.rawChampionName,
+      championId: player.isSelf ? championId.value : null,
+      itemIds: player.itemIds,
+      level: player.level,
+      kills: player.kills,
+      deaths: player.deaths,
+      assists: player.assists,
+      isSelf: player.isSelf,
+    })
+    const allies = players.filter((player) => player.isAlly).map(toInput)
+    const enemies = players.filter((player) => !player.isAlly).map(toInput)
+    if (allies.length + enemies.length < 2) return null
+    return analyzeTeamComp({ allies, enemies, source: 'live', itemIndex: engineItemIndex.value })
+  }
+  const allyIds = data.allyChampionIds ?? []
+  if (allyIds.length >= 2) {
+    const self = data.selfChampionId ?? championId.value
+    return analyzeTeamComp({
+      allies: allyIds.map((id) => ({ championId: id, isSelf: id === self })),
+      enemies: [],
+      source: 'champ-select',
+      itemIndex: engineItemIndex.value,
+    })
+  }
+  return null
+})
+
+const routeFlex = computed(() => championRouteFlex({ builds: championData.value?.builds || [], items: engineItems.value }))
+const teamAdvice = computed(() => (teamAnalysis.value ? adviseTeamComp(teamAnalysis.value, routeFlex.value) : null))
+const teamExpanded = ref(false)
+const teamSides = computed(() => {
+  const analysis = teamAnalysis.value
+  if (!analysis) return []
+  const sides = [{ key: 'ally', label: '我方', players: analysis.allies }]
+  if (analysis.enemies.length) sides.push({ key: 'enemy', label: '对面', players: analysis.enemies })
+  return sides
+})
+
+function shortCompReason(reason: string) {
+  return reason.split('→').pop()?.trim() || reason
+}
+
+function teamPlayerTitle(player: TeamPlayerTag) {
+  const damage = player.damage === 'AP' ? '法系' : player.damage === 'AD' ? '物理' : player.damage === 'MIX' ? '混伤' : '未知'
+  return `${player.name}${player.isSelf ? '（你）' : ''} · ${damage}${player.tags.length ? ` · ${player.tags.join('/')}` : ''}${player.known ? '' : ' · 没有画像'}`
+}
+
+/** 出装引擎：每次已选海克斯 / 2999 装备 / 阵容变化都会重新计算 */
 const engineInput = computed(() => ({
   builds: championData.value?.builds || [],
   items: engineItems.value,
   augments: heldProfiles.value,
   ownedItemIds: live.value?.found ? live.value.ownedItemIds : [],
   enemyItemIds: live.value?.found ? live.value.enemyItemIds : [],
+  team: teamAnalysis.value,
 }))
 
 // ------------------------------------------------------------- 方案切换 + 换装（每局记住）
@@ -755,7 +861,7 @@ function planTabLabel(plan: BuildPlan) {
   return [plan.label, ...plan.aliases].join(' · ')
 }
 
-/** 选了别的方案之后海克斯又变了，且「海克斯适配」与当前方案相差很多：提示（可关闭） */
+/** 选了别的方案之后海克斯又变了，且「局势适配」与当前方案相差很多：提示（可关闭） */
 const planHint = computed(() => {
   const prefs = buildPrefs.value
   const current = activePlan.value
@@ -764,7 +870,7 @@ const planHint = computed(() => {
   if (prefs.planAugmentKey == null || prefs.planAugmentKey === augmentKey.value) return null
   if (prefs.hintDismissedKey === augmentKey.value) return null
   const difference = planDifference(current.result, adapted.result)
-  return difference >= 3 ? `海克斯变了：「海克斯适配」与当前方案差 ${difference} 件` : null
+  return difference >= 3 ? `海克斯变了：「${ADAPTED_LABEL}」与当前方案差 ${difference} 件` : null
 })
 
 // 格位备选：点格子展开，点备选换装
@@ -866,7 +972,13 @@ const focusItem = computed(() => {
 const focusIndex = computed(() => engine.value.items.findIndex((item) => item.itemId === focusItem.value?.itemId))
 /** 焦点装备：最关键的海克斯原因在前，数据先验在后 */
 const focusReasons = computed(() => {
-  const reasons = focusItem.value?.reasons || []
+  const item = focusItem.value
+  const reasons = item?.reasons || []
+  // 阵容影响比海克斯大时，先说阵容
+  const compReason = reasons.find((reason) => reason.startsWith('阵容：'))
+  if (item && compReason && Math.abs(item.score.comp) > Math.abs(item.score.synergy)) {
+    return [compReason, reasons.find((reason) => reason !== compReason && !reason.startsWith('数据：')) ?? reasons[0]].filter(Boolean)
+  }
   return reasons.length > 1 ? [reasons[1], reasons[0]] : reasons.slice(0, 1)
 })
 
@@ -925,7 +1037,9 @@ function changeBadge(item: EngineItem) {
 
 function scoreTitle(item: EngineItem) {
   const s = item.score
-  return `先验 ${s.prior.toFixed(1)} · 海克斯 ${s.synergy >= 0 ? '+' : ''}${s.synergy.toFixed(1)} · 进度 ${s.progress.toFixed(1)} · 敌方 ${s.enemy.toFixed(1)} = ${s.total.toFixed(1)}`
+  const enemy = Math.abs(s.enemy) >= 0.05 ? ` · 敌方 ${s.enemy.toFixed(1)}` : ''
+  const comp = Math.abs(s.comp) >= 0.05 ? ` · 阵容 ${s.comp >= 0 ? '+' : ''}${s.comp.toFixed(1)}` : ''
+  return `先验 ${s.prior.toFixed(1)} · 海克斯 ${s.synergy >= 0 ? '+' : ''}${s.synergy.toFixed(1)} · 进度 ${s.progress.toFixed(1)}${enemy}${comp} = ${s.total.toFixed(1)}`
 }
 
 function synergyText(entry: SynergyRankedChoice<CardInput>) {
@@ -1689,6 +1803,49 @@ onBeforeUnmount(() => {
   background: rgba(10, 200, 185, 0.1); border: 1px solid rgba(10, 200, 185, 0.35); color: var(--mo-blue); font-size: 11px;
 }
 .mo-plan-hint span { flex: 1; min-width: 0; }
+
+/* ---------- 阵容胶囊 ---------- */
+.mo-synergy-comp { background: rgba(10, 200, 185, 0.14); color: var(--mo-blue); }
+.mo-comp { margin-bottom: 6px; border: 1px solid rgba(200, 170, 110, 0.22); border-radius: 7px; background: rgba(5, 10, 20, 0.35); }
+.mo-comp-open { border-color: rgba(200, 170, 110, 0.45); }
+.mo-comp-chip {
+  display: flex; align-items: center; gap: 4px; width: 100%; padding: 3px 6px; border: 0; background: transparent;
+  color: var(--mo-text); font-size: 11px; cursor: pointer; text-align: left; min-width: 0;
+}
+.mo-comp-label { flex: none; color: var(--mo-gold); font-weight: 600; letter-spacing: 0.5px; }
+.mo-comp-tag { flex: none; padding: 0 5px; border-radius: 4px; font-size: 10px; line-height: 15px; white-space: nowrap; }
+.mo-comp-tag-ap { background: rgba(124, 140, 255, 0.18); color: #a8b4ff; }
+.mo-comp-tag-ad { background: rgba(239, 150, 90, 0.18); color: #f2b07f; }
+.mo-comp-tag-warn { background: rgba(239, 111, 111, 0.16); color: #f19a9a; }
+.mo-comp-tag-info { background: rgba(10, 200, 185, 0.14); color: var(--mo-blue); }
+.mo-comp-text { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--mo-muted); }
+.mo-comp-open .mo-comp-text { visibility: hidden; }
+.mo-comp-body { padding: 2px 6px 6px; font-size: 11px; }
+.mo-comp-summary { color: var(--mo-ivory); line-height: 1.45; margin-bottom: 5px; }
+.mo-comp-side { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.mo-comp-side-label { flex: none; width: 26px; font-size: 10px; color: var(--mo-muted); }
+.mo-comp-side-ally { color: var(--mo-blue); }
+.mo-comp-side-enemy { color: var(--mo-down); }
+.mo-comp-players { display: flex; gap: 4px; flex-wrap: wrap; }
+.mo-comp-player { position: relative; width: 30px; height: 30px; border-radius: 5px; border: 1px solid rgba(200, 170, 110, 0.3); overflow: visible; }
+.mo-comp-player img { width: 100%; height: 100%; border-radius: 4px; display: block; }
+.mo-comp-self { border-color: var(--mo-gold-bright); box-shadow: 0 0 5px rgba(240, 216, 154, 0.5); }
+.mo-comp-unknown { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 10px; color: var(--mo-muted); }
+.mo-comp-dmg {
+  position: absolute; right: 0; top: 0; padding: 0 2px; border-radius: 0 4px 0 4px; font-size: 8px; font-weight: 700; line-height: 11px;
+}
+.mo-comp-dmg-ap { background: rgba(92, 108, 230, 0.92); color: #fff; }
+.mo-comp-dmg-ad { background: rgba(214, 120, 60, 0.92); color: #fff; }
+.mo-comp-dmg-mix { background: rgba(120, 120, 140, 0.92); color: #fff; }
+.mo-comp-ptag {
+  position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 8px; line-height: 11px;
+  background: rgba(0, 0, 0, 0.72); color: var(--mo-ivory); border-radius: 0 0 4px 4px;
+}
+.mo-comp-impact { display: flex; flex-wrap: wrap; gap: 3px 8px; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(200, 170, 110, 0.15); }
+.mo-comp-impact > span:first-child { width: 100%; color: var(--mo-text); }
+.mo-comp-route { width: 100%; color: var(--mo-gold-bright); }
+.mo-comp-change small { color: var(--mo-muted); font-size: 10px; }
+.mo-comp-note { margin-top: 3px; color: var(--mo-muted); font-size: 10px; }
 .mo-slot-open { border-color: var(--mo-blue); box-shadow: 0 0 8px rgba(10, 200, 185, 0.45); }
 .mo-slot-swapped {
   position: absolute; left: 1px; bottom: 1px; padding: 0 3px; border-radius: 4px;

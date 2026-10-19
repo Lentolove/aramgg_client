@@ -1,0 +1,3050 @@
+{
+ "meta": {
+  "note": "人工整理的英雄画像（ARAM 常见英雄），数值为 0–1 的相对强度（cc 为大致硬控个数），是模型而不是统计",
+  "author": "curated 2026-10, patch 16.20"
+ },
+ "champions": {
+  "Annie": {
+   "damage": {
+    "ap": 0.95,
+    "ad": 0.05,
+    "true": 0.0
+   },
+   "frontline": 0.1,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 2.0,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.3,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Ashe": {
+   "damage": {
+    "ap": 0.05,
+    "ad": 0.95,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.1,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.2,
+   "dps": 0.8,
+   "dive": 0.0,
+   "poke": 0.5,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Yasuo": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.3,
+   "sustain": 0.2,
+   "shield": 0.4,
+   "cc": 1.0,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "assassin"
+   ]
+  },
+  "Yone": {
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0.0
+   },
+   "frontline": 0.3,
+   "sustain": 0.2,
+   "shield": 0.3,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.8,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "assassin"
+   ]
+  },
+  "Malphite": {
+   "damage": {
+    "ap": 0.7,
+    "ad": 0.3,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 2.0,
+   "burst": 0.7,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Lux": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.5,
+   "cc": 2.0,
+   "burst": 0.8,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.8,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Ezreal": {
+   "damage": {
+    "ap": 0.35,
+    "ad": 0.65,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.4,
+   "dps": 0.5,
+   "dive": 0.2,
+   "poke": 0.9,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Jinx": {
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.9,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.2,
+   "dps": 0.9,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "MissFortune": {
+   "damage": {
+    "ap": 0.15,
+    "ad": 0.85,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.6,
+   "dive": 0.0,
+   "poke": 0.5,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Veigar": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 1.0,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Xerath": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.6,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 1.0,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Ziggs": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0.0,
+   "poke": 0.9,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Brand": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.6,
+   "dps": 0.6,
+   "dive": 0.0,
+   "poke": 0.4,
+   "percentHp": 0.6,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Zyra": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.5,
+   "dive": 0.0,
+   "poke": 0.5,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Sona": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.7,
+   "shield": 0.4,
+   "cc": 1.5,
+   "burst": 0.3,
+   "dps": 0.3,
+   "dive": 0.0,
+   "poke": 0.5,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Soraka": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 1.0,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.0,
+   "dps": 0.1,
+   "dive": 0.0,
+   "poke": 0.4,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Yuumi": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.8,
+   "shield": 0.5,
+   "cc": 1.0,
+   "burst": 0.1,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Nami": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.6,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Seraphine": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.5,
+   "shield": 0.6,
+   "cc": 2.0,
+   "burst": 0.4,
+   "dps": 0.3,
+   "dive": 0.0,
+   "poke": 0.6,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter",
+    "mage"
+   ]
+  },
+  "Lulu": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.1,
+   "shield": 0.9,
+   "cc": 1.5,
+   "burst": 0.1,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Janna": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.3,
+   "shield": 0.9,
+   "cc": 2.0,
+   "burst": 0.0,
+   "dps": 0.1,
+   "dive": 0.0,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Karma": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.1,
+   "shield": 0.9,
+   "cc": 1.0,
+   "burst": 0.4,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.7,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter",
+    "mage"
+   ]
+  },
+  "Morgana": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.1,
+   "sustain": 0.1,
+   "shield": 0.8,
+   "cc": 2.0,
+   "burst": 0.4,
+   "dps": 0.4,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "mage",
+    "enchanter"
+   ]
+  },
+  "Swain": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.5,
+   "sustain": 0.8,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.3,
+   "dps": 0.7,
+   "dive": 0.3,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage",
+    "fighter"
+   ]
+  },
+  "Vladimir": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.9,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Sylas": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.3,
+   "sustain": 0.7,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "mage",
+    "assassin"
+   ]
+  },
+  "Darius": {
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.9,
+    "true": 0.0
+   },
+   "frontline": 0.7,
+   "sustain": 0.5,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Garen": {
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.8,
+    "true": 0.0
+   },
+   "frontline": 0.7,
+   "sustain": 0.4,
+   "shield": 0.4,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Sett": {
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.9,
+    "true": 0.0
+   },
+   "frontline": 0.7,
+   "sustain": 0.3,
+   "shield": 0.6,
+   "cc": 1.5,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Mordekaiser": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.7,
+   "sustain": 0.3,
+   "shield": 0.6,
+   "cc": 1.0,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Aatrox": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.9,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Fiora": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 0.7,
+    "true": 0.3
+   },
+   "frontline": 0.4,
+   "sustain": 0.5,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.8,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "MasterYi": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 0.7,
+    "true": 0.3
+   },
+   "frontline": 0.0,
+   "sustain": 0.5,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.4,
+   "dps": 0.9,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin",
+    "fighter"
+   ]
+  },
+  "Katarina": {
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.8,
+   "dps": 0.4,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Zed": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.9,
+   "dps": 0.3,
+   "dive": 0.9,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Akali": {
+   "damage": {
+    "ap": 0.9,
+    "ad": 0.1,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.8,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Fizz": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Leblanc": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.7,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin",
+    "mage"
+   ]
+  },
+  "Khazix": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.9,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Evelynn": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Pyke": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.7,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin",
+    "enchanter"
+   ]
+  },
+  "Diana": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.3,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 1.0,
+   "burst": 0.8,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin",
+    "fighter"
+   ]
+  },
+  "Kassadin": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 0.5,
+   "burst": 0.8,
+   "dps": 0.3,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Nautilus": {
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.5,
+   "cc": 3.0,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Leona": {
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.2,
+   "cc": 3.0,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Thresh": {
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0.0
+   },
+   "frontline": 0.5,
+   "sustain": 0.0,
+   "shield": 0.6,
+   "cc": 2.5,
+   "burst": 0.2,
+   "dps": 0.1,
+   "dive": 0.3,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank",
+    "enchanter"
+   ]
+  },
+  "Blitzcrank": {
+   "damage": {
+    "ap": 0.7,
+    "ad": 0.3,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 2.5,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Alistar": {
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.4,
+   "shield": 0.0,
+   "cc": 3.0,
+   "burst": 0.2,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Braum": {
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0.0
+   },
+   "frontline": 0.8,
+   "sustain": 0.0,
+   "shield": 0.6,
+   "cc": 2.0,
+   "burst": 0.1,
+   "dps": 0.1,
+   "dive": 0.3,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Sion": {
+   "damage": {
+    "ap": 0.3,
+    "ad": 0.7,
+    "true": 0.0
+   },
+   "frontline": 1.0,
+   "sustain": 0.0,
+   "shield": 0.5,
+   "cc": 2.0,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Chogath": {
+   "damage": {
+    "ap": 0.8,
+    "ad": 0,
+    "true": 0.2
+   },
+   "frontline": 1.0,
+   "sustain": 0.3,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.5,
+   "dps": 0.2,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.5,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Zac": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 1.0,
+   "sustain": 0.5,
+   "shield": 0.0,
+   "cc": 2.5,
+   "burst": 0.4,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.4,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Sejuani": {
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.5,
+   "cc": 2.5,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Ornn": {
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0.0
+   },
+   "frontline": 1.0,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 2.5,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Galio": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.8,
+   "sustain": 0.0,
+   "shield": 0.5,
+   "cc": 2.5,
+   "burst": 0.4,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank",
+    "mage"
+   ]
+  },
+  "Amumu": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 2.5,
+   "burst": 0.4,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.4,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Rammus": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank"
+   ]
+  },
+  "DrMundo": {
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0.0
+   },
+   "frontline": 1.0,
+   "sustain": 0.9,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.1,
+   "dps": 0.5,
+   "dive": 0.3,
+   "poke": 0.3,
+   "percentHp": 0.6,
+   "roles": [
+    "tank",
+    "fighter"
+   ]
+  },
+  "Warwick": {
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.9,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.5,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Illaoi": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.7,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.2,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Nasus": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.7,
+   "sustain": 0.5,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.3,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "tank"
+   ]
+  },
+  "Jax": {
+   "damage": {
+    "ap": 0.3,
+    "ad": 0.7,
+    "true": 0.0
+   },
+   "frontline": 0.5,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.4,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Kayle": {
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.3,
+    "true": 0.1
+   },
+   "frontline": 0.0,
+   "sustain": 0.1,
+   "shield": 0.0,
+   "cc": 0.3,
+   "burst": 0.2,
+   "dps": 0.8,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman",
+    "mage"
+   ]
+  },
+  "KogMaw": {
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.3,
+   "burst": 0.2,
+   "dps": 0.9,
+   "dive": 0.0,
+   "poke": 0.4,
+   "percentHp": 0.7,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Vayne": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 0.6,
+    "true": 0.4
+   },
+   "frontline": 0.0,
+   "sustain": 0.2,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.3,
+   "dps": 0.9,
+   "dive": 0.2,
+   "poke": 0.0,
+   "percentHp": 0.9,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Caitlyn": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.0,
+   "poke": 0.7,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Draven": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.1,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.8,
+   "dive": 0.0,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Samira": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.3,
+   "shield": 0.0,
+   "cc": 0.3,
+   "burst": 0.6,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Senna": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.5,
+   "shield": 0.3,
+   "cc": 0.7,
+   "burst": 0.2,
+   "dps": 0.5,
+   "dive": 0.0,
+   "poke": 0.7,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman",
+    "enchanter"
+   ]
+  },
+  "Varus": {
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.0,
+   "poke": 0.9,
+   "percentHp": 0.4,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Jhin": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.7,
+   "burst": 0.5,
+   "dps": 0.4,
+   "dive": 0.0,
+   "poke": 0.7,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Kaisa": {
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 0.0,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Twitch": {
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.7,
+    "true": 0.1
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.3,
+   "burst": 0.4,
+   "dps": 0.9,
+   "dive": 0.2,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Lucian": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.4,
+   "dps": 0.7,
+   "dive": 0.3,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Ahri": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.2,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.5,
+   "percentHp": 0.0,
+   "roles": [
+    "mage",
+    "assassin"
+   ]
+  },
+  "Viktor": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.0,
+   "poke": 0.6,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Velkoz": {
+   "damage": {
+    "ap": 0.6,
+    "ad": 0,
+    "true": 0.4
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.6,
+   "dps": 0.3,
+   "dive": 0.0,
+   "poke": 0.9,
+   "percentHp": 0.2,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Lissandra": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 2.5,
+   "burst": 0.6,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Neeko": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 2.0,
+   "burst": 0.7,
+   "dps": 0.2,
+   "dive": 0.4,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Teemo": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.2,
+   "dps": 0.5,
+   "dive": 0.0,
+   "poke": 0.6,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Heimerdinger": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.0,
+   "poke": 0.7,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Nidalee": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.4,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.5,
+   "dps": 0.2,
+   "dive": 0.4,
+   "poke": 0.9,
+   "percentHp": 0.0,
+   "roles": [
+    "mage",
+    "assassin"
+   ]
+  },
+  "Jayce": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.2,
+   "poke": 0.9,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "marksman"
+   ]
+  },
+  "Kennen": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Rumble": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.3,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.4,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage",
+    "fighter"
+   ]
+  },
+  "Gwen": {
+   "damage": {
+    "ap": 0.7,
+    "ad": 0.0,
+    "true": 0.3
+   },
+   "frontline": 0.4,
+   "sustain": 0.5,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.7,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Briar": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.9,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "assassin"
+   ]
+  },
+  "Hwei": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.6,
+   "dps": 0.3,
+   "dive": 0.0,
+   "poke": 0.8,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Smolder": {
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.8,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.3,
+   "burst": 0.3,
+   "dps": 0.7,
+   "dive": 0.0,
+   "poke": 0.5,
+   "percentHp": 0.2,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Aurora": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.1,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "mage",
+    "assassin"
+   ]
+  },
+  "Mel": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 1.0,
+   "burst": 0.6,
+   "dps": 0.3,
+   "dive": 0.0,
+   "poke": 0.7,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Ambessa": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.5,
+   "sustain": 0.4,
+   "shield": 0.5,
+   "cc": 1.5,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "assassin"
+   ]
+  },
+  "Zoe": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.8,
+   "dps": 0.1,
+   "dive": 0.0,
+   "poke": 0.9,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Taric": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.6,
+   "shield": 0.6,
+   "cc": 1.5,
+   "burst": 0.1,
+   "dps": 0.2,
+   "dive": 0.3,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank",
+    "enchanter"
+   ]
+  },
+  "Rell": {
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.2,
+   "cc": 3.0,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Renata": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.4,
+   "shield": 0.6,
+   "cc": 2.0,
+   "burst": 0.2,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Milio": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.6,
+   "shield": 0.9,
+   "cc": 1.0,
+   "burst": 0.0,
+   "dps": 0.1,
+   "dive": 0.0,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Bard": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.3,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.2,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Zilean": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.4,
+   "shield": 0.2,
+   "cc": 1.5,
+   "burst": 0.3,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.5,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter",
+    "mage"
+   ]
+  },
+  "Cassiopeia": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.3,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.2,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Orianna": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.6,
+   "cc": 2.0,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.0,
+   "poke": 0.5,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Syndra": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.9,
+   "dps": 0.2,
+   "dive": 0.0,
+   "poke": 0.5,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Anivia": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.1,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.0,
+   "poke": 0.4,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Fiddlesticks": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.4,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Gragas": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.3,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "mage"
+   ]
+  },
+  "Maokai": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.4,
+   "shield": 0.0,
+   "cc": 2.5,
+   "burst": 0.2,
+   "dps": 0.2,
+   "dive": 0.4,
+   "poke": 0.2,
+   "percentHp": 0.3,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Poppy": {
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.8,
+    "true": 0.0
+   },
+   "frontline": 0.8,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 2.0,
+   "burst": 0.4,
+   "dps": 0.2,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Shen": {
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.2,
+    "true": 0.3
+   },
+   "frontline": 0.7,
+   "sustain": 0.0,
+   "shield": 0.7,
+   "cc": 1.5,
+   "burst": 0.2,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Volibear": {
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0.0
+   },
+   "frontline": 0.8,
+   "sustain": 0.4,
+   "shield": 0.3,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.5,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "fighter",
+    "tank"
+   ]
+  },
+  "Trundle": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.6,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.2,
+   "dps": 0.7,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.4,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Tryndamere": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.4,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.4,
+   "dps": 0.9,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Riven": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.3,
+   "sustain": 0.0,
+   "shield": 0.5,
+   "cc": 1.5,
+   "burst": 0.7,
+   "dps": 0.5,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Irelia": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.4,
+   "sustain": 0.4,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Renekton": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.4,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Olaf": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 0.8,
+    "true": 0.2
+   },
+   "frontline": 0.5,
+   "sustain": 0.6,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.3,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Udyr": {
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.3,
+   "shield": 0.4,
+   "cc": 1.0,
+   "burst": 0.3,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Hecarim": {
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.9,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.3,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.5,
+   "dps": 0.4,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Pantheon": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.3,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0.4,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "assassin"
+   ]
+  },
+  "Rengar": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.2,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.9,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Talon": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.9,
+   "dps": 0.3,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Qiyana": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.2,
+   "cc": 1.5,
+   "burst": 0.8,
+   "dps": 0.2,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Nocturne": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.2,
+   "shield": 0.4,
+   "cc": 1.0,
+   "burst": 0.6,
+   "dps": 0.6,
+   "dive": 0.8,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin",
+    "fighter"
+   ]
+  },
+  "Elise": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "mage",
+    "assassin"
+   ]
+  },
+  "Shaco": {
+   "damage": {
+    "ap": 0.5,
+    "ad": 0.5,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "assassin"
+   ]
+  },
+  "Kindred": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.2,
+   "shield": 0.0,
+   "cc": 0.3,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0.3,
+   "poke": 0.0,
+   "percentHp": 0.5,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Aphelios": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.2,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.4,
+   "dps": 0.8,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Xayah": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.0,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Tristana": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.6,
+   "dps": 0.7,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Sivir": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.5,
+   "cc": 0.3,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0.0,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Zeri": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 0.3,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0.2,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Nilah": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.3,
+   "shield": 0.3,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "marksman"
+   ]
+  },
+  "Corki": {
+   "damage": {
+    "ap": 0.6,
+    "ad": 0.4,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.0,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.0,
+   "poke": 0.7,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Graves": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.6,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Quinn": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Taliyah": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.6,
+   "dps": 0.3,
+   "dive": 0.0,
+   "poke": 0.6,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Azir": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 2.0,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.3,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Ryze": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 1.0,
+   "burst": 0.5,
+   "dps": 0.6,
+   "dive": 0.3,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Malzahar": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 2.0,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.0,
+   "poke": 0.2,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "Kled": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.5,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 1.5,
+   "burst": 0.5,
+   "dps": 0.5,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Skarner": {
+   "damage": {
+    "ap": 0.4,
+    "ad": 0.6,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.5,
+   "cc": 2.5,
+   "burst": 0.3,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.4,
+   "roles": [
+    "tank"
+   ]
+  },
+  "TahmKench": {
+   "damage": {
+    "ap": 0.7,
+    "ad": 0.3,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.4,
+   "shield": 0.5,
+   "cc": 2.0,
+   "burst": 0.3,
+   "dps": 0.3,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.4,
+   "roles": [
+    "tank"
+   ]
+  },
+  "Lillia": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.2,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.5,
+   "roles": [
+    "mage",
+    "fighter"
+   ]
+  },
+  "TwistedFate": {
+   "damage": {
+    "ap": 0.8,
+    "ad": 0.2,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.2,
+   "poke": 0.3,
+   "percentHp": 0.0,
+   "roles": [
+    "mage",
+    "marksman"
+   ]
+  },
+  "Karthus": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.0,
+   "poke": 0.6,
+   "percentHp": 0.0,
+   "roles": [
+    "mage"
+   ]
+  },
+  "XinZhao": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.5,
+   "sustain": 0.3,
+   "shield": 0.0,
+   "cc": 1.5,
+   "burst": 0.5,
+   "dps": 0.6,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "LeeSin": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.4,
+   "sustain": 0.2,
+   "shield": 0.4,
+   "cc": 1.0,
+   "burst": 0.7,
+   "dps": 0.3,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "assassin"
+   ]
+  },
+  "JarvanIV": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 2.0,
+   "burst": 0.5,
+   "dps": 0.3,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter",
+    "tank"
+   ]
+  },
+  "Vi": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.5,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 2.0,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Camille": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 0.8,
+    "true": 0.2
+   },
+   "frontline": 0.4,
+   "sustain": 0.0,
+   "shield": 0.3,
+   "cc": 1.0,
+   "burst": 0.6,
+   "dps": 0.5,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Gangplank": {
+   "damage": {
+    "ap": 0.1,
+    "ad": 0.7,
+    "true": 0.2
+   },
+   "frontline": 0.2,
+   "sustain": 0.3,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.7,
+   "dps": 0.4,
+   "dive": 0.0,
+   "poke": 0.7,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "KSante": {
+   "damage": {
+    "ap": 0.2,
+    "ad": 0.8,
+    "true": 0.0
+   },
+   "frontline": 0.9,
+   "sustain": 0.0,
+   "shield": 0.4,
+   "cc": 2.0,
+   "burst": 0.3,
+   "dps": 0.3,
+   "dive": 0.5,
+   "poke": 0.0,
+   "percentHp": 0.3,
+   "roles": [
+    "tank",
+    "fighter"
+   ]
+  },
+  "Singed": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.7,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.2,
+   "dps": 0.6,
+   "dive": 0.4,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "tank",
+    "mage"
+   ]
+  },
+  "Rakan": {
+   "damage": {
+    "ap": 1.0,
+    "ad": 0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.3,
+   "shield": 0.4,
+   "cc": 2.0,
+   "burst": 0.3,
+   "dps": 0.1,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "enchanter"
+   ]
+  },
+  "Gnar": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.7,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.4,
+   "dps": 0.4,
+   "dive": 0.4,
+   "poke": 0.3,
+   "percentHp": 0.3,
+   "roles": [
+    "fighter",
+    "tank"
+   ]
+  },
+  "Urgot": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.6,
+   "sustain": 0.2,
+   "shield": 0.4,
+   "cc": 1.5,
+   "burst": 0.4,
+   "dps": 0.6,
+   "dive": 0.3,
+   "poke": 0.0,
+   "percentHp": 0.4,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "MonkeyKing": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.4,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 2.0,
+   "burst": 0.6,
+   "dps": 0.4,
+   "dive": 0.7,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "fighter"
+   ]
+  },
+  "Kalista": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.0,
+   "sustain": 0.0,
+   "shield": 0.0,
+   "cc": 1.0,
+   "burst": 0.3,
+   "dps": 0.8,
+   "dive": 0.2,
+   "poke": 0.0,
+   "percentHp": 0.0,
+   "roles": [
+    "marksman"
+   ]
+  },
+  "Viego": {
+   "damage": {
+    "ap": 0.0,
+    "ad": 1.0,
+    "true": 0.0
+   },
+   "frontline": 0.2,
+   "sustain": 0.4,
+   "shield": 0.0,
+   "cc": 0.5,
+   "burst": 0.5,
+   "dps": 0.7,
+   "dive": 0.6,
+   "poke": 0.0,
+   "percentHp": 0.4,
+   "roles": [
+    "fighter",
+    "assassin"
+   ]
+  }
+ }
+}

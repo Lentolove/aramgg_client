@@ -475,6 +475,19 @@ export interface ManualOverlayReminder {
   reason: string
 }
 
+export interface ManualOverlayLivePlayer {
+  championName: string
+  rawChampionName: string | null
+  team: string | null
+  isSelf: boolean
+  isAlly: boolean
+  itemIds: number[]
+  level: number | null
+  kills: number | null
+  deaths: number | null
+  assists: number | null
+}
+
 export interface ManualOverlayLiveData {
   available: boolean
   found: boolean
@@ -491,6 +504,13 @@ export interface ManualOverlayLiveData {
   heldAugmentIds?: number[]
   /** 2999 中名字含 augment 的字段（诊断用） */
   augmentFieldKeys?: string[]
+  /** 双方 10 人（2999 playerlist；阵容分析用） */
+  players?: ManualOverlayLivePlayer[]
+  /** 选人阶段（2999 还没起来）：LCU 我方已选英雄 id（ARAM 看不到对面） */
+  allyChampionIds?: number[]
+  selfChampionId?: number | null
+  /** 阵容信息来源 */
+  teamSource?: 'live' | 'champ-select' | null
   error?: string
 }
 

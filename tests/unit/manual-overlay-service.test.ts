@@ -222,6 +222,36 @@ describe('ManualOverlayService', () => {
     expect(live).toMatchObject({ available: true, found: true, ownedItemIds: [3020], enemyItemIds: [3089] })
   })
 
+  it('returns both teams from 2999 for team-comp analysis', async () => {
+    const { deps } = createDeps({
+      getLiveClientAllGameData: vi.fn(async () => ({
+        status: 200,
+        data: {
+          activePlayer: { riotId: 'Me#1' },
+          allPlayers: [
+            { riotId: 'Me#1', team: 'ORDER', championName: 'Annie', rawChampionName: 'game_character_displayname_Annie', items: [] },
+            { riotId: 'Foe#1', team: 'CHAOS', championName: 'Zed', rawChampionName: 'game_character_displayname_Zed', scores: { kills: 3, deaths: 0 }, items: [{ itemID: 3142 }] },
+          ],
+        },
+      })),
+    })
+    const live = await new ManualOverlayService(deps).getLiveData()
+    expect(live.teamSource).toBe('live')
+    expect(live.players).toHaveLength(2)
+    expect(live.players?.[1]).toMatchObject({ isAlly: false, kills: 3, itemIds: [3142] })
+  })
+
+  it('falls back to the LCU ally team during champ select', async () => {
+    const getChampSelectTeam = vi.fn(async () => ({ selfChampionId: 54, allyChampionIds: [54, 99, 81] }))
+    const { deps } = createDeps({ getChampSelectTeam })
+    const service = new ManualOverlayService(deps)
+    expect((await service.getLiveData()).teamSource).toBeUndefined()
+    expect(getChampSelectTeam).not.toHaveBeenCalled() // 不在选人阶段不打 LCU
+    service.setPhase('ChampSelect')
+    const live = await service.getLiveData()
+    expect(live).toMatchObject({ available: false, teamSource: 'champ-select', allyChampionIds: [54, 99, 81], selfChampionId: 54 })
+  })
+
   it('handles the live client being unavailable', async () => {
     const { deps } = createDeps()
     const live = await new ManualOverlayService(deps).getLiveData()

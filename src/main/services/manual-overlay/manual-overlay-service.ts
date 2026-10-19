@@ -132,6 +132,8 @@ export interface ManualOverlayDeps {
   /** 刷新/选择/更正日志（jsonl），用于校准提醒时机与识别效果 */
   appendLog?: (record: RefreshLogRecord) => void
   getLiveClientAllGameData: () => Promise<{ status: number; data: any } | null>
+  /** 选人阶段的我方阵容（LCU champ-select；不在选人时返回 null） */
+  getChampSelectTeam?: () => Promise<{ selfChampionId: number | null; allyChampionIds: number[] } | null>
   store: { get: (key: string) => unknown; set: (key: string, value: unknown) => void }
   shortcuts: {
     register: (accelerator: string, callback: () => void) => boolean
@@ -1240,7 +1242,13 @@ export class ManualOverlayService {
     try {
       const response = await this.deps.getLiveClientAllGameData()
       if (!response || response.status !== 200 || !response.data) {
-        return { ...empty, error: response ? `HTTP ${response.status}` : '2999 端口不可用（不在对局中？）' }
+        const error = response ? `HTTP ${response.status}` : '2999 端口不可用（不在对局中？）'
+        // 还在选人：用 LCU 的我方阵容（开局前就能给阵容建议）
+        const champSelect = this.state.phase === 'ChampSelect' ? await this.deps.getChampSelectTeam?.().catch(() => null) : null
+        if (champSelect && champSelect.allyChampionIds.length) {
+          return { ...empty, error, allyChampionIds: champSelect.allyChampionIds, selfChampionId: champSelect.selfChampionId, teamSource: 'champ-select' }
+        }
+        return { ...empty, error }
       }
       const parsed = parseLiveClientPlayers(response.data.activePlayer, response.data.allPlayers)
       const timing = parseLiveTiming(response.data)
@@ -1281,6 +1289,8 @@ export class ManualOverlayService {
         reminder,
         heldAugmentIds: liveAugments.ids,
         augmentFieldKeys: liveAugments.keys,
+        players: parsed.players,
+        teamSource: parsed.players.length ? 'live' : null,
       }
     } catch (error) {
       return { ...empty, error: error instanceof Error ? error.message : String(error) }
