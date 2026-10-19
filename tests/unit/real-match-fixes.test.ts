@@ -18,6 +18,7 @@ import {
   isMixedBuild,
   itemDamageClass,
   recommendBuild,
+  resolvePlan,
   scoreCardSynergy,
   type TeamPlayerInput,
 } from '../../src/shared/recommendation/index.ts'
@@ -87,12 +88,12 @@ describe('2. 鞋子按路线主属性白名单 + 出场门槛', () => {
 
 describe('3. 主流方案每格按出场率', () => {
   it('辛德拉主流：鞋 = 路线里出场最多的法师之靴（不是 6% 出场的高胜率鞋）', () => {
-    const popular = generateBuildPlans(syndra.engineInput([])).find((plan) => plan.key === 'popular')!
+    const popular = resolvePlan(generateBuildPlans(syndra.engineInput([])), 'popular')! // 与高胜率相同时会合并
     expect(popular.result.items.find((item) => item.boots)?.itemId).toBe(SORC)
   })
 
   it('主流方案里非核心装按场次从高到低选：选中的每件场次都不低于没选中的同路线装备（唯一被动冲突除外）', () => {
-    const popular = generateBuildPlans(sion.engineInput([])).find((plan) => plan.key === 'popular')!
+    const popular = resolvePlan(generateBuildPlans(sion.engineInput([])), 'popular')!
     const chosen = popular.result.items.filter((item) => !item.boots && item.priorGames != null)
     const minChosen = Math.min(...chosen.map((item) => item.priorGames!))
     const alternatives = popular.result.items.flatMap((item) => item.alternatives)
