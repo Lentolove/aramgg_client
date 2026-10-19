@@ -12,6 +12,19 @@
 >
 > **许可说明**：上游仓库没有附带开源许可证文件（GitHub 显示无 license），本 fork 不新增或更改许可，原代码版权归原作者所有；fork 的改动仅供个人学习使用。arammeta 数据按其 MIT 许可使用并署名（见下文）。
 
+## 界面预览
+
+> 下面是浮窗组件用真实 arammeta 数据渲染出来的样子，背景是占位图，不是游戏内实拍。
+
+<p>
+  <img src="docs/screenshots/overlay-yasuo.png" alt="亚索：海克斯三选一排名和推荐出装" width="400" />
+  <img src="docs/screenshots/overlay-malphite.png" alt="墨菲特：已选海克斯和阵容适配出装" width="300" />
+</p>
+
+收起后只剩一条，显示下一件装备：
+
+<img src="docs/screenshots/overlay-collapsed.png" alt="收起状态" width="244" />
+
 ## 功能
 
 - **常驻浮窗**：进入对局（游戏内 2999 接口有响应即可，不依赖 LCU 事件）自动出现，置顶、可拖动、记住位置；可选「选人阶段也显示」。浮窗会被排除在截图之外（content protection）。
