@@ -365,7 +365,7 @@
             <button class="mo-section-toggle" @click="toggleSection('build')">
               <span class="mo-chevron" :class="{ 'mo-chevron-closed': isSectionCollapsed('build') }">▾</span>
               <span class="mo-section-title">推荐出装</span>
-              <span v-if="archetypeName" class="mo-archetype" :class="{ 'mo-archetype-changed': archetypeChanged }">{{ archetypeName }}</span>
+              <span v-if="archetypeName" class="mo-archetype" :class="{ 'mo-archetype-changed': archetypeChanged }" :title="archetypeFullName">{{ archetypeName }}</span>
             </button>
             <button v-if="!isSectionCollapsed('build')" class="mo-link" :class="{ 'mo-link-active': buildDetails }" @click="buildDetails = !buildDetails">详情</button>
           </div>
@@ -379,9 +379,9 @@
                   class="mo-plan-tab"
                   :class="{ 'mo-plan-tab-active': activePlan?.key === plan.key }"
                   role="tab"
-                  :title="`${plan.description}\n路线：${plan.routeLabel} · ${plan.routeGames} 场 · 胜率 ${formatPercent(plan.routeWinRate)}`"
+                  :title="`${planTabLabel(plan)}\n${plan.description}\n路线：${plan.routeLabel} · ${plan.routeGames} 场 · 胜率 ${formatPercent(plan.routeWinRate)}`"
                   @click="selectPlan(plan.key)"
-                >{{ planTabLabel(plan) }}</button>
+                >{{ plan.label }}<span v-if="plan.aliases.length" class="mo-plan-alias">+{{ plan.aliases.length }}</span></button>
               </div>
               <div v-if="planHint" class="mo-plan-hint mo-no-drag">
                 <span>{{ planHint }}</span>
@@ -494,7 +494,8 @@
                   :key="index"
                   class="mo-focus-reason"
                   :class="{ 'mo-focus-reason-secondary': index > 0 }"
-                >{{ reason }}</div>
+                  :title="reason"
+                >{{ compactReason(reason) }}</div>
               </div>
               <div v-if="buildDetails" class="mo-build-details">
                 <div class="mo-detail-plans">
@@ -964,15 +965,13 @@ const cardRankingSource = computed(() => (ranking.value as { source?: string }).
 const RARITY_SHORT: Record<string, string> = { kPrismatic: '棱彩', kGold: '金', kSilver: '银' }
 type CardEntry = SynergyRankedChoice<CardInput> & Partial<ArammetaRankedChoice<CardInput>>
 
+/** 默认视图只放样本量（紧凑）；同稀有度名次在悬停提示与详情里 */
 function cardSampleText(entry: CardEntry) {
-  const parts = [`n=${entry.games}`]
-  if (entry.rarityRank && entry.rarity) parts.push(`${RARITY_SHORT[entry.rarity] ?? ''}#${entry.rarityRank.rank}/${entry.rarityRank.total}`)
-  if (entry.source === 'dtodo') parts.push('dtodo')
-  return parts.join(' · ')
+  return `${compactGames(entry.games)}${entry.source === 'dtodo' ? '·dtodo' : ''}`
 }
 
 function cardSourceTitle(entry: CardEntry) {
-  if (entry.source === 'arammeta') return `实测·arammeta：${entry.games} 场${entry.rarityRank ? `；本英雄同稀有度第 ${entry.rarityRank.rank}/${entry.rarityRank.total}` : ''}`
+  if (entry.source === 'arammeta') return `实测·arammeta：${entry.games} 场${entry.rarityRank && entry.rarity ? `；本英雄${RARITY_SHORT[entry.rarity] ?? ''}卡第 ${entry.rarityRank.rank}/${entry.rarityRank.total}` : ''}`
   if (entry.source === 'dtodo') return `实测·dtodo：${entry.games} 场（arammeta 没有这张卡的统计）`
   return `实测·dtodo：${entry.games} 场`
 }
@@ -981,6 +980,7 @@ function cardDetailText(entry: CardEntry) {
   const hide = settings.hideWinRates
   if (entry.source === 'arammeta') {
     const parts = [`实测·arammeta ${entry.games} 场`]
+    if (entry.rarityRank && entry.rarity) parts.push(`${RARITY_SHORT[entry.rarity] ?? ''}卡第 ${entry.rarityRank.rank}/${entry.rarityRank.total}`)
     if (!hide) parts.push(`后验胜率 ${formatPercent(entry.shrunkWinRate)}`)
     if (!hide && entry.lcbLift != null) parts.push(`保守提升 ${formatDelta(entry.lcbLift)}`)
     if (entry.pickRate != null) parts.push(`选取率 ${formatPercent(entry.pickRate)}`)
@@ -1024,10 +1024,25 @@ function formatDateTime(value: string | number) {
 /** 按游戏里的左右顺序展示，标签来自三卡相对排序（胜率 + 契合度） */
 const rankedCards = computed(() => [...ranking.value.choices].sort((a, b) => a.slot - b.slot))
 
-const archetypeName = computed(() => {
+/** 路线名去掉「（核心装）」消歧后缀，标题栏放得下；完整名放 title */
+function shortRoute(label: string) {
+  return label.replace(/（[^）]*）/g, '')
+}
+const archetypeFullName = computed(() => {
   const archetype = engine.value.archetype
   return archetype ? `${localizeArchetype(archetype.label)}流` : ''
 })
+const archetypeName = computed(() => shortRoute(archetypeFullName.value))
+
+/** 焦点框里的理由：去掉路线名里的核心装后缀（完整内容在悬停提示和详情里） */
+function compactReason(reason: string) {
+  return reason.replace(/（(?=[^）]*\+)(?=[^）]*[\u4e00-\u9fff])[^）]*）/g, '')
+}
+
+function compactGames(games: number | null | undefined) {
+  const n = Number(games) || 0
+  return n >= 10000 ? `${(n / 10000).toFixed(1)}万场` : `${n}场`
+}
 const archetypeChanged = computed(() => !!engine.value.archetype && engine.value.archetype.baselineIndex !== 0 && state.value.picked.length > 0)
 
 // ------------------------------------------------------------- 布局：收起 / 分区折叠 / 缩放
@@ -1741,7 +1756,8 @@ onBeforeUnmount(() => {
   font: inherit;
   cursor: pointer;
 }
-.mo-section-title { color: var(--mo-gold); font-weight: 700; font-size: 12px; letter-spacing: 1px; }
+.mo-section-title { color: var(--mo-gold); font-weight: 700; font-size: 12px; letter-spacing: 1px; white-space: nowrap; flex-shrink: 0; }
+.mo-section-head > .mo-link { white-space: nowrap; flex-shrink: 0; }
 .mo-chevron { display: inline-block; width: 10px; color: var(--mo-gold); font-size: 10px; transition: transform 0.15s; }
 .mo-chevron-closed { transform: rotate(-90deg); }
 .mo-count {
@@ -1789,7 +1805,8 @@ onBeforeUnmount(() => {
   width: 14px; height: 14px; flex: none; border-radius: 50%; background: #c98a2e; color: #10141c;
   font-size: 10px; font-weight: 700; line-height: 14px; text-align: center;
 }
-.mo-card-stats { display: flex; align-items: baseline; gap: 6px; margin-top: 1px; }
+.mo-card-stats { display: flex; align-items: baseline; gap: 6px; margin-top: 1px; white-space: nowrap; overflow: hidden; }
+.mo-plan-alias { margin-left: 3px; font-size: 9px; opacity: 0.65; }
 .mo-wr { color: var(--mo-ivory); font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .mo-delta { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .mo-up { color: var(--mo-up); }
@@ -1862,6 +1879,7 @@ onBeforeUnmount(() => {
 /* ---------- 出装：6 格 ---------- */
 .mo-archetype {
   font-size: 10px; padding: 0 6px; border-radius: 8px; line-height: 16px;
+  max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   background: rgba(120, 140, 170, 0.15); color: var(--mo-text);
 }
 .mo-archetype-changed { background: rgba(10, 200, 185, 0.16); color: var(--mo-blue); }
