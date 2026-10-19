@@ -9,7 +9,7 @@ Windows 发布流水线在 `npm run pack` 后、上传安装包和创建 GitHub 
 - 启动本次构建的 `win-unpacked/aramgg_client.exe`，要求 `app.isPackaged === true`。
 - 使用真实主进程窗口初始化、IPC 注册、ASAR 内的 preload、Vue 入口和路由；不模拟 BrowserWindow，
   不伪造 `renderer-ready`，不直接调用该通知来让测试通过。
-- 验证 `/display`、`/augment-overlay`、`/floating-overlay`、`/augment-side-panel` 四个窗口
+- 验证 `/display`、`/augment-overlay` 两个窗口（fork 已移除 floating / side-panel 窗口）
   自己发出就绪通知、Vue 已挂载且页面有内容、窗口可显示，并保存截图。
 - 经主窗口的真实 `showPopup` / `diagnostics.testShowFloating` IPC 发送固定测试数据，验证浮窗显示
   测试海克斯。空闲浮窗本来无正文，不能只靠页面加载成功判断它能展示推荐内容。
