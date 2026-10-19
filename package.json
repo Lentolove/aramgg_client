@@ -1,6 +1,6 @@
 {
   "name": "aramgg_client",
-  "version": "0.2.17",
+  "version": "0.3.0",
   "description": "Electron companion for League of Legends ARAM recommendations and augment OCR.",
   "author": "ARAMGG",
   "private": true,
@@ -25,7 +25,7 @@
     "release:patch": "npm version patch -m \"chore: release v%s\"",
     "release:minor": "npm version minor -m \"chore: release v%s\"",
     "release:major": "npm version major -m \"chore: release v%s\"",
-    "release:push": "git push origin master --follow-tags"
+    "release:push": "git push fork manual-overlay --follow-tags"
   },
   "build": {
     "productName": "aramgg_client",
@@ -107,7 +107,15 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "aramgg_client"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Lentolove",
+        "repo": "aramgg_client",
+        "releaseType": "release"
+      }
+    ]
   },
   "dependencies": {
     "axios": "^1.18.1",

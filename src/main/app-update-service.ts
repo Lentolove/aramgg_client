@@ -1,13 +1,14 @@
 import { app, BrowserWindow } from 'electron'
 import electronUpdater from 'electron-updater'
 import type { ProgressInfo, UpdateDownloadedEvent, UpdateInfo } from 'electron-updater'
-import { loadDataApiConfig } from './data-loader.ts'
 import logger from './modules/logger.ts'
 import { allowMainWindowClose } from './modules/window-manager.ts'
 import {
-  normalizeTrustedUpdateFeedUrl,
+  FORK_UPDATE_OWNER,
+  FORK_UPDATE_REPO,
+  FORK_RELEASES_URL,
+  getForkUpdateFeedUrl,
   parseTrustedPublisherNames,
-  parseTrustedUpdateOrigins,
 } from './security/update-trust.ts'
 
 const { autoUpdater, CancellationToken } = electronUpdater
@@ -82,18 +83,12 @@ const UPDATE_DOWNLOAD_BLOCKED_PHASES = new Set(['GameStart', 'InProgress'])
 // publisher names are verified end to end, restore this and package.json's
 // win.verifyUpdateCodeSignature to true.
 const REQUIRE_SIGNED_WINDOWS_UPDATES = false
-const BUILTIN_TRUSTED_UPDATE_ORIGINS: readonly string[] = ['https://cdn.dtodo.cn']
+// Updates come only from Lentolove/aramgg_client GitHub Releases (fork).
+// The upstream remote config (data.dtodo.cn) is ignored for updates.
 const BUILTIN_TRUSTED_UPDATE_PUBLISHERS: readonly string[] = []
-const DEV_TRUSTED_UPDATE_ORIGINS = DEV_UPDATE_CHECK_ENABLED
-  ? String(process.env.ARAMGG_UPDATE_ALLOWED_ORIGINS || '').split(',')
-  : []
 const DEV_TRUSTED_UPDATE_PUBLISHERS = DEV_UPDATE_CHECK_ENABLED
   ? String(process.env.ARAMGG_UPDATE_PUBLISHER_NAMES || '').split(',')
   : []
-const TRUSTED_UPDATE_ORIGINS = parseTrustedUpdateOrigins(
-  [...BUILTIN_TRUSTED_UPDATE_ORIGINS, ...DEV_TRUSTED_UPDATE_ORIGINS],
-  DEV_UPDATE_CHECK_ENABLED
-)
 const TRUSTED_UPDATE_PUBLISHERS = parseTrustedPublisherNames([
   ...BUILTIN_TRUSTED_UPDATE_PUBLISHERS,
   ...DEV_TRUSTED_UPDATE_PUBLISHERS,
@@ -199,14 +194,6 @@ function isRuntimeUpdateAllowed(): boolean {
   return app.isPackaged || DEV_UPDATE_CHECK_ENABLED
 }
 
-function normalizeFeedUrl(value: unknown): string {
-  return normalizeTrustedUpdateFeedUrl(
-    value,
-    TRUSTED_UPDATE_ORIGINS,
-    DEV_UPDATE_CHECK_ENABLED
-  )
-}
-
 function configureUpdateSignatureVerification(): void {
   const updater = autoUpdater as typeof autoUpdater & {
     verifyUpdateCodeSignature?: (
@@ -234,41 +221,12 @@ function configureUpdateSignatureVerification(): void {
     defaultVerifier(TRUSTED_UPDATE_PUBLISHERS, filePath)
 }
 
-function getClientConfig(config: any): any {
-  return config?.client || config?.electron || {}
-}
-
-function getUpdateFeedCandidate(config: any): string {
-  return (
-    process.env.ARAMGG_UPDATE_FEED_URL ||
-    getClientConfig(config).updateFeedUrl ||
-    config?.electron?.updateFeedUrl ||
-    ''
-  )
-}
-
-function getManualDownloadUrl(config: any): string {
-  return (
-    getClientConfig(config).downloadUrl ||
-    config?.electron?.downloadUrl ||
-    ''
-  )
-}
-
-function getLatestVersionHint(config: any): string {
-  return (
-    getClientConfig(config).latestVersion ||
-    config?.electron?.latestVersion ||
-    ''
-  )
-}
-
-function getAutoUpdateEnabled(config: any): boolean {
+function getAutoUpdateEnabled(): boolean {
   if (AUTO_UPDATE_ENV_CONFIGURED) {
     return AUTO_UPDATE_ENV_ENABLED
   }
 
-  return getClientConfig(config).autoUpdateEnabled === true || config?.electron?.autoUpdateEnabled === true
+  return true
 }
 
 function normalizeProgress(progress: ProgressInfo): UpdateProgress {
@@ -560,44 +518,9 @@ export function setAppUpdateGamePhase(phase: string | null | undefined): UpdateS
 }
 
 export async function refreshAppUpdateConfig(options: RefreshOptions = {}): Promise<UpdateActionResult> {
-  let config: any = null
-
-  try {
-    config = await loadDataApiConfig({
-      force: options.force === true,
-      timeoutMs: options.force ? 10000 : 5000,
-    })
-  } catch (error) {
-    if (!process.env.ARAMGG_UPDATE_FEED_URL) {
-      const message = getErrorMessage(error)
-      const autoUpdateEnabled = AUTO_UPDATE_ENV_CONFIGURED ? AUTO_UPDATE_ENV_ENABLED : false
-      const autoUpdateUnavailable = !autoUpdateEnabled || !isRuntimeUpdateAllowed()
-      logger.warn('[update] failed to load update config:', message)
-      setUpdateState({
-        phase: autoUpdateUnavailable ? 'disabled' : 'no-feed',
-        autoUpdateEnabled,
-        feedUrl: '',
-        feedConfigured: false,
-        available: false,
-        downloaded: false,
-        downloadDeferred: false,
-        progress: null,
-        error: message,
-        message: autoUpdateUnavailable
-          ? (isRuntimeUpdateAllowed() ? '自动更新未启用' : '开发模式已跳过自动更新')
-          : '未读取到自动更新配置',
-      })
-      return {
-        success: false,
-        data: getAppUpdateState(),
-        error: message,
-      }
-    }
-  }
-
-  const manualDownloadUrl = getManualDownloadUrl(config)
-  const latestVersion = getLatestVersionHint(config)
-  const autoUpdateEnabled = getAutoUpdateEnabled(config)
+  const manualDownloadUrl = FORK_RELEASES_URL
+  const latestVersion = updateState.latestVersion
+  const autoUpdateEnabled = getAutoUpdateEnabled()
 
   if (!autoUpdateEnabled) {
     configuredFeedUrl = ''
@@ -605,7 +528,6 @@ export async function refreshAppUpdateConfig(options: RefreshOptions = {}): Prom
       phase: 'disabled',
       autoUpdateEnabled: false,
       manualDownloadUrl,
-      latestVersion,
       feedUrl: '',
       feedConfigured: false,
       available: false,
@@ -615,10 +537,7 @@ export async function refreshAppUpdateConfig(options: RefreshOptions = {}): Prom
       error: '',
       message: '自动更新未启用',
     })
-    return {
-      success: true,
-      data: getAppUpdateState(),
-    }
+    return { success: true, data: getAppUpdateState() }
   }
 
   if (!isRuntimeUpdateAllowed()) {
@@ -626,7 +545,6 @@ export async function refreshAppUpdateConfig(options: RefreshOptions = {}): Prom
       phase: 'disabled',
       autoUpdateEnabled,
       manualDownloadUrl,
-      latestVersion,
       feedUrl: '',
       feedConfigured: false,
       available: false,
@@ -635,23 +553,17 @@ export async function refreshAppUpdateConfig(options: RefreshOptions = {}): Prom
       progress: null,
       message: isDevRuntime ? '开发模式已跳过自动更新' : '自动更新不可用',
     })
-    return {
-      success: true,
-      data: getAppUpdateState(),
-    }
+    return { success: true, data: getAppUpdateState() }
   }
 
-  let feedUrl = ''
   try {
     configureUpdateSignatureVerification()
-    feedUrl = normalizeFeedUrl(getUpdateFeedCandidate(config))
   } catch (error) {
     const message = getErrorMessage(error)
     setUpdateState({
       phase: 'error',
       autoUpdateEnabled,
       manualDownloadUrl,
-      latestVersion,
       feedUrl: '',
       feedConfigured: false,
       available: false,
@@ -661,40 +573,17 @@ export async function refreshAppUpdateConfig(options: RefreshOptions = {}): Prom
       error: message,
       message: '自动更新源配置无效',
     })
-    return {
-      success: false,
-      data: getAppUpdateState(),
-      error: message,
-    }
+    return { success: false, data: getAppUpdateState(), error: message }
   }
 
-  if (!feedUrl) {
-    configuredFeedUrl = ''
-    setUpdateState({
-      phase: 'no-feed',
-      autoUpdateEnabled,
-      manualDownloadUrl,
-      latestVersion,
-      feedUrl: '',
-      feedConfigured: false,
-      available: false,
-      downloaded: false,
-      downloadDeferred: false,
-      progress: null,
-      error: '',
-      message: '未配置自动更新源',
-    })
-    return {
-      success: true,
-      data: getAppUpdateState(),
-    }
-  }
-
+  const feedUrl = getForkUpdateFeedUrl()
   if (feedUrl !== configuredFeedUrl) {
     configuredFeedUrl = feedUrl
     autoUpdater.setFeedURL({
-      provider: 'generic',
-      url: feedUrl,
+      provider: 'github',
+      owner: FORK_UPDATE_OWNER,
+      repo: FORK_UPDATE_REPO,
+      releaseType: 'release',
     })
     logger.info('[update] feed configured', {
       feedUrl,

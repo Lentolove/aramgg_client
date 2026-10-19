@@ -16,6 +16,8 @@ concurrency:
 jobs:
   build:
     name: Build Windows installer
+    # Upstream-only workflow; disabled in forks (see release-fork.yml).
+    if: github.repository == 'valkia/aramgg_client'
     runs-on: windows-latest
     timeout-minutes: 45
 

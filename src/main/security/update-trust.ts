@@ -57,3 +57,31 @@ export function normalizeTrustedUpdateFeedUrl(
   url.hash = ''
   return url.toString()
 }
+
+export const FORK_UPDATE_OWNER = 'Lentolove'
+export const FORK_UPDATE_REPO = 'aramgg_client'
+export const FORK_REPO_URL = `https://github.com/${FORK_UPDATE_OWNER}/${FORK_UPDATE_REPO}`
+export const FORK_RELEASES_URL = `${FORK_REPO_URL}/releases`
+export const FORK_LATEST_RELEASE_API_URL =
+  `https://api.github.com/repos/${FORK_UPDATE_OWNER}/${FORK_UPDATE_REPO}/releases/latest`
+
+export function getForkUpdateFeedUrl(): string {
+  return `${FORK_RELEASES_URL}/`
+}
+
+/** Only release pages/assets of the fork are trusted. */
+export function isTrustedForkReleaseUrl(value: unknown): boolean {
+  if (typeof value !== 'string' || !value.trim()) {
+    return false
+  }
+  try {
+    const url = new URL(value.trim())
+    if (url.protocol !== 'https:' || url.hostname !== 'github.com' || url.username || url.password) {
+      return false
+    }
+    const prefix = `/${FORK_UPDATE_OWNER}/${FORK_UPDATE_REPO}/releases`
+    return url.pathname === prefix || url.pathname.startsWith(`${prefix}/`)
+  } catch {
+    return false
+  }
+}

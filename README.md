@@ -1,3 +1,5 @@
+> **说明**：这是 Lentolove 的 `manual-overlay` 分支 fork（手动刷新浮窗 + 按海克斯/阵容动态出装，数据来自 arammeta）。自动更新只检查 [Lentolove/aramgg_client Releases](https://github.com/Lentolove/aramgg_client/releases)，不会被上游版本覆盖。
+
 <p align="center">
   <img src="./assets/readme/hero.svg" width="100%" alt="ARAMGG 助手：只读 LCU 选人建议、本地海克斯 OCR 与游戏内推荐浮窗" />
 </p>

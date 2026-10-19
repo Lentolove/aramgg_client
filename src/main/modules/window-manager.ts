@@ -559,7 +559,7 @@ export const createMainWindow = async (
         ...bounds,
         frame: false,
         webPreferences,
-        title: 'ARAMGG助手',
+        title: `ARAMGG助手 v${app.getVersion()} (Lentolove)`,
     })
     const window = mainWindow
     attachWindowDiagnostics('main', window)

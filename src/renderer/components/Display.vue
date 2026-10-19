@@ -449,7 +449,7 @@ const ARAMGG_HOME_URL = 'https://aramgg.com'
 const ARAMGG_HOME_LABEL = 'aramgg.com'
 const DATA_API_URL = 'https://data.dtodo.cn'
 const DATA_API_LABEL = computed(() => t('display.openApi'))
-const GITHUB_URL = 'https://github.com/valkia/aramgg_client'
+const GITHUB_URL = 'https://github.com/Lentolove/aramgg_client'
 let removeQuitConfirmListener = null
 let removeLocaleChangedListener = null
 

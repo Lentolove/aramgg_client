@@ -1,0 +1,93 @@
+name: Release (Lentolove fork)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-fork-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and publish Windows installer
+    if: github.repository == 'Lentolove/aramgg_client'
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.18.0'
+          cache: npm
+
+      - name: Validate release tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $v = node -p "require('./package.json').version"
+          if ($env:GITHUB_REF_NAME -ne "v$v") { Write-Error "Tag $env:GITHUB_REF_NAME != v$v"; exit 1 }
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Package Windows installer (includes prepare:arammeta)
+        shell: pwsh
+        run: |
+          $env:ELECTRON_CACHE = Join-Path $env:RUNNER_TEMP 'electron-cache'
+          $env:ELECTRON_BUILDER_CACHE = Join-Path $env:RUNNER_TEMP 'electron-builder-cache'
+          npm run pack
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem build -File | Format-Table Name, Length
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aramgg-client-windows
+          if-no-files-found: error
+          path: |
+            build/*.exe
+            build/*.exe.blockmap
+            build/latest.yml
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $assets = @(
+            Get-ChildItem -Path build -Filter '*.exe' -File
+            Get-ChildItem -Path build -Filter '*.exe.blockmap' -File
+            Get-Item -Path build/latest.yml
+          )
+          if ($assets.Count -lt 3) { Write-Error "Release assets missing in build/"; exit 1 }
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -ne 0) {
+            $notes = @(
+              "Lentolove manual-overlay fork $tag"
+              ''
+              '- 手动刷新浮窗：按当前英雄推荐海克斯'
+              '- 根据已选海克斯与双方阵容动态推荐出装，可切换方案'
+              '- 数据来源：arammeta (Lanternko/ARAM-Mayhem-Database)'
+              '- 自动更新只检查本仓库 Releases'
+            ) -join [Environment]::NewLine
+            gh release create $tag --title $tag --notes $notes --latest
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          foreach ($a in $assets) {
+            gh release upload $tag $a.FullName --clobber
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
