@@ -235,14 +235,6 @@
                     </div>
 
                     <div class="test-controls">
-                        <button class="test-btn primary" @click="testFloatingWindow">
-                            <Target class="icon" />
-                            <span class="button-copy">
-                                <span class="text">{{ t('display.augmentOverlay') }}</span>
-                                <span class="hint">{{ t('display.randomChampionAugments') }}</span>
-                            </span>
-                        </button>
-
                         <button class="test-btn secondary" @click="testPopupWindow">
                             <ClipboardList class="icon" />
                             <span class="button-copy">
@@ -421,7 +413,6 @@ import {
     ScrollText,
     Share2,
     Sparkles,
-    Target,
     Trash2,
     X,
 } from 'lucide-vue-next'
@@ -861,23 +852,6 @@ const formatRandomPreviewMessage = (prefix, result) => {
     const benchText = benchCount ? ` | ${t('display.benchCount', { count: benchCount })}` : ''
 
     return `${prefix}：${data.championName || t('display.randomChampion')}${augmentNames ? ' | ' + augmentNames : ''}${benchText}`
-}
-
-const testFloatingWindow = async () => {
-    testStatus.value = { type: 'info', message: t('display.openingAugmentPreview') }
-
-    try {
-        const result = await electronAPI.diagnostics.testShowRandomFloating()
-        if (!result.success) {
-            throw new Error(result.error || t('display.sendingFailed'))
-        }
-        testStatus.value = {
-            type: 'success',
-            message: formatRandomPreviewMessage(t('display.augmentPreviewSent'), result),
-        }
-    } catch (err) {
-        testStatus.value = { type: 'error', message: t('display.sendingFailedWithReason', { error: err.message }) }
-    }
 }
 
 const testPopupWindow = async () => {

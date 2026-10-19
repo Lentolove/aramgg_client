@@ -52,7 +52,7 @@ try {
   } catch (error) {
     throw new Error(`Packaged app produced no valid report: exit=${code}, timeout=${timedOut}. See ${output}/stderr.log`, { cause: error })
   }
-  const expectedRoutes = ['#/display', '#/augment-overlay', '#/floating-overlay', '#/augment-side-panel']
+  const expectedRoutes = ['#/display', '#/augment-overlay']
   if (timedOut || code !== 0 || !report.passed || !report.packaged ||
       report.platform !== process.platform || report.windows?.length !== 4 ||
       expectedRoutes.some((route) => !report.windows.some((window) => window.route === route))) {

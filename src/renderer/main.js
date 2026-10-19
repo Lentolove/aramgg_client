@@ -173,16 +173,6 @@ const router = createRouter({
       component: () => import('./components/PopupAugmentView.vue'),
     },
     {
-      path: '/floating-overlay',
-      name: 'FloatingOverlay',
-      component: () => import('./components/FloatingView.vue'),
-    },
-    {
-      path: '/augment-side-panel',
-      name: 'AugmentSidePanel',
-      component: () => import('./components/AugmentSidePanelView.vue'),
-    },
-    {
       path: '/manual-overlay',
       name: 'ManualOverlay',
       component: () => import('./components/ManualOverlay.vue'),

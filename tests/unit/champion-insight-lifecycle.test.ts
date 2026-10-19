@@ -9,7 +9,7 @@ describe('champion insight lifecycle', () => {
     ])
     const popupWindowBlock = windowManager.slice(
       windowManager.indexOf('export const createPopupWindow'),
-      windowManager.indexOf('export const createAugmentSidePanelWindow'),
+      windowManager.indexOf('export const', windowManager.indexOf('export const createPopupWindow') + 1),
     )
     const inProgressRecoveryBlock = appConfig.slice(
       appConfig.indexOf('async function recoverChampionInsightForInProgress'),
@@ -27,20 +27,15 @@ describe('champion insight lifecycle', () => {
     expect(inProgressRecoveryBlock).toContain('applyPopupWindowPreferences()')
   })
 
-  it('leaves champion window visibility to the main process while preserving side-panel dismissal', async () => {
-    const [overlaySource, screenshotService, preferences] = await Promise.all([
+  it('leaves champion window visibility to the main process', async () => {
+    const [overlaySource, preferences] = await Promise.all([
       readFile(
         new URL('../../src/renderer/components/AugmentWinrateOverlay.vue', import.meta.url),
         'utf8',
       ),
-      readFile(new URL('../../src/main/auto-screenshot-service.ts', import.meta.url), 'utf8'),
       readFile(new URL('../../src/renderer/components/OverlayPreferences.vue', import.meta.url), 'utf8'),
     ])
     const overlay = overlaySource.replace(/\r\n/g, '\n')
-    const augmentClearedBlock = screenshotService.slice(
-      screenshotService.indexOf('_notifyAugmentCleared'),
-      screenshotService.indexOf('_recordPerformance'),
-    )
 
     expect(overlay).toContain('<div class="window-controls">')
     expect(overlay).toContain('<button v-if="isSidePanel" class="window-control"')
@@ -48,8 +43,6 @@ describe('champion insight lifecycle', () => {
     expect(overlay).toContain("if (isSidePanel.value) {\n      closeOverlay('augment-cleared')")
     expect(overlay).toContain("game-started received; champion insight visibility handled by main process")
     expect(overlay).toContain("game-in-progress received; champion insight visibility handled by main process")
-    expect(augmentClearedBlock).not.toContain("url.includes('augment-overlay')")
-    expect(augmentClearedBlock).not.toContain('popupWindow.hide()')
     expect(preferences).toContain('championInsight.hideOnGameStart')
   })
 

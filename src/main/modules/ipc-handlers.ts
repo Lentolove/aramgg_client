@@ -1,9 +1,6 @@
 import { BrowserWindow, clipboard, dialog, nativeImage, type OpenDialogOptions } from 'electron'
 import { writeFile } from 'fs/promises'
 import path from 'path'
-import { captureScreenshot } from '../screenshot.ts'
-import { analyzeScreenshot } from '../image-analyzer.ts'
-import autoScreenshotService from '../auto-screenshot-service.ts'
 import { registerLCUIpcHandlers } from '../services/lcu/ipc-handlers.ts'
 import { getLCUServiceInstance } from '../services/lcu/lcu-service.ts'
 import { registerMatchHistoryIpcHandlers } from '../services/match-history/ipc-handlers.ts'
@@ -13,16 +10,10 @@ import {
     preparePostGameSharePosterData,
 } from '../services/post-game-share.ts'
 import {
-    applyAugmentSidePanelWindowLayout,
-    applyFloatingWindowLayout,
     applyPopupWindowLayout,
-    getAugmentSidePanelWindow,
     ensurePopupWindow,
-    ensureAugmentOverlayWindows,
-    getFloatingWindow,
     getMainWindow,
     getPopupWindow,
-    raiseOverlayWindow,
 } from './window-manager.ts'
 import { registerManualOverlayIpcHandlers } from '../ipc/manual-overlay-handlers.ts'
 import logger from './logger.ts'
@@ -31,8 +22,6 @@ import store from './app-store.ts'
 import { getAppDataDir } from './app-paths.ts'
 import {
     shouldShowChampionDetails,
-    shouldShowAugmentSidePanel,
-    shouldShowAugmentTopOverlay,
 } from './user-preferences.ts'
 import {
     findLeagueInstallChildPath,
@@ -48,7 +37,6 @@ import { registerPreferencesIpcHandlers } from '../ipc/preferences-handlers.ts'
 import { registerSystemIpcHandlers } from '../ipc/system-handlers.ts'
 import { registerFeedbackIpcHandlers } from '../ipc/feedback-handlers.ts'
 import { trustedIpcMain as ipcMain } from '../security/trusted-ipc.ts'
-import { shouldRaiseOverlayWindow } from './overlay-window-state.ts'
 
 const TEST_AUGMENT_COUNT = 3
 const TEST_BENCH_CHAMPION_COUNT = 8
@@ -58,7 +46,6 @@ const BROADCAST_CHANNELS = new Set([
     'for-popup',
     'screenshot-taken',
     'winrate-updated',
-    'auto-screenshot-taken',
     'game-phase-changed',
     'champ-select-start',
     'item-set-auto-apply-completed',
@@ -82,18 +69,6 @@ function getElapsedMs(startedAt: number): number {
 
 function getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error)
-}
-
-function suppressManualAugmentOverlayReshow(reason: unknown, source: string): void {
-    if (reason !== 'manual') {
-        return
-    }
-
-    try {
-        autoScreenshotService.suppressCurrentAugmentOverlay(source)
-    } catch (error) {
-        logger.warn('[overlay] failed to suppress manual augment reshow:', getErrorMessage(error))
-    }
 }
 
 function getPosterPngBuffer(dataUrl: unknown): Buffer {
@@ -417,7 +392,6 @@ export function registerIpcHandlers(isDev: boolean): void {
     })
 
     ipcMain.on('hide-popup', async (_event, reason = 'renderer') => {
-        suppressManualAugmentOverlayReshow(reason, 'hide-popup')
         const popupWindow = getPopupWindow()
         if (popupWindow && !popupWindow.isDestroyed() && popupWindow.isVisible()) {
             popupWindow.hide()
@@ -427,117 +401,6 @@ export function registerIpcHandlers(isDev: boolean): void {
             windowExists: !!popupWindow && !popupWindow.isDestroyed(),
             visibleAfter: !!popupWindow && !popupWindow.isDestroyed() && popupWindow.isVisible(),
         })
-    })
-
-    ipcMain.on('hide-floating', async (_event, reason = 'renderer') => {
-        suppressManualAugmentOverlayReshow(reason, 'hide-floating')
-        const floatingWindow = getFloatingWindow()
-        if (floatingWindow && !floatingWindow.isDestroyed() && floatingWindow.isVisible()) {
-            floatingWindow.hide()
-        }
-        logger.debug('Floating window hide processed', {
-            reason,
-            windowExists: !!floatingWindow && !floatingWindow.isDestroyed(),
-            visibleAfter: !!floatingWindow && !floatingWindow.isDestroyed() && floatingWindow.isVisible(),
-        })
-    })
-
-    ipcMain.on('hide-augment-side-panel', async (_event, reason = 'renderer') => {
-        suppressManualAugmentOverlayReshow(reason, 'hide-augment-side-panel')
-        const sidePanelWindow = getAugmentSidePanelWindow()
-        if (sidePanelWindow && !sidePanelWindow.isDestroyed() && sidePanelWindow.isVisible()) {
-            sidePanelWindow.hide()
-        }
-        logger.debug('Augment side panel hide processed', {
-            reason,
-            windowExists: !!sidePanelWindow && !sidePanelWindow.isDestroyed(),
-            visibleAfter: !!sidePanelWindow && !sidePanelWindow.isDestroyed() && sidePanelWindow.isVisible(),
-        })
-    })
-
-    ipcMain.handle('test-show-floating', async (_event, data) => {
-        try {
-            if (!shouldShowAugmentTopOverlay() && !shouldShowAugmentSidePanel()) {
-                return { success: true, skipped: true, reason: 'augment-overlays-disabled' }
-            }
-            const [floatingWindow, sidePanelWindow] = await ensureAugmentOverlayWindows()
-
-            if ((!floatingWindow || floatingWindow.isDestroyed()) && (!sidePanelWindow || sidePanelWindow.isDestroyed())) {
-                logger.error('Augment overlay windows do not exist')
-                return { success: false, error: 'Augment overlay windows do not exist' }
-            }
-
-            if (floatingWindow && !floatingWindow.isDestroyed() && shouldShowAugmentTopOverlay()) {
-                if (shouldRaiseOverlayWindow(floatingWindow)) {
-                    applyFloatingWindowLayout()
-                    logger.info('Floating window shown for test')
-                    raiseOverlayWindow(floatingWindow, 'floating')
-                }
-                floatingWindow.webContents.send('augment-detected', data)
-            }
-
-            if (sidePanelWindow && !sidePanelWindow.isDestroyed() && shouldShowAugmentSidePanel()) {
-                if (shouldRaiseOverlayWindow(sidePanelWindow)) {
-                    applyAugmentSidePanelWindowLayout()
-                    logger.info('Augment side panel window shown for test')
-                    raiseOverlayWindow(sidePanelWindow, 'augment-side-panel')
-                }
-                sidePanelWindow.webContents.send('augment-detected', data)
-            }
-
-            logger.info('Test data sent to floating window')
-
-            return { success: true }
-        } catch (error) {
-            logger.error('Failed to test floating window:', error)
-            return { success: false, error: getErrorMessage(error) }
-        }
-    })
-
-    ipcMain.handle('test-show-random-floating', async () => {
-        const startedAt = Date.now()
-        try {
-            logger.info('[diagnostics] random floating test requested')
-            const data = await buildRandomAugmentPreviewData('random-floating-test')
-            if (!shouldShowAugmentTopOverlay() && !shouldShowAugmentSidePanel()) {
-                return { success: true, skipped: true, reason: 'augment-overlays-disabled' }
-            }
-            const [floatingWindow, sidePanelWindow] = await ensureAugmentOverlayWindows()
-
-            if ((!floatingWindow || floatingWindow.isDestroyed()) && (!sidePanelWindow || sidePanelWindow.isDestroyed())) {
-                logger.error('Augment overlay windows do not exist')
-                return { success: false, error: 'Augment overlay windows do not exist' }
-            }
-
-            if (floatingWindow && !floatingWindow.isDestroyed() && shouldShowAugmentTopOverlay()) {
-                if (shouldRaiseOverlayWindow(floatingWindow)) {
-                    applyFloatingWindowLayout()
-                    logger.info('Floating window shown for random test')
-                    raiseOverlayWindow(floatingWindow, 'floating')
-                }
-                floatingWindow.webContents.send('augment-detected', data)
-            }
-
-            if (sidePanelWindow && !sidePanelWindow.isDestroyed() && shouldShowAugmentSidePanel()) {
-                if (shouldRaiseOverlayWindow(sidePanelWindow)) {
-                    applyAugmentSidePanelWindowLayout()
-                    logger.info('Augment side panel window shown for random test')
-                    raiseOverlayWindow(sidePanelWindow, 'augment-side-panel')
-                }
-                sidePanelWindow.webContents.send('augment-detected', data)
-            }
-
-            logger.info('Random test data sent to floating window', {
-                championId: data.championId,
-                augmentIds: data.augments.map((augment) => augment.id),
-                durationMs: getElapsedMs(startedAt),
-            })
-
-            return { success: true, data }
-        } catch (error) {
-            logger.error('Failed to show random floating test:', error)
-            return { success: false, error: getErrorMessage(error) }
-        }
     })
 
     ipcMain.handle('test-show-random-popup', async () => {
@@ -884,14 +747,6 @@ export function registerIpcHandlers(isDev: boolean): void {
         }
     })
 
-    ipcMain.handle('screenshot-capture', async () => {
-        return captureScreenshot()
-    })
-
-    ipcMain.handle('analyze-screenshot', async (_event, imagePath) => {
-        return analyzeScreenshot(imagePath)
-    })
-
     ipcMain.handle('get-winrate', async (_event, data: unknown = {}) => {
         const request = data && typeof data === 'object'
             ? data as Record<string, unknown>
@@ -1032,42 +887,6 @@ export function registerIpcHandlers(isDev: boolean): void {
 
         championDataLoadRequests.set(requestKey, request)
         return request
-    })
-
-    ipcMain.handle('auto-screenshot-start', async (_event, config = {}) => {
-        const interval = config.interval || 5000
-        const success = await autoScreenshotService.start(interval, 'manual')
-        if (success) {
-            logger.info('Auto screenshot service started')
-        }
-        return {
-            success,
-            config: autoScreenshotService.getConfig(),
-        }
-    })
-
-    ipcMain.handle('auto-screenshot-stop', async () => {
-        const success = autoScreenshotService.stop('manual')
-        if (success) {
-            logger.info('Auto screenshot service stopped')
-        }
-        return {
-            success,
-            config: autoScreenshotService.getConfig(),
-        }
-    })
-
-    ipcMain.handle('auto-screenshot-set-config', async (_event, config) => {
-        autoScreenshotService.setConfig(config)
-        return autoScreenshotService.getConfig()
-    })
-
-    ipcMain.handle('auto-screenshot-get-stats', async () => {
-        return autoScreenshotService.getPerformanceStats()
-    })
-
-    ipcMain.handle('auto-screenshot-get-config', async () => {
-        return autoScreenshotService.getConfig()
     })
 
     ipcMain.handle('item-sets-get-aram-status', async () => {

@@ -163,10 +163,6 @@
             <input v-model="settings.focusable" type="checkbox" @change="saveSettings">
             <span>浮窗可获得焦点（重启生效）</span>
           </label>
-          <label class="mo-check">
-            <input v-model="settings.autoScreenshot" type="checkbox" @change="saveSettings">
-            <span>持续自动截图（旧模式）</span>
-          </label>
           <div class="mo-settings-foot">
             <button class="mo-btn mo-btn-small" @click="resetGame">清空本局记录</button>
             <span class="mo-muted">{{ iconIndexLabel }}</span>
@@ -628,7 +624,6 @@ const state = ref<ManualOverlayState>({
   revision: 0,
 })
 const settings = reactive<ManualOverlaySettings>({
-  autoScreenshot: false,
   hotkey: 'CommandOrControl+Shift+R',
   showInChampSelect: false,
   shrinkageAlpha: 300,

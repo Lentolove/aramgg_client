@@ -22,8 +22,6 @@ export const electronAPI: ElectronAPI = {
     ready: () => requireElectronAPI().windows.ready(),
     showPopup: (...args) => requireElectronAPI().windows.showPopup(...args),
     hidePopup: (...args) => requireElectronAPI().windows.hidePopup(...args),
-    hideFloating: (...args) => requireElectronAPI().windows.hideFloating(...args),
-    hideAugmentSidePanel: (...args) => requireElectronAPI().windows.hideAugmentSidePanel(...args),
     toggleMain: (...args) => requireElectronAPI().windows.toggleMain(...args),
     confirmQuit: (...args) => requireElectronAPI().windows.confirmQuit(...args),
     restart: (...args) => requireElectronAPI().windows.restart(...args),
@@ -47,21 +45,11 @@ export const electronAPI: ElectronAPI = {
     get: (...args) => requireElectronAPI().locale.get(...args),
     set: (...args) => requireElectronAPI().locale.set(...args),
   },
-  screenshot: {
-    capture: (...args) => requireElectronAPI().screenshot.capture(...args),
-    analyze: (...args) => requireElectronAPI().screenshot.analyze(...args),
-  },
   winrate: {
     get: (...args) => requireElectronAPI().winrate.get(...args),
     loadChampionData: (...args) => requireElectronAPI().winrate.loadChampionData(...args),
   },
-  autoScreenshot: {
-    start: (...args) => requireElectronAPI().autoScreenshot.start(...args),
-    stop: (...args) => requireElectronAPI().autoScreenshot.stop(...args),
-    setConfig: (...args) => requireElectronAPI().autoScreenshot.setConfig(...args),
-    getStats: (...args) => requireElectronAPI().autoScreenshot.getStats(...args),
-    getConfig: (...args) => requireElectronAPI().autoScreenshot.getConfig(...args),
-  },
+
   itemSets: {
     getAramStatus: (...args) => requireElectronAPI().itemSets.getAramStatus(...args),
     installAramChampion: (...args) => requireElectronAPI().itemSets.installAramChampion(...args),
@@ -113,9 +101,6 @@ export const electronAPI: ElectronAPI = {
     clearManualLeaguePath: (...args) => requireElectronAPI().lcu.clearManualLeaguePath(...args),
   },
   diagnostics: {
-    testShowFloating: (...args) => requireElectronAPI().diagnostics.testShowFloating(...args),
-    testShowRandomFloating: (...args) =>
-      requireElectronAPI().diagnostics.testShowRandomFloating(...args),
     testShowRandomPopup: (...args) =>
       requireElectronAPI().diagnostics.testShowRandomPopup(...args),
     testShowBenchRecommendation: (...args) =>

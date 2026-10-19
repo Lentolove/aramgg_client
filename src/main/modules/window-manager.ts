@@ -28,8 +28,6 @@ import {
     shouldHideChampionInsightOnGameStart,
     shouldKeepChampionInsightOnTop,
     shouldShowChampionDetails,
-    shouldShowAugmentSidePanel,
-    shouldShowAugmentTopOverlay,
 } from './user-preferences.ts'
 import type { GameflowPhase } from '../../shared/ipc-contract.ts'
 
@@ -52,8 +50,6 @@ const RENDERER_CONTENT_SECURITY_POLICY = [
 let mainWindow: BrowserWindow | null = null
 let popupWindow: BrowserWindow | null = null
 let popupGameflowPhase: GameflowPhase | null = null
-let floatingWindow: BrowserWindow | null = null
-let augmentSidePanelWindow: BrowserWindow | null = null
 let manualOverlayWindow: BrowserWindow | null = null
 let mainWindowCloseAllowed = false
 let rendererServerPromise: Promise<string> | null = null
@@ -61,8 +57,6 @@ let rendererServerPromise: Promise<string> | null = null
 const MAIN_WINDOW_SIZE = { width: 472, height: 752 }
 const POPUP_WINDOW_SIZE = { width: 360, height: 640 }
 const POPUP_WINDOW_POSITION_KEY = 'windows.championInsightPosition'
-const FLOATING_WINDOW_SIZE = { width: 760, height: 170 }
-const AUGMENT_SIDE_PANEL_WINDOW_SIZE = { width: 360, height: 640 }
 const MANUAL_OVERLAY_WINDOW_SIZE = { width: 340, height: 560 }
 const MANUAL_OVERLAY_WINDOW_POSITION_KEY = 'windows.manualOverlayPosition'
 const OVERLAY_ALWAYS_ON_TOP_LEVEL = process.platform === 'win32' ? 'screen-saver' : 'floating'
@@ -140,33 +134,7 @@ function savePopupWindowPosition(): void {
     store.set(POPUP_WINDOW_POSITION_KEY, { x, y })
 }
 
-function getFloatingBounds(): Rectangle {
-    const display = screen.getPrimaryDisplay()
-    const area = display.workArea || display.bounds
-    const width = Math.min(FLOATING_WINDOW_SIZE.width, area.width)
-    const height = Math.min(FLOATING_WINDOW_SIZE.height, area.height)
 
-    return {
-        width,
-        height,
-        x: area.x + Math.round((area.width - width) / 2),
-        y: area.y + Math.round(area.height * 0.02),
-    }
-}
-
-function getAugmentSidePanelBounds(): Rectangle {
-    const display = screen.getPrimaryDisplay()
-    const area = display.workArea || display.bounds
-    const width = Math.min(AUGMENT_SIDE_PANEL_WINDOW_SIZE.width, area.width)
-    const height = Math.min(AUGMENT_SIDE_PANEL_WINDOW_SIZE.height, area.height)
-
-    return {
-        width,
-        height,
-        x: area.x + area.width - width - 16,
-        y: area.y + Math.max(16, Math.round((area.height - height) / 2)),
-    }
-}
 
 function getManualOverlayBounds(): Rectangle {
     const savedPosition = parseWindowPosition(store.get(MANUAL_OVERLAY_WINDOW_POSITION_KEY))
@@ -208,23 +176,7 @@ export function applyPopupWindowLayout() {
     }
 }
 
-export function applyFloatingWindowLayout() {
-    if (floatingWindow && !floatingWindow.isDestroyed()) {
-        if (floatingWindow.isVisible()) {
-            return
-        }
-        floatingWindow.setBounds(getFloatingBounds())
-    }
-}
 
-export function applyAugmentSidePanelWindowLayout() {
-    if (augmentSidePanelWindow && !augmentSidePanelWindow.isDestroyed()) {
-        if (augmentSidePanelWindow.isVisible()) {
-            return
-        }
-        augmentSidePanelWindow.setBounds(getAugmentSidePanelBounds())
-    }
-}
 
 export function applyPopupWindowPreferences(phase: GameflowPhase | null = popupGameflowPhase): void {
     popupGameflowPhase = phase
@@ -585,14 +537,6 @@ export const createMainWindow = async (
             logger.info('Closing popup window...')
             popupWindow.close()
         }
-        if (floatingWindow && !floatingWindow.isDestroyed()) {
-            logger.info('Closing floating window...')
-            floatingWindow.close()
-        }
-        if (augmentSidePanelWindow && !augmentSidePanelWindow.isDestroyed()) {
-            logger.info('Closing augment side panel window...')
-            augmentSidePanelWindow.close()
-        }
         if (manualOverlayWindow && !manualOverlayWindow.isDestroyed()) {
             manualOverlayWindow.close()
         }
@@ -662,105 +606,7 @@ export const createPopupWindow = async (
     return popupWindow
 }
 
-/**
- * 创建游戏右侧海克斯推荐列表窗口
- */
-export const createAugmentSidePanelWindow = async (
-    isDev: boolean,
-    devServerUrl: string
-): Promise<BrowserWindow> => {
-    const webPreferences = getWebPreferences(isDev)
-    const bounds = getAugmentSidePanelBounds()
 
-    augmentSidePanelWindow = new BrowserWindow({
-        show: false,
-        frame: false,
-        transparent: true,
-        skipTaskbar: true,
-        resizable: isDev || false,
-        fullscreenable: false,
-        alwaysOnTop: true,
-        focusable: true,
-        ...bounds,
-        webPreferences,
-    })
-    setOverlayAlwaysOnTop(augmentSidePanelWindow, true, 'augment-side-panel')
-    attachWindowDiagnostics('augment-side-panel', augmentSidePanelWindow)
-
-    augmentSidePanelWindow.on('closed', () => {
-        logger.info('Augment side panel window closed')
-        augmentSidePanelWindow = null
-    })
-
-    await loadRendererRoute(
-        augmentSidePanelWindow,
-        'augment-side-panel',
-        isDev,
-        devServerUrl,
-        '/augment-side-panel',
-        webPreferences.preload
-    )
-
-    if (isDev && OPEN_OVERLAY_DEVTOOLS) {
-        augmentSidePanelWindow.webContents.openDevTools({ mode: 'detach' })
-    }
-
-    logger.info('海克斯右侧推荐列表窗口已创建', {
-        ...bounds,
-        url: augmentSidePanelWindow.webContents.getURL(),
-    })
-
-    return augmentSidePanelWindow
-}
-
-/**
- * 创建透明浮动窗口（用于游戏内显示海克斯推荐）
- * 【重要】窗口位置在屏幕顶部(2%)，确保不与OCR识别区域(从25%开始)重叠
- */
-export const createFloatingWindow = async (
-    isDev: boolean,
-    devServerUrl: string
-): Promise<BrowserWindow> => {
-    const webPreferences = getWebPreferences(isDev)
-    const bounds = getFloatingBounds()
-
-    floatingWindow = new BrowserWindow({
-        show: false,
-        frame: false,           // 无边框
-        transparent: true,      // 透明背景
-        skipTaskbar: true,      // 不在任务栏显示
-        resizable: false,
-        fullscreenable: false,
-        alwaysOnTop: true,      // 始终置顶
-        focusable: false,       // 不获取焦点，避免干扰游戏
-        ...bounds,
-        webPreferences,
-    })
-    setOverlayAlwaysOnTop(floatingWindow, true, 'floating')
-    attachWindowDiagnostics('floating', floatingWindow)
-
-    // 设置窗口忽略鼠标事件（透传点击）
-    // floatingWindow.setIgnoreMouseEvents(true, { forward: true })
-
-    floatingWindow.on('closed', () => {
-        logger.info('Floating window closed')
-        floatingWindow = null
-    })
-
-    await loadRendererRoute(floatingWindow, 'floating', isDev, devServerUrl, '/floating-overlay', webPreferences.preload)
-
-    // 开发模式下打开开发者工具
-    if (isDev && OPEN_OVERLAY_DEVTOOLS) {
-        floatingWindow.webContents.openDevTools({ mode: 'detach' })
-    }
-
-    logger.info('透明浮动窗口已创建', {
-        ...bounds,
-        url: floatingWindow.webContents.getURL(),
-    })
-
-    return floatingWindow
-}
 
 /**
  * 创建「手动刷新」常驻浮窗：可拖动、始终置顶、不抢游戏焦点。
@@ -938,13 +784,6 @@ export const getMainWindow = () => mainWindow
  */
 export const getPopupWindow = () => popupWindow
 
-/**
- * 获取浮动窗口实例
- */
-export const getFloatingWindow = () => floatingWindow
-
-export const getAugmentSidePanelWindow = () => augmentSidePanelWindow
-
 export const getManualOverlayWindow = () => manualOverlayWindow
 
 const MANUAL_OVERLAY_MIN_SIZE = { width: 120, height: 40 }
@@ -989,26 +828,12 @@ export const ensurePopupWindow = createWindowLoader(
     getPopupWindow,
     () => createPopupWindow(...getRendererRuntime()),
 )
-export const ensureFloatingWindow = createWindowLoader(
-    getFloatingWindow,
-    () => createFloatingWindow(...getRendererRuntime()),
-)
-export const ensureAugmentSidePanelWindow = createWindowLoader(
-    getAugmentSidePanelWindow,
-    () => createAugmentSidePanelWindow(...getRendererRuntime()),
-)
 
 export const ensureManualOverlayWindow = createWindowLoader(
     getManualOverlayWindow,
     () => createManualOverlayWindow(...getRendererRuntime()),
 )
 
-export function ensureAugmentOverlayWindows(): Promise<[BrowserWindow | null, BrowserWindow | null]> {
-    return Promise.all([
-        shouldShowAugmentTopOverlay() ? ensureFloatingWindow() : null,
-        shouldShowAugmentSidePanel() ? ensureAugmentSidePanelWindow() : null,
-    ])
-}
 
 export function notifyAllWindows(channel: string, data: unknown): void {
     for (const window of BrowserWindow.getAllWindows()) {

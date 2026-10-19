@@ -8,13 +8,9 @@ const mocks = vi.hoisted(() => ({
   subscribe: vi.fn(),
   createMain: vi.fn(),
   ensurePopup: vi.fn(),
-  ensureFloating: vi.fn(),
-  ensureSidePanel: vi.fn(),
   notify: vi.fn(),
   applyPopupPreferences: vi.fn(),
   logError: vi.fn(),
-  autoStart: vi.fn(async () => true),
-  autoScreenshotEnabled: false,
   overlayPhase: vi.fn(),
   registerHotkey: vi.fn(),
   popup: { show: vi.fn(), isVisible: () => false, isDestroyed: () => false, webContents: { send: vi.fn() } },
@@ -35,21 +31,13 @@ vi.mock('../../src/main/modules/app-store.ts', () => ({ default: {
 vi.mock('../../src/main/modules/window-manager.ts', () => ({
   createMainWindow: mocks.createMain,
   ensurePopupWindow: mocks.ensurePopup,
-  ensureFloatingWindow: mocks.ensureFloating,
-  ensureAugmentSidePanelWindow: mocks.ensureSidePanel,
-  getPopupWindow: () => null, getFloatingWindow: () => null, getAugmentSidePanelWindow: () => null,
+  getPopupWindow: () => null,
   toggleMainWindow: vi.fn(), applyPopupWindowLayout: vi.fn(), applyPopupWindowPreferences: mocks.applyPopupPreferences,
   notifyAllWindows: mocks.notify,
 }))
-vi.mock('../../src/main/screenshot.ts', () => ({ getLolGameStatus: async () => ({ isGameOpen: false }) }))
 vi.mock('../../src/main/modules/ipc-handlers.ts', () => ({ registerIpcHandlers: vi.fn() }))
-vi.mock('../../src/main/auto-screenshot-service.ts', () => ({ default: {
-  isRunning: false, setGameflowPhase: vi.fn(), clearAugmentState: vi.fn(),
-  setConfig: vi.fn(), start: mocks.autoStart,
-} }))
 vi.mock('../../src/main/services/manual-overlay/manual-overlay-runtime.ts', () => ({
   getManualOverlayService: () => ({
-    isAutoScreenshotEnabled: () => mocks.autoScreenshotEnabled,
     setPhase: mocks.overlayPhase,
     registerHotkey: mocks.registerHotkey,
     startLiveGameWatch: vi.fn(),
@@ -85,8 +73,6 @@ vi.mock('../../src/main/modules/performance-monitor.ts', () => ({ startPerforman
 vi.mock('../../src/main/modules/tray.ts', () => ({ createAppTray: vi.fn() }))
 vi.mock('../../src/main/modules/user-preferences.ts', () => ({
   shouldShowChampionDetails: () => true,
-  shouldShowAugmentTopOverlay: () => true,
-  shouldShowAugmentSidePanel: () => true,
 }))
 
 beforeEach(() => {
@@ -101,12 +87,8 @@ beforeEach(() => {
   mocks.subscribe.mockResolvedValue({ isConnected: () => false, close: vi.fn() })
   mocks.createMain.mockResolvedValue({})
   mocks.ensurePopup.mockResolvedValue(mocks.popup)
-  mocks.ensureFloating.mockResolvedValue({})
-  mocks.ensureSidePanel.mockResolvedValue({})
-  mocks.autoStart.mockClear()
   mocks.overlayPhase.mockClear()
   mocks.registerHotkey.mockClear()
-  mocks.autoScreenshotEnabled = false
 })
 afterEach(async () => {
   await vi.dynamicImportSettled()
@@ -132,28 +114,24 @@ describe('main-process monitoring ownership', () => {
     expect(mocks.popup.show).not.toHaveBeenCalled()
   })
 
-  it('prepares all four windows at startup without showing champion details', async () => {
+  it('prepares the main and champion windows at startup without showing champion details', async () => {
     await start()
     expect(mocks.createMain).toHaveBeenCalledOnce()
-    for (const prepare of [mocks.ensurePopup, mocks.ensureFloating, mocks.ensureSidePanel]) {
-      expect(prepare).toHaveBeenCalledOnce()
-    }
+    expect(mocks.ensurePopup).toHaveBeenCalledOnce()
     expect(mocks.popup.show).not.toHaveBeenCalled()
     expect(mocks.popup.webContents.send).not.toHaveBeenCalled()
   })
 
-  it('waits for every auxiliary renderer before starting game monitoring', async () => {
+  it('waits for the champion renderer before starting game monitoring', async () => {
     let ready!: (value: unknown) => void
-    mocks.ensureFloating.mockReturnValueOnce(new Promise(done => { ready = done }))
+    mocks.ensurePopup.mockReturnValueOnce(new Promise(done => { ready = done }))
     const { init } = await import('../../src/main/modules/app-config.ts')
     const starting = init()
     await vi.dynamicImportSettled()
     await vi.advanceTimersByTimeAsync(6000)
     expect(mocks.ensurePopup).toHaveBeenCalledOnce()
-    expect(mocks.ensureFloating).toHaveBeenCalledOnce()
-    expect(mocks.ensureSidePanel).toHaveBeenCalledOnce()
     expect(mocks.phase).not.toHaveBeenCalled()
-    ready({})
+    ready(mocks.popup)
     await starting
     await vi.advanceTimersByTimeAsync(2000)
     expect(mocks.phase).toHaveBeenCalledOnce()
@@ -198,20 +176,11 @@ describe('main-process monitoring ownership', () => {
     expect(getChampionMonitorState()).toMatchObject({ phase: 'EndOfGame', selectedChampionId: null, lastChampionId: 22 })
   })
 
-  it('does not start continuous auto screenshots in game unless autoScreenshot is enabled', async () => {
+  it('forwards game phases to the manual overlay and never auto-captures', async () => {
     await start()
     expect(mocks.registerHotkey).toHaveBeenCalledOnce()
     const phaseChanged = mocks.subscribe.mock.calls[0][0]
     await phaseChanged('InProgress')
     expect(mocks.overlayPhase).toHaveBeenLastCalledWith('InProgress')
-    expect(mocks.autoStart).not.toHaveBeenCalled()
-  })
-
-  it('keeps the legacy auto screenshot path when autoScreenshot is enabled', async () => {
-    mocks.autoScreenshotEnabled = true
-    await start()
-    const phaseChanged = mocks.subscribe.mock.calls[0][0]
-    await phaseChanged('InProgress')
-    expect(mocks.autoStart).toHaveBeenCalledWith(expect.any(Number), 'gameflow')
   })
 })

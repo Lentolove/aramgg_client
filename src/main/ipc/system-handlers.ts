@@ -5,7 +5,6 @@ import {
   getAppUpdateState,
   installDownloadedAppUpdate,
 } from '../app-update-service.ts'
-import autoScreenshotService from '../auto-screenshot-service.ts'
 import {
   getAnalyticsStatus,
   setAnalyticsEnabled,
@@ -34,12 +33,6 @@ function requestAppQuit(reason: string): void {
     globalShortcut.unregisterAll()
   } catch (error) {
     logger.warn('[app] failed to unregister shortcuts before quit:', (error as Error).message)
-  }
-
-  try {
-    autoScreenshotService.stop(`app quit: ${reason}`)
-  } catch (error) {
-    logger.warn('[app] failed to stop auto screenshot before quit:', (error as Error).message)
   }
 
   allowMainWindowClose()

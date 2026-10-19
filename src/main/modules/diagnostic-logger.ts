@@ -1,5 +1,4 @@
 import { app } from 'electron'
-import autoScreenshotService from '../auto-screenshot-service.ts'
 import { getLCUServiceInstance } from '../services/lcu/lcu-service.ts'
 import { getVersionInfo } from '../version-checker.ts'
 import logger from './logger.ts'
@@ -23,23 +22,6 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, fallback: T): Pr
 function getStoreBoolean(key: string, fallback: boolean | null = null): boolean | null {
     const value = store.get(key)
     return typeof value === 'boolean' ? value : fallback
-}
-
-type DiagnosticAugment = {
-    detectedSlot?: number
-    id?: string | number
-    augmentId?: string | number
-    name?: string
-    rarity?: string
-}
-
-function summarizeAugments(augments: DiagnosticAugment[] = []) {
-    return augments.slice(0, 3).map((augment, index) => ({
-        slot: Number.isInteger(augment?.detectedSlot) ? augment.detectedSlot : index,
-        id: augment?.id ?? augment?.augmentId ?? null,
-        name: augment?.name || '',
-        rarity: augment?.rarity || 'unknown',
-    }))
 }
 
 async function collectVersionDiagnostics() {
@@ -110,7 +92,6 @@ async function collectLcuDiagnostics() {
 function collectConfigDiagnostics() {
     return {
         itemSetAutoApplyAram: getStoreBoolean('itemSets.autoApplyAram', true),
-        autoScreenshotGameflowControl: getStoreBoolean('autoScreenshotGameflowControl', true),
         analyticsEnabled: getStoreBoolean('analytics.enabled', null),
         lastSelectedChampionId: store.get('lastSelectedChampionId') || null,
         appDataDir: getAppDataDir(),
@@ -120,44 +101,8 @@ function collectConfigDiagnostics() {
 }
 
 function collectOcrDiagnostics() {
-    const config = autoScreenshotService.getConfig()
-    const stats = autoScreenshotService.getPerformanceStats()
-    const recent = autoScreenshotService.getRecentAugmentDiagnostic?.() || {}
-
-    return {
-        service: {
-            isRunning: config.isRunning,
-            interval: config.interval,
-            enableAnalysis: config.enableAnalysis,
-            gameflowPhase: config.gameflowPhase,
-            analysisPausedByGameflow: config.analysisPausedByGameflow,
-            controlOwner: config.controlOwner,
-            isCapturing: config.isCapturing,
-            isAnalyzing: config.isAnalyzing,
-            captureTimeoutMs: config.captureTimeoutMs,
-            preferScreenCapture: config.preferScreenCapture,
-        },
-        counters: {
-            screenshotCount: stats.screenshotCount,
-            analysisCount: stats.analysisCount,
-            detectionCount: stats.detectionCount,
-            droppedAnalysisCount: stats.droppedAnalysisCount,
-            analysisBackpressureSkipCount: stats.analysisBackpressureSkipCount,
-            partialOcrSaveCount: stats.partialOcrSaveCount,
-        },
-        lastTiming: {
-            lastScreenshotTime: stats.lastScreenshotTime || null,
-            lastAnalysisTime: stats.lastAnalysisTime || null,
-            lastAnalysisDuration: stats.lastAnalysisDuration || config.lastAnalysisDuration || 0,
-        },
-        recentResult: {
-            detectedAt: recent.detectedAt || null,
-            ageMs: recent.ageMs ?? null,
-            ids: recent.ids || [],
-            augments: summarizeAugments(recent.augments || []),
-            slotFingerprints: recent.slotFingerprints || [],
-        },
-    }
+    // Capture now happens only on manual refresh; see manual-overlay logs.
+    return { mode: 'manual-refresh' }
 }
 
 export async function collectDiagnosticSnapshot(reason: string = 'manual') {

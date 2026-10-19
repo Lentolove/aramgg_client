@@ -72,20 +72,6 @@ const preferenceDefinitions = [
     descriptionKey: 'preferences.alwaysOnTopDescription',
   },
   {
-    key: 'showAugmentTopOverlay',
-    storeKey: 'augments.showTopOverlay',
-    defaultValue: true,
-    titleKey: 'preferences.topOverlayTitle',
-    descriptionKey: 'preferences.topOverlayDescription',
-  },
-  {
-    key: 'showAugmentSidePanel',
-    storeKey: 'augments.showSidePanel',
-    defaultValue: true,
-    titleKey: 'preferences.sidePanelTitle',
-    descriptionKey: 'preferences.sidePanelDescription',
-  },
-  {
     key: 'autoShowPostGameShare',
     storeKey: 'postGameShare.autoShow',
     defaultValue: true,
@@ -138,11 +124,7 @@ const applyImmediateWindowEffect = (key, value) => {
     return
   }
 
-  if (key === 'showAugmentTopOverlay') {
-    electronAPI.windows.hideFloating()
-  } else if (key === 'showAugmentSidePanel') {
-    electronAPI.windows.hideAugmentSidePanel()
-  } else if (key === 'showChampionDetails') {
+  if (key === 'showChampionDetails') {
     electronAPI.windows.hidePopup()
   }
 }

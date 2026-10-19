@@ -10,7 +10,6 @@ const validEvents = new Set<ElectronEventChannel>([
   'for-popup',
   'screenshot-taken',
   'winrate-updated',
-  'auto-screenshot-taken',
   'game-phase-changed',
   'champion-monitor-changed',
   'champ-select-start',
@@ -71,8 +70,6 @@ const electronAPI: ElectronAPI = {
     ready: () => ipcRenderer.send('renderer-ready'),
     showPopup: (data) => ipcRenderer.send('show-popup', data),
     hidePopup: (reason) => ipcRenderer.send('hide-popup', reason),
-    hideFloating: (reason) => ipcRenderer.send('hide-floating', reason),
-    hideAugmentSidePanel: (reason) => ipcRenderer.send('hide-augment-side-panel', reason),
     toggleMain: () => ipcRenderer.send('toggle-main-window'),
     confirmQuit: () => ipcRenderer.invoke('confirm-quit-app'),
     restart: () => ipcRenderer.send('restart-app'),
@@ -96,21 +93,11 @@ const electronAPI: ElectronAPI = {
     get: () => ipcRenderer.invoke('locale-get'),
     set: (locale) => ipcRenderer.invoke('locale-set', locale),
   },
-  screenshot: {
-    capture: () => ipcRenderer.invoke('screenshot-capture'),
-    analyze: (imagePathOrBuffer) => ipcRenderer.invoke('analyze-screenshot', imagePathOrBuffer),
-  },
   winrate: {
     get: (data) => ipcRenderer.invoke('get-winrate', data),
     loadChampionData: (championId) => ipcRenderer.invoke('load-champion-data', championId),
   },
-  autoScreenshot: {
-    start: (config) => ipcRenderer.invoke('auto-screenshot-start', config),
-    stop: () => ipcRenderer.invoke('auto-screenshot-stop'),
-    setConfig: (config) => ipcRenderer.invoke('auto-screenshot-set-config', config),
-    getStats: () => ipcRenderer.invoke('auto-screenshot-get-stats'),
-    getConfig: () => ipcRenderer.invoke('auto-screenshot-get-config'),
-  },
+
   itemSets: {
     getAramStatus: () => ipcRenderer.invoke('item-sets-get-aram-status'),
     installAramChampion: (payload) => ipcRenderer.invoke('item-sets-install-aram-champion', payload),
@@ -160,8 +147,6 @@ const electronAPI: ElectronAPI = {
     clearManualLeaguePath: () => ipcRenderer.invoke('lcu-clear-manual-league-path'),
   },
   diagnostics: {
-    testShowFloating: (data) => ipcRenderer.invoke('test-show-floating', data),
-    testShowRandomFloating: () => ipcRenderer.invoke('test-show-random-floating'),
     testShowRandomPopup: () => ipcRenderer.invoke('test-show-random-popup'),
     testShowBenchRecommendation: () => ipcRenderer.invoke('test-show-bench-recommendation'),
     logRendererError: (errorData) => ipcRenderer.invoke('log-renderer-error', errorData),

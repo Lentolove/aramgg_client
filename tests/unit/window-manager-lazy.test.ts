@@ -68,31 +68,4 @@ describe('auxiliary window loading', () => {
     expect(await manager.ensurePopupWindow()).toBe(mocks.windows[0])
     expect(mocks.windows).toHaveLength(1)
   })
-
-  it('prepares all auxiliary windows while hidden and reuses them when enabled', async () => {
-    mocks.top = false
-    mocks.side = false
-    const manager = await import('../../src/main/modules/window-manager.ts')
-    const { markRendererReady } = await import('../../src/main/modules/renderer-ready.ts')
-    const loading = Promise.all([
-      manager.ensurePopupWindow(),
-      manager.ensureFloatingWindow(),
-      manager.ensureAugmentSidePanelWindow(),
-    ])
-    await Promise.resolve()
-    expect(mocks.windows).toHaveLength(3)
-    for (const window of mocks.windows) {
-      expect(window.options.show).toBe(false)
-      markRendererReady(window.webContents)
-    }
-    const [popup, floating, sidePanel] = await loading
-    expect(floating.webContents.getURL()).toContain('#/floating-overlay')
-    expect(sidePanel.webContents.getURL()).toContain('#/augment-side-panel')
-    expect(await manager.ensureAugmentOverlayWindows()).toEqual([null, null])
-    mocks.top = true
-    mocks.side = true
-    expect(await manager.ensurePopupWindow()).toBe(popup)
-    expect(await manager.ensureAugmentOverlayWindows()).toEqual([floating, sidePanel])
-    expect(mocks.windows).toHaveLength(3)
-  })
 })

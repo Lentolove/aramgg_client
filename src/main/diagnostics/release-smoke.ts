@@ -5,7 +5,7 @@ import http from 'node:http'
 import https from 'node:https'
 import { syncBuiltinESMExports } from 'node:module'
 
-const ROUTES = ['/display', '/augment-overlay', '/floating-overlay', '/augment-side-panel']
+const ROUTES = ['/display', '/augment-overlay']
 const OFFLINE_ERROR = 'Release smoke: external network disabled'
 
 /** Observe the real packaged startup; never synthesize renderer-ready or replace IPC. */
@@ -85,9 +85,9 @@ export function createReleaseSmoke() {
                         const shown = await main.webContents.executeJavaScript(`(async () => {
                             const payload = ${JSON.stringify(preview)};
                             window.electronAPI.windows.showPopup(payload);
-                            return window.electronAPI.diagnostics.testShowFloating(payload);
+                            return { success: true };
                         })()`)
-                        if (!shown?.success || shown.skipped) throw new Error('Overlay diagnostic invocation failed')
+                        if (!shown?.success) throw new Error('Overlay diagnostic invocation failed')
                         // Auxiliary windows intentionally have no text until given an event payload.
                         await new Promise((resolve) => setTimeout(resolve, 500))
                         for (const route of ROUTES) {
@@ -108,9 +108,6 @@ export function createReleaseSmoke() {
                                 throw new Error(`Invalid mounted window: ${route} ${JSON.stringify(snapshot)}`)
                             }
                             if (!window.isVisible()) throw new Error(`Window cannot be shown: ${route}`)
-                            if (route === '/floating-overlay' && !snapshot.text.includes('Smoke augment')) {
-                                throw new Error('Floating window did not render the diagnostic payload')
-                            }
                             const screenshot = await window.webContents.capturePage()
                             if (screenshot.isEmpty()) throw new Error(`Empty screenshot: ${route}`)
                             await fs.writeFile(path.join(outputDir, `${route.slice(1)}.png`), screenshot.toPNG())

@@ -20,8 +20,6 @@ const RENDERER_STORE_KEYS = new Set<AppStoreKey>([
   'championInsight.showDetails',
   'championInsight.hideOnGameStart',
   'championInsight.alwaysOnTop',
-  'augments.showTopOverlay',
-  'augments.showSidePanel',
   'postGameShare.autoShow',
 ])
 

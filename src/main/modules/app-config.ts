@@ -1,23 +1,14 @@
 // @ts-nocheck
 import { app, globalShortcut, BrowserWindow } from 'electron'
-import { getLolGameStatus } from '../screenshot.ts'
 import { registerIpcHandlers } from './ipc-handlers.ts'
 import {
-    applyAugmentSidePanelWindowLayout,
-    applyFloatingWindowLayout,
     applyPopupWindowLayout,
     createMainWindow,
     ensurePopupWindow,
-    ensureFloatingWindow,
-    ensureAugmentSidePanelWindow,
     toggleMainWindow,
-    getAugmentSidePanelWindow,
-    getFloatingWindow,
     getPopupWindow,
-    raiseOverlayWindow,
     applyPopupWindowPreferences,
 } from './window-manager.ts'
-import autoScreenshotService from '../auto-screenshot-service.ts'
 import { getManualOverlayService } from '../services/manual-overlay/manual-overlay-runtime.ts'
 import { getLCUServiceInstance } from '../services/lcu/lcu-service.ts'
 import {
@@ -62,17 +53,8 @@ import {
 import { createAppTray } from './tray.ts'
 import {
     shouldShowChampionDetails,
-    shouldShowAugmentSidePanel,
-    shouldShowAugmentTopOverlay,
 } from './user-preferences.ts'
 import { GameSessionCoordinator } from '../services/game-session/game-session-machine.ts'
-import { shouldRaiseOverlayWindow } from './overlay-window-state.ts'
-import {
-    GAMEFLOW_ACTIVE_CAPTURE_INTERVAL_MS,
-    GAMEFLOW_CAPTURE_THUMBNAIL_SIZE,
-    GAMEFLOW_IDLE_CAPTURE_INTERVAL_MS,
-} from '../auto-screenshot-policy.ts'
-
 const __dirname = import.meta.dirname
 
 // 全局游戏流程监控状态
@@ -83,8 +65,6 @@ let lcuGameflowMonitorStopping = false
 let lcuGameflowInitPromise = null
 let quitCleanupCompleted = false
 let quitCleanupPromise = null
-const AUTO_SCREENSHOT_MAX_CAPTURES = 100
-const GAME_WINDOW_STATUS_LOG_INTERVAL_MS = 30000
 const GAMEFLOW_AUGMENT_ANALYSIS_PHASE = 'InProgress'
 const GAMEFLOW_POLL_FALLBACK_INTERVAL_MS = 1000
 const GAMEFLOW_TOKEN_REFRESH_INTERVAL_MS = 60000
@@ -106,19 +86,6 @@ const GAME_API_DIAGNOSTIC_KEYWORDS = [
 ]
 const ITEM_SET_AUTO_APPLY_KEY = 'itemSets.autoApplyAram'
 const ITEM_SET_PRELOAD_CONCURRENCY = 3
-const AUGMENT_CLEAR_PHASES = new Set([
-    'Lobby',
-    'Matchmaking',
-    'ReadyCheck',
-    'ChampSelect',
-    'GameStart',
-    'WaitingForStats',
-    'PreEndOfGame',
-    'EndOfGame',
-])
-let autoScreenshotManagedByGameFlow = false
-let lastGameWindowStatusKey = null
-let lastGameWindowStatusLogAt = 0
 let lastGameApiDiagnosticAt = 0
 let gameApiDiagnosticInFlight = false
 let itemSetAutoApplyInFlight = false
@@ -172,17 +139,11 @@ export async function init({ startBackgroundServices = true } = {}) {
     }
 
     const mainWindow = await createMainWindow(isDev, devServerUrl)
-    const [popupWindow, floatingWindow, augmentSidePanelWindow] = await Promise.all([
-        ensurePopupWindow(),
-        ensureFloatingWindow(),
-        ensureAugmentSidePanelWindow(),
-    ])
+    const popupWindow = await ensurePopupWindow()
     createAppTray()
     logger.info('窗口已创建:', {
         main: !!mainWindow,
         popup: !!popupWindow,
-        floating: !!floatingWindow,
-        augmentSidePanel: !!augmentSidePanelWindow,
         tray: true,
     })
     // Release smoke still uses real IPC, packaged assets, windows and tray.
@@ -236,77 +197,6 @@ export async function init({ startBackgroundServices = true } = {}) {
     registerAppEvents()
 
     return { mainWindow, popupWindow, toggleMainWindow }
-}
-
-async function startAutoScreenshotForGame(reason) {
-    // 默认关闭持续自动截图；改为浮窗里手动刷新 / 快捷键单次截图。
-    // 只有用户在设置里打开 autoScreenshot 才恢复旧行为。
-    if (!getManualOverlayService().isAutoScreenshotEnabled()) {
-        logger.debug(`Auto screenshot gameflow start skipped: autoScreenshot disabled (${reason})`)
-        return false
-    }
-
-    if (store.get('autoScreenshotGameflowControl') === false) {
-        logger.info(`Auto screenshot gameflow start skipped: disabled by config (${reason})`)
-        return false
-    }
-
-    if (autoScreenshotService.isRunning) {
-        return false
-    }
-
-    autoScreenshotService.setConfig({
-        interval: GAMEFLOW_ACTIVE_CAPTURE_INTERVAL_MS,
-        idleInterval: GAMEFLOW_IDLE_CAPTURE_INTERVAL_MS,
-        automaticThumbnailSize: GAMEFLOW_CAPTURE_THUMBNAIL_SIZE,
-        maxScreenshots: AUTO_SCREENSHOT_MAX_CAPTURES,
-    })
-
-    const startedAt = Date.now()
-    const success = await autoScreenshotService.start(GAMEFLOW_ACTIVE_CAPTURE_INTERVAL_MS, 'gameflow')
-    if (success) {
-        autoScreenshotManagedByGameFlow = true
-        logger.info('Auto screenshot service started by game monitor', {
-            reason,
-            durationMs: Date.now() - startedAt,
-            intervalMs: GAMEFLOW_ACTIVE_CAPTURE_INTERVAL_MS,
-            idleIntervalMs: GAMEFLOW_IDLE_CAPTURE_INTERVAL_MS,
-            activeIntervalMs: GAMEFLOW_ACTIVE_CAPTURE_INTERVAL_MS,
-            thumbnailSize: GAMEFLOW_CAPTURE_THUMBNAIL_SIZE,
-            pollFallbackIntervalMs: GAMEFLOW_POLL_FALLBACK_INTERVAL_MS,
-        })
-    }
-
-    return success
-}
-
-function stopAutoScreenshotForGame(reason) {
-    if (!autoScreenshotService.isRunning) {
-        autoScreenshotManagedByGameFlow = false
-        return false
-    }
-
-    if (!autoScreenshotManagedByGameFlow && autoScreenshotService.getConfig().controlOwner !== 'gameflow') {
-        return false
-    }
-
-    const success = autoScreenshotService.stop('gameflow')
-    if (success) {
-        autoScreenshotManagedByGameFlow = false
-        logger.info(`Auto screenshot service stopped by game monitor: ${reason}`)
-    } else if (autoScreenshotService.getConfig().controlOwner === 'manual') {
-        autoScreenshotManagedByGameFlow = false
-    }
-
-    return success
-}
-
-function clearAugmentOverlayForPhase(phase) {
-    if (!AUGMENT_CLEAR_PHASES.has(phase)) {
-        return
-    }
-
-    autoScreenshotService.clearAugmentState(`LCU phase ${phase}`)
 }
 
 function getDiagnosticType(value) {
@@ -1079,42 +969,6 @@ async function autoApplyAramItemSetForChampion(championId, reason) {
     }
 }
 
-function logLolGameStatus(status, phase) {
-    const processState = status.processRunning === null
-        ? 'unknown'
-        : status.processRunning
-            ? 'running'
-            : 'missing'
-    const windowState = status.found ? status.name : 'missing'
-    const statusKey = `${phase}:${processState}:${windowState}:${autoScreenshotService.isRunning}`
-    const now = Date.now()
-
-    if (
-        statusKey !== lastGameWindowStatusKey ||
-        now - lastGameWindowStatusLogAt > GAME_WINDOW_STATUS_LOG_INTERVAL_MS
-    ) {
-        logger.debug(
-            `LoL game status: phase=${phase || 'unknown'}, process=${processState}, window=${windowState}, autoScreenshot=${autoScreenshotService.isRunning}`
-        )
-        lastGameWindowStatusKey = statusKey
-        lastGameWindowStatusLogAt = now
-    }
-}
-
-async function reconcileAutoScreenshotWithLolWindow(phase) {
-    const status = await getLolGameStatus()
-    logLolGameStatus(status, phase)
-
-    if (status.isGameOpen) {
-        await startAutoScreenshotForGame(
-            `LoL game process/window fallback while LCU phase is ${phase || 'unknown'} (${status.name})`
-        )
-        return
-    }
-
-    stopAutoScreenshotForGame('LoL game process/window not found')
-}
-
 function stopGameflowWebSocket(reason) {
     if (lcuGameflowReconnectTimer) {
         clearTimeout(lcuGameflowReconnectTimer)
@@ -1214,7 +1068,6 @@ async function initGameFlowMonitor() {
                 return
             }
 
-            autoScreenshotService.setGameflowPhase(phase)
             setAppUpdateGamePhase(phase)
             setChampionMonitorPhase(phase)
             try {
@@ -1230,7 +1083,6 @@ async function initGameFlowMonitor() {
                 const currentPhase = transition.current.phase
                 logger.info(`游戏阶段变化(${source}): ${prevPhase || 'unknown'} → ${phase}`)
                 notifyAllWindows('game-phase-changed', { phase: currentPhase, prevPhase })
-                clearAugmentOverlayForPhase(currentPhase)
                 void logReadOnlyGameApiDiagnostics(lcuService, currentPhase, `phase-change:${source}`, true)
                 if (currentPhase === 'Lobby' || currentPhase === 'None') {
                     requestLocalMatchHistoryBackgroundSync(`phase-change:${currentPhase}`)
@@ -1241,15 +1093,13 @@ async function initGameFlowMonitor() {
                     case 'RESET_IDLE_SERVICES':
                         lastAutoAppliedItemSetChampionId = null
                         resetChampSelectItemSetState(`LCU phase ${currentPhase}`)
-                        stopAutoScreenshotForGame(`LCU phase ${currentPhase}`)
                         break
                     case 'ENTER_CHAMP_SELECT':
-                        logger.info('进入选人阶段 - 暂停游戏内海克斯 OCR')
+                        logger.info('进入选人阶段')
                         resetPostGameShareSnapshot('LCU phase ChampSelect')
                         lastAutoAppliedItemSetChampionId = null
                         resetChampSelectItemSetState(`LCU phase ${phase}`)
                         notifyAllWindows('champ-select-start', {})
-                        stopAutoScreenshotForGame('LCU phase ChampSelect')
                         await showChampionInsightForChampSelect(lcuService)
                         break
                     case 'ENTER_GAME_START':
@@ -1257,35 +1107,30 @@ async function initGameFlowMonitor() {
                         resetPostGameShareSnapshot('LCU phase GameStart')
                         notifyAllWindows('game-started', {})
                         resetChampSelectItemSetState('LCU phase GameStart')
-                        stopAutoScreenshotForGame('LCU phase GameStart')
                         break
                     case 'ENTER_IN_PROGRESS':
-                        logger.info('游戏进行中 - 启动自动截图来检测海克斯选择')
+                        logger.info('游戏进行中')
                         notifyAllWindows('game-in-progress', {})
                         resetChampSelectItemSetState('LCU phase InProgress')
                         void recoverChampionInsightForInProgress(lcuService, 'LCU phase InProgress')
                         void capturePostGameShareSnapshot(lcuService, 'LCU phase InProgress')
-                        await startAutoScreenshotForGame('LCU phase InProgress')
                         break
                     case 'ENTER_WAITING_FOR_STATS':
                         logger.info('游戏已结束')
                         notifyAllWindows('game-ended', {})
                         void prepareAndNotifyPostGameShare(lcuService, 'LCU phase WaitingForStats')
                         resetChampSelectItemSetState('LCU phase WaitingForStats')
-                        stopAutoScreenshotForGame('LCU phase WaitingForStats')
                         break
                     case 'ENTER_PRE_END_OF_GAME':
                         logger.info('游戏结束统计阶段')
                         void prepareAndNotifyPostGameShare(lcuService, 'LCU phase PreEndOfGame')
                         resetChampSelectItemSetState('LCU phase PreEndOfGame')
-                        stopAutoScreenshotForGame('LCU phase PreEndOfGame')
                         break
                     case 'ENTER_END_OF_GAME':
                         logger.info('游戏完全结束')
                         notifyAllWindows('end-of-game', {})
                         void prepareAndNotifyPostGameShare(lcuService, 'LCU phase EndOfGame')
                         resetChampSelectItemSetState('LCU phase EndOfGame')
-                        stopAutoScreenshotForGame('LCU phase EndOfGame')
                         break
                 }
             }
@@ -1298,11 +1143,6 @@ async function initGameFlowMonitor() {
                 if (lastInProgressInsightChampionId == null) {
                     void recoverChampionInsightForInProgress(lcuService, 'LCU phase InProgress heartbeat')
                 }
-                await startAutoScreenshotForGame('LCU phase InProgress')
-            } else if (phase === 'None') {
-                await reconcileAutoScreenshotWithLolWindow(phase)
-            } else if (phase) {
-                stopAutoScreenshotForGame(`LCU phase ${phase}`)
             }
         }
 
@@ -1449,10 +1289,6 @@ async function runQuitCleanup(reason = 'app quit') {
     stopGameflowMonitorRuntime('app will quit')
     stopLocalMatchHistoryBackgroundSync()
 
-    if (autoScreenshotService && autoScreenshotService.isRunning) {
-        autoScreenshotService.stop()
-        logger.info('自动截图服务已停止')
-    }
 
     try {
         getManualOverlayService().dispose()
@@ -1552,44 +1388,6 @@ function registerAppEvents() {
  * 通知所有窗口
  */
 async function notifyAllWindows(channel, data) {
-    // 如果是海克斯检测事件，找到并显示浮动窗口
-    if (channel === 'augment-detected') {
-        const floatingWin = getFloatingWindow()
-        const sidePanelWin = getAugmentSidePanelWindow()
-        let sentToOverlay = false
-
-        if (floatingWin && !floatingWin.isDestroyed() && shouldShowAugmentTopOverlay()) {
-            if (shouldRaiseOverlayWindow(floatingWin)) {
-                applyFloatingWindowLayout()
-                logger.info('✨ 显示海克斯浮动窗口')
-                raiseOverlayWindow(floatingWin, 'floating')
-            }
-            // 发送数据到浮动窗口
-            floatingWin.webContents.send(channel, data)
-            sentToOverlay = true
-        } else if (floatingWin && !floatingWin.isDestroyed() && floatingWin.isVisible() && !shouldShowAugmentTopOverlay()) {
-            floatingWin.hide()
-        }
-
-        if (sidePanelWin && !sidePanelWin.isDestroyed() && shouldShowAugmentSidePanel()) {
-            if (shouldRaiseOverlayWindow(sidePanelWin)) {
-                applyAugmentSidePanelWindowLayout()
-                logger.info('✨ 显示海克斯右侧推荐列表')
-                raiseOverlayWindow(sidePanelWin, 'augment-side-panel')
-            }
-            sidePanelWin.webContents.send(channel, data)
-            sentToOverlay = true
-        } else if (sidePanelWin && !sidePanelWin.isDestroyed() && sidePanelWin.isVisible() && !shouldShowAugmentSidePanel()) {
-            sidePanelWin.hide()
-        }
-
-        if (sentToOverlay) {
-            return
-        } else {
-            logger.warn('⚠️ 海克斯浮窗均未显示或不可用')
-        }
-    }
-
     // 通知所有打开的窗口（兜底）
     BrowserWindow.getAllWindows().forEach(window => {
         if (!window.isDestroyed()) {

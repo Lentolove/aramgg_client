@@ -9,39 +9,20 @@ describe('augment overlay performance safeguards', () => {
   })
 
   it('keeps overlay rendering free of persistent blur and pulse effects', async () => {
-    const [floatingOverlay, sidePanelOverlay] = await Promise.all([
-      readFile(
-        new URL('../../src/renderer/components/AugmentFloatingOverlay.vue', import.meta.url),
-        'utf8',
-      ),
-      readFile(
-        new URL('../../src/renderer/components/AugmentWinrateOverlay.vue', import.meta.url),
-        'utf8',
-      ),
-    ])
+    const sidePanelOverlay = await readFile(
+      new URL('../../src/renderer/components/AugmentWinrateOverlay.vue', import.meta.url),
+      'utf8',
+    )
 
-    expect(floatingOverlay).not.toContain('backdrop-filter')
-    expect(floatingOverlay).not.toContain('animation: pulse')
-    expect(floatingOverlay).not.toContain('@keyframes pulse')
     expect(sidePanelOverlay).not.toContain('backdrop-filter')
   })
 
   it('displays rank-backed recommendations while preserving client win rates', async () => {
-    const [floatingOverlay, championDetailOverlay] = await Promise.all([
-      readFile(
-        new URL('../../src/renderer/components/AugmentFloatingOverlay.vue', import.meta.url),
-        'utf8',
-      ),
-      readFile(
-        new URL('../../src/renderer/components/AugmentWinrateOverlay.vue', import.meta.url),
-        'utf8',
-      ),
-    ])
+    const championDetailOverlay = await readFile(
+      new URL('../../src/renderer/components/AugmentWinrateOverlay.vue', import.meta.url),
+      'utf8',
+    )
 
-    expect(floatingOverlay).toContain('formatPercent(augment.pickRate)')
-    expect(floatingOverlay).toContain('formatAugmentWinRate(augment.winRate)')
-    expect(floatingOverlay).toContain("t('augment.winRate')")
-    expect(floatingOverlay).toContain('const hasRecommendationData =')
     expect(championDetailOverlay).toContain('formatAugmentWinRate(augment.winRate)')
     expect(championDetailOverlay).toContain("t('augment.winRate')")
     expect(championDetailOverlay).toContain('class="augment-tier"')
@@ -52,17 +33,12 @@ describe('augment overlay performance safeguards', () => {
   })
 
   it('uses Electron background throttling defaults and guards every overlay raise path', async () => {
-    const [windowManager, autoScreenshotService, appConfig, ipcHandlers] = await Promise.all([
-      readFile(new URL('../../src/main/modules/window-manager.ts', import.meta.url), 'utf8'),
-      readFile(new URL('../../src/main/auto-screenshot-service.ts', import.meta.url), 'utf8'),
-      readFile(new URL('../../src/main/modules/app-config.ts', import.meta.url), 'utf8'),
-      readFile(new URL('../../src/main/modules/ipc-handlers.ts', import.meta.url), 'utf8'),
-    ])
+    const windowManager = await readFile(
+      new URL('../../src/main/modules/window-manager.ts', import.meta.url),
+      'utf8',
+    )
 
     expect(windowManager).not.toContain('backgroundThrottling')
     expect(windowManager).toContain('!shouldRaiseOverlayWindow(window)')
-    expect(autoScreenshotService.match(/if \(shouldRaiseOverlayWindow\(/g)).toHaveLength(2)
-    expect(appConfig.match(/if \(shouldRaiseOverlayWindow\(/g)).toHaveLength(2)
-    expect(ipcHandlers.match(/if \(shouldRaiseOverlayWindow\(/g)).toHaveLength(4)
   })
 })

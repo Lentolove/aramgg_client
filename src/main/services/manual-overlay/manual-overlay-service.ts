@@ -36,13 +36,11 @@ import { DEFAULT_SHRINKAGE_ALPHA } from '../../../shared/augment-choice-ranking.
 
 export const DEFAULT_MANUAL_OVERLAY_HOTKEY = 'CommandOrControl+Shift+R'
 export const MANUAL_OVERLAY_SETTINGS_KEY = 'manualOverlay.settings'
-export const AUTO_SCREENSHOT_SETTING_KEY = 'autoScreenshot'
 export const MANUAL_OVERLAY_COLLAPSED_KEY = 'manualOverlay.collapsed'
 export const DEFAULT_COLLAPSE_HOTKEY = 'CommandOrControl+Shift+H'
 const SECTIONS: ManualOverlaySection[] = ['cards', 'picked', 'build']
 
 export const DEFAULT_MANUAL_OVERLAY_SETTINGS: ManualOverlaySettings = {
-  autoScreenshot: false,
   hotkey: DEFAULT_MANUAL_OVERLAY_HOTKEY,
   showInChampSelect: false,
   shrinkageAlpha: DEFAULT_SHRINKAGE_ALPHA,
@@ -150,14 +148,11 @@ export interface ManualOverlayDeps {
   logger?: { info: (...args: any[]) => void; warn: (...args: any[]) => void; debug: (...args: any[]) => void }
 }
 
-function sanitizeSettings(raw: unknown, legacyAutoScreenshot: unknown): ManualOverlaySettings {
+function sanitizeSettings(raw: unknown): ManualOverlaySettings {
   const value = (raw && typeof raw === 'object' ? raw : {}) as Partial<ManualOverlaySettings>
   const alpha = Number(value.shrinkageAlpha)
   const startWindow = Number(value.startWindowSec ?? DEFAULT_START_WINDOW_SEC)
   return {
-    autoScreenshot: typeof value.autoScreenshot === 'boolean'
-      ? value.autoScreenshot
-      : legacyAutoScreenshot === true,
     hotkey: typeof value.hotkey === 'string' && value.hotkey.trim()
       ? value.hotkey.trim()
       : DEFAULT_MANUAL_OVERLAY_HOTKEY,
@@ -344,7 +339,6 @@ export class ManualOverlayService {
     this.deps = deps
     this.settings = sanitizeSettings(
       deps.store.get(MANUAL_OVERLAY_SETTINGS_KEY),
-      deps.store.get(AUTO_SCREENSHOT_SETTING_KEY),
     )
     this.state = {
       phase: null,
@@ -549,21 +543,14 @@ export class ManualOverlayService {
     return { ...this.settings }
   }
 
-  /** 是否允许旧版持续自动截图（app-config 用它来门控 startAutoScreenshotForGame）。 */
-  isAutoScreenshotEnabled(): boolean {
-    return this.settings.autoScreenshot === true
-  }
-
   setSettings(patch: unknown): ManualOverlaySettings {
     const merged = sanitizeSettings(
       { ...this.settings, ...(patch && typeof patch === 'object' ? patch : {}) },
-      this.settings.autoScreenshot,
     )
     const hotkeyChanged = merged.hotkey !== this.settings.hotkey ||
       merged.collapseHotkey !== this.settings.collapseHotkey
     this.settings = merged
     this.deps.store.set(MANUAL_OVERLAY_SETTINGS_KEY, { ...merged })
-    this.deps.store.set(AUTO_SCREENSHOT_SETTING_KEY, merged.autoScreenshot)
     if (hotkeyChanged || !this.state.hotkeyRegistered) {
       this.registerHotkey()
     }

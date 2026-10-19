@@ -6,8 +6,6 @@ export type AppStoreKey =
   | 'championInsight.showDetails'
   | 'championInsight.hideOnGameStart'
   | 'championInsight.alwaysOnTop'
-  | 'augments.showTopOverlay'
-  | 'augments.showSidePanel'
   | 'postGameShare.autoShow'
 
 export type SupportedDataLocale = 'zh-CN' | 'zh-TW' | 'en-US'
@@ -341,8 +339,6 @@ export interface MatchHistoryUpdatedPayload {
 }
 
 export interface ManualOverlaySettings {
-  /** 旧版持续自动截图（默认关闭；关闭后只在手动刷新/快捷键时截一次图） */
-  autoScreenshot: boolean
   /** Electron accelerator，例如 CommandOrControl+Shift+R / F8 */
   hotkey: string
   /** 选人阶段也显示浮窗 */
@@ -534,7 +530,6 @@ export interface ElectronEventMap {
   'for-popup': [payload: OverlayPayload]
   'screenshot-taken': [payload: LooseRecord]
   'winrate-updated': [payload: LooseRecord]
-  'auto-screenshot-taken': [payload: LooseRecord]
   'game-phase-changed': [payload: GamePhaseChangedPayload]
   'champion-monitor-changed': [payload: ChampionMonitorState]
   'champ-select-start': [payload?: LooseRecord]
@@ -567,8 +562,6 @@ export interface ElectronAPI {
     ready(): void
     showPopup(data: OverlayPayload): void
     hidePopup(reason?: string): void
-    hideFloating(reason?: string): void
-    hideAugmentSidePanel(reason?: string): void
     toggleMain(): void
     confirmQuit(): Promise<OperationResult>
     restart(): void
@@ -592,20 +585,9 @@ export interface ElectronAPI {
     get(): Promise<LocaleInfo>
     set(locale: SupportedDataLocale): Promise<LocaleInfo>
   }
-  screenshot: {
-    capture(): Promise<LooseRecord>
-    analyze(imagePathOrBuffer: string | Uint8Array): Promise<LooseRecord>
-  }
   winrate: {
     get(data: LooseRecord): Promise<OperationResult & { augments?: LooseRecord[]; timing?: LooseRecord }>
     loadChampionData(championId: number): Promise<OperationResult & { data?: LooseRecord }>
-  }
-  autoScreenshot: {
-    start(config?: LooseRecord): Promise<LooseRecord>
-    stop(): Promise<LooseRecord>
-    setConfig(config: LooseRecord): Promise<LooseRecord>
-    getStats(): Promise<LooseRecord>
-    getConfig(): Promise<LooseRecord>
   }
   itemSets: {
     getAramStatus(): Promise<OperationResult>
@@ -663,8 +645,6 @@ export interface ElectronAPI {
     clearManualLeaguePath(): Promise<LooseRecord>
   }
   diagnostics: {
-    testShowFloating(data: LooseRecord): Promise<OperationResult>
-    testShowRandomFloating(): Promise<OperationResult>
     testShowRandomPopup(): Promise<OperationResult>
     testShowBenchRecommendation(): Promise<OperationResult>
     logRendererError(errorData: LooseRecord): Promise<OperationResult>

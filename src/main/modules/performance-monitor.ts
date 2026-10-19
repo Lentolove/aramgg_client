@@ -5,7 +5,6 @@ import {
     type EventLoopUtilization,
     type IntervalHistogram,
 } from 'node:perf_hooks'
-import autoScreenshotService from '../auto-screenshot-service.ts'
 import { getLcuProcessDiscoveryStats } from '../services/lcu/process-auth-discovery.ts'
 import logger from './logger.ts'
 import { resolvePerformanceSampleInterval } from './performance-monitor-utils.ts'
@@ -144,24 +143,7 @@ function collectProcessPerformanceState(
 }
 
 function collectOcrState() {
-    try {
-        const config = autoScreenshotService.getConfig()
-        const stats = autoScreenshotService.getPerformanceStats()
-        return {
-            running: Boolean(config.isRunning),
-            gameflowPhase: config.gameflowPhase || null,
-            intervalMs: config.interval || null,
-            capturing: Boolean(config.isCapturing),
-            analyzing: Boolean(config.isAnalyzing),
-            screenshotCount: stats.screenshotCount || 0,
-            analysisCount: stats.analysisCount || 0,
-            lastAnalysisDurationMs: round(stats.lastAnalysisDuration || 0, 1),
-        }
-    } catch (error) {
-        return {
-            error: error instanceof Error ? error.message : String(error),
-        }
-    }
+    return { mode: 'manual-refresh' }
 }
 
 function collectLcuDiscoveryState() {

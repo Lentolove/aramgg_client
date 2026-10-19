@@ -49,17 +49,12 @@ function createDeps(overrides: Partial<ManualOverlayDeps> = {}) {
 }
 
 describe('ManualOverlayService', () => {
-  it('defaults to autoScreenshot off and the default hotkey', () => {
-    const { deps } = createDeps()
-    const service = new ManualOverlayService(deps)
-    expect(service.isAutoScreenshotEnabled()).toBe(false)
-    expect(service.getSettings().hotkey).toBe(DEFAULT_MANUAL_OVERLAY_HOTKEY)
-  })
-
-  it('honours a legacy autoScreenshot=true store value', () => {
+  it('defaults to the default hotkey and drops the removed autoScreenshot setting', () => {
     const { deps, storeValues } = createDeps()
-    storeValues.set('autoScreenshot', true)
-    expect(new ManualOverlayService(deps).isAutoScreenshotEnabled()).toBe(true)
+    storeValues.set('manualOverlay.settings', { autoScreenshot: true })
+    const service = new ManualOverlayService(deps)
+    expect(service.getSettings().hotkey).toBe(DEFAULT_MANUAL_OVERLAY_HOTKEY)
+    expect(service.getSettings()).not.toHaveProperty('autoScreenshot')
   })
 
   it('refresh captures once, runs OCR and broadcasts candidates sorted by slot', async () => {
@@ -185,7 +180,6 @@ describe('ManualOverlayService', () => {
     const service = new ManualOverlayService(deps)
     const settings = service.setSettings({ shrinkageAlpha: -5, hotkey: '   ', autoScreenshot: true, extra: 1 })
     expect(settings).toEqual({
-      autoScreenshot: true,
       hotkey: DEFAULT_MANUAL_OVERLAY_HOTKEY,
       showInChampSelect: false,
       shrinkageAlpha: 300,
@@ -203,7 +197,7 @@ describe('ManualOverlayService', () => {
       collapsedSections: [],
       hideWinRates: false,
     })
-    expect(service.isAutoScreenshotEnabled()).toBe(true)
+    expect(settings).not.toHaveProperty('autoScreenshot')
   })
 
   it('parses live client data', async () => {
