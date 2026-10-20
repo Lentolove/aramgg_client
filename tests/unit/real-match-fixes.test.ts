@@ -207,3 +207,22 @@ describe('8. 低优先级', () => {
     }
   })
 })
+
+describe('0.3.2 卡片主数字 = 排序分', () => {
+  it('数字大的卡永远排在前面（含契合度重排），没数据的为 null', async () => {
+    const { rankingPoints } = await import('../../src/shared/augment-choice-ranking.ts')
+    for (const ctx of [shaco, syndra, sion]) {
+      const pool = (ctx.champ.augments as any[]).slice(0, 12).map((a) => a.id)
+      for (let i = 0; i + 2 < pool.length; i += 3) {
+        const cards = [...pool.slice(i, i + 3).map((id, slot) => ({ id, slot, detectedSlot: slot })), { id: 999999, slot: 3, detectedSlot: 3 }]
+        const base = rankAugmentChoicesArammeta(cards as any, ctx.champ, { rarityOf: ctx.rarityOf })
+        const ranked = applyCardSynergy(base as any, (card: any) => ({ score: (card.id % 7) - 3, parts: { items: 0, archetype: 0, held: 0, trio: 0, team: 0 }, reasons: [] }))
+        const points = ranked.choices.map((choice) => rankingPoints(choice, ranked.baselineWinRate))
+        const known = points.filter((p): p is number => p != null)
+        for (let k = 1; k < known.length; k++) expect(known[k]).toBeLessThanOrEqual(known[k - 1])
+        expect(points[points.length - 1]).toBeNull()
+        expect(ranked.choices[ranked.choices.length - 1].relativeLabel).toBe('无数据')
+      }
+    }
+  })
+})

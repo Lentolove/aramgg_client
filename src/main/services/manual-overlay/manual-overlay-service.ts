@@ -36,6 +36,8 @@ import { DEFAULT_SHRINKAGE_ALPHA } from '../../../shared/augment-choice-ranking.
 
 export const DEFAULT_MANUAL_OVERLAY_HOTKEY = 'CommandOrControl+Shift+R'
 export const MANUAL_OVERLAY_SETTINGS_KEY = 'manualOverlay.settings'
+/** 0.3.2：海克斯卡改成「排序分」为主数字，胜率默认隐藏；旧设置迁移一次（之后用户可以再打开） */
+export const HIDE_WIN_RATES_MIGRATION_KEY = 'manualOverlay.migrations.hideWinRatesDefault'
 export const MANUAL_OVERLAY_COLLAPSED_KEY = 'manualOverlay.collapsed'
 export const DEFAULT_COLLAPSE_HOTKEY = 'CommandOrControl+Shift+H'
 const SECTIONS: ManualOverlaySection[] = ['cards', 'picked', 'build']
@@ -56,7 +58,7 @@ export const DEFAULT_MANUAL_OVERLAY_SETTINGS: ManualOverlaySettings = {
   opacity: 0.92,
   scale: 1,
   collapsedSections: [],
-  hideWinRates: false,
+  hideWinRates: true,
 }
 
 function clampNumber(value: unknown, min: number, max: number, fallback: number, step = 0.01): number {
@@ -176,7 +178,7 @@ function sanitizeSettings(raw: unknown): ManualOverlaySettings {
     collapsedSections: Array.isArray(value.collapsedSections)
       ? SECTIONS.filter((section) => (value.collapsedSections as unknown[]).includes(section))
       : [],
-    hideWinRates: value.hideWinRates === true,
+    hideWinRates: value.hideWinRates !== false,
   }
 }
 
@@ -340,6 +342,12 @@ export class ManualOverlayService {
     this.settings = sanitizeSettings(
       deps.store.get(MANUAL_OVERLAY_SETTINGS_KEY),
     )
+    if (deps.store.get(HIDE_WIN_RATES_MIGRATION_KEY) !== true) {
+      // 一次性：旧版本存的 hideWinRates=false 改成 true
+      this.settings = { ...this.settings, hideWinRates: true }
+      if (deps.store.get(MANUAL_OVERLAY_SETTINGS_KEY) != null) deps.store.set(MANUAL_OVERLAY_SETTINGS_KEY, { ...this.settings })
+      deps.store.set(HIDE_WIN_RATES_MIGRATION_KEY, true)
+    }
     this.state = {
       phase: null,
       gameRevision: 0,

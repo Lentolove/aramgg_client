@@ -285,3 +285,17 @@ export function rankAugmentChoices<T extends AugmentChoiceInput>(
     summary,
   }
 }
+
+/**
+ * 卡片主数字「排序分」（百分点）：= 排序实际用的值 − 英雄基线。
+ * 排序值优先用契合度调整后的 combinedWinRate，其次 sortWinRate（arammeta：基线 + 保守提升），最后收缩胜率。
+ * 选它而不是「收缩胜率 − 基线」：保证数字大的卡永远排在前面（首选/次选与数字一致）。
+ */
+export function rankingPoints(
+  choice: { combinedWinRate?: number | null; sortWinRate?: number | null; shrunkWinRate?: number | null },
+  baselineWinRate: number | null | undefined,
+): number | null {
+  const value = choice.combinedWinRate ?? choice.sortWinRate ?? choice.shrunkWinRate
+  if (value == null || baselineWinRate == null || !Number.isFinite(value) || !Number.isFinite(baselineWinRate)) return null
+  return Math.round((value - baselineWinRate) * 1000) / 10
+}

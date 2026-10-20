@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
+  HIDE_WIN_RATES_MIGRATION_KEY,
+  MANUAL_OVERLAY_SETTINGS_KEY,
   DEFAULT_MANUAL_OVERLAY_HOTKEY,
   ManualOverlayService,
   type ManualOverlayDeps,
@@ -195,9 +197,21 @@ describe('ManualOverlayService', () => {
       opacity: 0.92,
       scale: 1,
       collapsedSections: [],
-      hideWinRates: false,
+      hideWinRates: true,
     })
     expect(settings).not.toHaveProperty('autoScreenshot')
+  })
+
+  it('migrates hideWinRates to true once, then respects the user turning it off', () => {
+    const { deps, storeValues } = createDeps()
+    storeValues.set(MANUAL_OVERLAY_SETTINGS_KEY, { hideWinRates: false, opacity: 0.8 })
+    const first = new ManualOverlayService(deps)
+    expect(first.getSettings().hideWinRates).toBe(true)
+    expect((storeValues.get(MANUAL_OVERLAY_SETTINGS_KEY) as any).hideWinRates).toBe(true)
+    expect((storeValues.get(MANUAL_OVERLAY_SETTINGS_KEY) as any).opacity).toBe(0.8)
+    expect(storeValues.get(HIDE_WIN_RATES_MIGRATION_KEY)).toBe(true)
+    storeValues.set(MANUAL_OVERLAY_SETTINGS_KEY, { hideWinRates: false })
+    expect(new ManualOverlayService(deps).getSettings().hideWinRates).toBe(false)
   })
 
   it('parses live client data', async () => {

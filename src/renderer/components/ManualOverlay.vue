@@ -202,11 +202,8 @@
                   </div>
                   <div class="mo-card-stats">
                     <template v-if="entry.method === 'shrunk'">
-                      <template v-if="!settings.hideWinRates">
-                        <span class="mo-wr">{{ formatPercent(entry.shrunkWinRate) }}</span>
-                        <span class="mo-delta" :class="deltaClass(entry.delta)">{{ formatDelta(entry.delta) }}</span>
-                      </template>
-                      <span class="mo-card-n" :title="cardSourceTitle(entry)">{{ cardSampleText(entry) }}</span>
+                      <span class="mo-score" :class="pointsClass(cardPoints(entry))" :title="SCORE_TITLE">{{ formatPoints(cardPoints(entry)) }}<small class="mo-score-unit">分</small></span>
+                      <span v-if="!settings.hideWinRates" class="mo-wr-small">胜率 {{ formatPercent(entry.shrunkWinRate) }}</span>
                       <span
                         v-if="synergyText(entry)"
                         class="mo-synergy"
@@ -214,6 +211,10 @@
                       >{{ synergyText(entry) }}</span>
                     </template>
                     <span v-else class="mo-muted">{{ entry.note }}</span>
+                  </div>
+                  <div v-if="entry.method === 'shrunk'" class="mo-card-sub" :title="cardSourceTitle(entry)">
+                    <span v-if="cardRarityText(entry)">{{ cardRarityText(entry) }}</span>
+                    <span class="mo-card-n">n={{ cardSampleText(entry) }}</span>
                   </div>
                   <div v-if="cardDetails" class="mo-card-detail">
                     <div v-if="entry.method === 'shrunk'">{{ cardDetailText(entry) }}</div>
@@ -269,10 +270,10 @@
             <div v-if="cardDetails" class="mo-footnote">
               <div v-if="ranking.method === 'rank-fallback'">无胜率数据：按热度排序，仅供参考</div>
               <div v-else-if="cardRankingSource !== 'dtodo'">
-                arammeta 方法：胜率向英雄基线 {{ settings.hideWinRates ? '' : formatPercent(ranking.baselineWinRate) }} 收缩（先验 {{ ranking.alpha }} 场），按 10% 保守下界 − 基线排序、同稀有度内比较；arammeta 没有的卡用 dtodo 胜率（同样收缩）；契合度（规则）最多调整 ±2 个百分点
+                大数字 = 排序分（相对英雄基线的百分点：arammeta 保守提升 + 契合度调整），数字大的永远排前面。arammeta 方法：胜率向英雄基线 {{ settings.hideWinRates ? '' : formatPercent(ranking.baselineWinRate) }} 收缩（先验 {{ ranking.alpha }} 场），按 10% 保守下界 − 基线排序、同稀有度内比较；arammeta 没有的卡用 dtodo 胜率（同样收缩）；契合度（规则）最多调整 ±2 个百分点
               </div>
               <div v-else-if="ranking.baselineWinRate != null">
-                收缩胜率 = (胜场 + α×{{ ranking.baselineSource === 'cards' ? '三卡平均' : '英雄平均' }}) / (场次 + α)，α={{ ranking.alpha }}，基准 {{ formatPercent(ranking.baselineWinRate) }}；契合度最多调整 ±2 个百分点
+                大数字 = 排序分（收缩胜率 + 契合度调整 − 基准，百分点）。收缩胜率 = (胜场 + α×{{ ranking.baselineSource === 'cards' ? '三卡平均' : '英雄平均' }}) / (场次 + α)，α={{ ranking.alpha }}{{ settings.hideWinRates ? '' : `，基准 ${formatPercent(ranking.baselineWinRate)}` }}；契合度最多调整 ±2 个百分点
               </div>
               <div>{{ ranking.summary }}</div>
               <div v-if="arammetaLine" class="mo-attribution">{{ arammetaLine }}</div>
@@ -375,7 +376,7 @@
                   class="mo-plan-tab"
                   :class="{ 'mo-plan-tab-active': activePlan?.key === plan.key }"
                   role="tab"
-                  :title="`${planTabLabel(plan)}\n${plan.description}\n路线：${plan.routeLabel} · ${plan.routeGames} 场 · 胜率 ${formatPercent(plan.routeWinRate)}`"
+                  :title="`${planTabLabel(plan)}\n${plan.description}\n路线：${plan.routeLabel} · ${plan.routeGames} 场${settings.hideWinRates ? '' : ` · 胜率 ${formatPercent(plan.routeWinRate)}`}`"
                   @click="selectPlan(plan.key)"
                 >{{ plan.label }}<span v-if="plan.aliases.length" class="mo-plan-alias">+{{ plan.aliases.length }}</span></button>
               </div>
@@ -497,7 +498,7 @@
                 <div class="mo-detail-plans">
                   <div v-for="plan in plans" :key="`plan-detail-${plan.key}`" class="mo-detail-plan" :class="{ 'mo-detail-plan-active': activePlan?.key === plan.key }">
                     <b>{{ planTabLabel(plan) }}</b>
-                    <span>{{ plan.routeLabel }} · {{ plan.routeGames }} 场 · 胜率 {{ formatPercent(plan.routeWinRate) }}{{ plan.usesAugments || plan.usesTeam ? ` · 含${[plan.usesAugments ? '海克斯' : '', plan.usesTeam ? '阵容' : ''].filter(Boolean).join('+')}模型` : ' · 纯数据' }}</span>
+                    <span>{{ plan.routeLabel }} · {{ plan.routeGames }} 场{{ settings.hideWinRates ? '' : ` · 胜率 ${formatPercent(plan.routeWinRate)}` }}{{ plan.usesAugments || plan.usesTeam ? ` · 含${[plan.usesAugments ? '海克斯' : '', plan.usesTeam ? '阵容' : ''].filter(Boolean).join('+')}模型` : ' · 纯数据' }}</span>
                     <span class="mo-detail-plan-desc">{{ plan.description }}</span>
                   </div>
                 </div>
@@ -536,6 +537,7 @@ import { electronAPI, hasElectronAPI } from '../native/electron-api.ts'
 import { getAugmentIconUrl, getChampionSquareIconUrl, getItemIconUrl } from '../service/cdn.js'
 import {
   rankAugmentChoices,
+  rankingPoints,
   type AugmentChoiceInput,
 } from '../../shared/augment-choice-ranking.ts'
 import { ARAMMETA_ATTRIBUTION } from '../../shared/arammeta/normalize.ts'
@@ -639,7 +641,7 @@ const settings = reactive<ManualOverlaySettings>({
   opacity: 0.92,
   scale: 1,
   collapsedSections: [],
-  hideWinRates: false,
+  hideWinRates: true,
 })
 const showSettings = ref(false)
 const championId = ref<number | null>(null)
@@ -960,7 +962,23 @@ const cardRankingSource = computed(() => (ranking.value as { source?: string }).
 const RARITY_SHORT: Record<string, string> = { kPrismatic: '棱彩', kGold: '金', kSilver: '银' }
 type CardEntry = SynergyRankedChoice<CardInput> & Partial<ArammetaRankedChoice<CardInput>>
 
-/** 默认视图只放样本量（紧凑）；同稀有度名次在悬停提示与详情里 */
+const SCORE_TITLE = '排序分：相对本英雄基线的百分点（arammeta 用保守下界，含契合度调整），数字大的排前面'
+function cardPoints(entry: CardEntry) {
+  return rankingPoints(entry, ranking.value.baselineWinRate)
+}
+function formatPoints(points: number | null) {
+  if (points == null) return '—'
+  return `${points > 0 ? '+' : points < 0 ? '−' : '±'}${Math.abs(points).toFixed(1)}`
+}
+function pointsClass(points: number | null) {
+  if (points == null || Math.abs(points) < 0.3) return 'mo-muted'
+  return points > 0 ? 'mo-up' : 'mo-down'
+}
+function cardRarityText(entry: CardEntry) {
+  return entry.rarityRank ? `同品质第 ${entry.rarityRank.rank}/${entry.rarityRank.total}` : ''
+}
+
+/** 样本量（紧凑） */
 function cardSampleText(entry: CardEntry) {
   return `${compactGames(entry.games)}${entry.source === 'dtodo' ? '·dtodo' : ''}`
 }
@@ -1113,6 +1131,7 @@ function itemTooltip(item: EngineItem) {
 function cardTooltip(entry: SynergyRankedChoice<CardInput>) {
   const lines = [`${entry.card.name}（点击记录为已选）`]
   if (entry.method === 'shrunk') {
+    lines.push(`排序分 ${formatPoints(cardPoints(entry as CardEntry))}（相对本英雄基线，百分点）`)
     if (!settings.hideWinRates) lines.push(`收缩胜率 ${formatPercent(entry.shrunkWinRate)}（相对基准 ${formatDelta(entry.delta)}）`)
     lines.push(cardDetailText(entry as CardEntry))
   }
@@ -1361,11 +1380,6 @@ function formatDelta(value: number | null | undefined) {
   if (!Number.isFinite(number)) return ''
   const points = number * 100
   return `${points > 0 ? '+' : points < 0 ? '−' : '±'}${Math.abs(points).toFixed(1)}`
-}
-
-function deltaClass(value: number | null | undefined) {
-  const number = Number(value)
-  return number > 0.0005 ? 'mo-up' : number < -0.0005 ? 'mo-down' : 'mo-muted'
 }
 
 function cardClass(entry: SynergyRankedChoice<CardInput>) {
@@ -1803,7 +1817,11 @@ onBeforeUnmount(() => {
 }
 .mo-card-stats { display: flex; align-items: baseline; gap: 6px; margin-top: 1px; white-space: nowrap; overflow: hidden; }
 .mo-plan-alias { margin-left: 3px; font-size: 9px; opacity: 0.65; }
-.mo-wr { color: var(--mo-ivory); font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mo-score { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; }
+.mo-score.mo-muted { color: var(--mo-ivory); opacity: 0.8; }
+.mo-score-unit { margin-left: 2px; font-size: 9px; font-weight: 500; opacity: 0.7; }
+.mo-wr-small { font-size: 10px; color: rgba(200, 210, 225, 0.62); font-variant-numeric: tabular-nums; }
+.mo-card-sub { display: flex; gap: 6px; margin-top: 1px; font-size: 10px; line-height: 1.3; color: rgba(200, 210, 225, 0.55); white-space: nowrap; overflow: hidden; }
 .mo-delta { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .mo-up { color: var(--mo-up); }
 .mo-down { color: var(--mo-down); }
