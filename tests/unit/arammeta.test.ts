@@ -67,8 +67,8 @@ describe('arammeta 三选一排序', () => {
     expect(shrinkToBaseline(0.6, 50, 0.5)).toBeCloseTo(0.5125, 4)
   })
 
-  it('按 arammeta score 排序并给出同稀有度名次与样本量', () => {
-    const list = top('kPrismatic')
+  it('按收缩胜率（只扣 0.5σ）排序并给出同稀有度名次与样本量', () => {
+    const list = [...top('kPrismatic')].sort((a, b) => (b.wr - 0.5 * Math.sqrt(b.wr * (1 - b.wr) / (b.g + 351))) - (a.wr - 0.5 * Math.sqrt(a.wr * (1 - a.wr) / (a.g + 351))))
     const cards = [list[5], list[0], list[2]].map((stat, slot) => ({ id: stat.id, name: `A${stat.id}`, detectedSlot: slot }))
     const ranking = rankAugmentChoicesArammeta(cards, malphite, { rarityOf })
     expect(ranking.source).toBe('arammeta')

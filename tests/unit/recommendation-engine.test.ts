@@ -122,7 +122,7 @@ describe('recommendBuild', () => {
 })
 
 describe('card synergy', () => {
-  it('only nudges the win-rate ranking (capped) and flags reorders', () => {
+  it('adjusts the win-rate ranking within the ±5pp cap and explains it', () => {
     const engine = build(54, [1013])
     const cards = [
       { id: 1152, name: '钢化你心', slot: 0, detectedSlot: 0, winRate: 0.5, games: 2000, wins: 1000 },
@@ -134,7 +134,11 @@ describe('card synergy', () => {
     const strength = ranked.choices.find((choice) => choice.card.id === 1007)!
     expect(heart.synergy!.score).toBeGreaterThan(strength.synergy!.score)
     for (const choice of ranked.choices) {
-      expect(Math.abs((choice.combinedWinRate ?? 0) - (choice.shrunkWinRate ?? 0))).toBeLessThanOrEqual(0.02 + 1e-9)
+      expect(Math.abs((choice.combinedWinRate ?? 0) - (choice.shrunkWinRate ?? 0))).toBeLessThanOrEqual(0.05 + 1e-9)
+      expect(choice.plainReason.length).toBeGreaterThan(0)
+      expect(['S', 'A', 'B', 'C']).toContain(choice.tier)
     }
+    // 胜率几乎一样时，契合更高的卡排第一
+    expect(ranked.choices[0].card.id).toBe(1152)
   })
 })

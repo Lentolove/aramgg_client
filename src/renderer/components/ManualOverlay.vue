@@ -202,13 +202,9 @@
                   </div>
                   <div class="mo-card-stats">
                     <template v-if="entry.method === 'shrunk'">
-                      <span class="mo-score" :class="pointsClass(cardPoints(entry))" :title="SCORE_TITLE">{{ formatPoints(cardPoints(entry)) }}<small class="mo-score-unit">分</small></span>
+                      <span v-if="entry.tier" class="mo-tier" :class="`mo-tier-${entry.tier}`" :title="TIER_TITLE">{{ entry.tier }}<small>{{ entry.tierLabel }}</small></span>
+                      <span class="mo-card-reason" :title="entry.plainReason">{{ entry.plainReason }}</span>
                       <span v-if="!settings.hideWinRates" class="mo-wr-small">胜率 {{ formatPercent(entry.shrunkWinRate) }}</span>
-                      <span
-                        v-if="synergyText(entry)"
-                        class="mo-synergy"
-                        :class="(entry.synergy?.score ?? 0) > 0 ? 'mo-synergy-up' : 'mo-synergy-down'"
-                      >{{ synergyText(entry) }}</span>
                     </template>
                     <span v-else class="mo-muted">{{ entry.note }}</span>
                   </div>
@@ -467,7 +463,7 @@
                       </span>
                       <span class="mo-slot-alt-reason">{{ alt.reason }}</span>
                     </span>
-                    <span class="mo-slot-alt-delta" :class="alt.delta >= 0 ? 'mo-up' : 'mo-muted'">{{ formatSigned(alt.delta) }}</span>
+                    <span class="mo-slot-alt-delta" :class="alt.delta >= 0 ? 'mo-up' : 'mo-muted'">{{ altVerdict(alt.delta) }}</span>
                   </button>
                   <div v-if="!slotMenuItem.alternatives.length" class="mo-empty">没有合规的备选</div>
                 </template>
@@ -480,11 +476,11 @@
                     v-if="Math.abs(focusItem.score.synergy) >= 0.3"
                     class="mo-synergy"
                     :class="focusItem.score.synergy > 0 ? 'mo-synergy-up' : 'mo-synergy-down'"
-                  >海克斯 {{ focusItem.score.synergy > 0 ? '+' : '' }}{{ focusItem.score.synergy.toFixed(1) }}</span>
+                  >{{ focusItem.score.synergy > 0 ? '海克斯加成' : '海克斯不搭' }}</span>
                   <span
                     v-if="Math.abs(focusItem.score.comp) >= 0.3"
                     class="mo-synergy mo-synergy-comp"
-                  >阵容 {{ focusItem.score.comp > 0 ? '+' : '' }}{{ focusItem.score.comp.toFixed(1) }}</span>
+                  >{{ focusItem.score.comp > 0 ? '阵容需要' : '阵容不需要' }}</span>
                 </div>
                 <div
                   v-for="(reason, index) in focusReasons"
@@ -537,7 +533,6 @@ import { electronAPI, hasElectronAPI } from '../native/electron-api.ts'
 import { getAugmentIconUrl, getChampionSquareIconUrl, getItemIconUrl } from '../service/cdn.js'
 import {
   rankAugmentChoices,
-  rankingPoints,
   type AugmentChoiceInput,
 } from '../../shared/augment-choice-ranking.ts'
 import { ARAMMETA_ATTRIBUTION } from '../../shared/arammeta/normalize.ts'
@@ -936,6 +931,14 @@ function swapSlot(item: EngineItem, alternative: ItemAlternative | { itemId: num
   slotMenuItemId.value = alternative.itemId
 }
 
+/** 备选与当前推荐比：用文字，不给裸分差 */
+function altVerdict(delta: number) {
+  if (delta >= 0.3) return '更合适'
+  if (delta >= -0.8) return '差不多'
+  if (delta >= -2.5) return '稍弱'
+  return '较弱'
+}
+
 function formatSigned(value: number) {
   return `${value > 0 ? '+' : value < 0 ? '−' : '±'}${Math.abs(value).toFixed(1)}`
 }
@@ -962,18 +965,7 @@ const cardRankingSource = computed(() => (ranking.value as { source?: string }).
 const RARITY_SHORT: Record<string, string> = { kPrismatic: '棱彩', kGold: '金', kSilver: '银' }
 type CardEntry = SynergyRankedChoice<CardInput> & Partial<ArammetaRankedChoice<CardInput>>
 
-const SCORE_TITLE = '排序分：相对本英雄基线的百分点（arammeta 用保守下界，含契合度调整），数字大的排前面'
-function cardPoints(entry: CardEntry) {
-  return rankingPoints(entry, ranking.value.baselineWinRate)
-}
-function formatPoints(points: number | null) {
-  if (points == null) return '—'
-  return `${points > 0 ? '+' : points < 0 ? '−' : '±'}${Math.abs(points).toFixed(1)}`
-}
-function pointsClass(points: number | null) {
-  if (points == null || Math.abs(points) < 0.3) return 'mo-muted'
-  return points > 0 ? 'mo-up' : 'mo-down'
-}
+const TIER_TITLE = '档位 = 该英雄拿这张卡的实测表现 + 与当前阵容/已选海克斯/出装的契合。S 强烈推荐 · A 推荐 · B 一般 · C 不推荐'
 function cardRarityText(entry: CardEntry) {
   return entry.rarityRank ? `同品质第 ${entry.rarityRank.rank}/${entry.rarityRank.total}` : ''
 }
@@ -1115,7 +1107,13 @@ const focusIndex = computed(() => engine.value.items.findIndex((item) => item.it
 /** 焦点装备：最关键的海克斯原因在前，数据先验在后 */
 const focusReasons = computed(() => {
   const item = focusItem.value
-  const reasons = item?.reasons || []
+  const all = item?.reasons || []
+  if (item?.plainReason) {
+    // 大白话理由在前；第二行只在显示胜率时给数据出处（含胜率），否则给一条不带数字的补充
+    const extra = all.filter((reason) => !reason.endsWith(item.plainReason!) && (!settings.hideWinRates || !/胜率|n=|[+−-]\d/.test(reason)))
+    return [item.plainReason, ...extra].slice(0, 2)
+  }
+  const reasons = all
   // 阵容影响比海克斯大时，先说阵容
   const compReason = reasons.find((reason) => reason.startsWith(COMP_REASON_PREFIX))
   if (item && compReason && Math.abs(item.score.comp) > Math.abs(item.score.synergy)) {
@@ -1131,7 +1129,8 @@ function itemTooltip(item: EngineItem) {
 function cardTooltip(entry: SynergyRankedChoice<CardInput>) {
   const lines = [`${entry.card.name}（点击记录为已选）`]
   if (entry.method === 'shrunk') {
-    lines.push(`排序分 ${formatPoints(cardPoints(entry as CardEntry))}（相对本英雄基线，百分点）`)
+    const e = entry as CardEntry
+    if (e.tier) lines.push(`${e.tier} · ${e.tierLabel}：${e.plainReason}`)
     if (!settings.hideWinRates) lines.push(`收缩胜率 ${formatPercent(entry.shrunkWinRate)}（相对基准 ${formatDelta(entry.delta)}）`)
     lines.push(cardDetailText(entry as CardEntry))
   }
@@ -1186,11 +1185,6 @@ function scoreTitle(item: EngineItem) {
   return `先验(实测) ${s.prior.toFixed(1)} · 海克斯(规则) ${s.synergy >= 0 ? '+' : ''}${s.synergy.toFixed(1)} · 进度 ${s.progress.toFixed(1)}${enemy}${comp}${pair} = ${s.total.toFixed(1)}`
 }
 
-function synergyText(entry: SynergyRankedChoice<CardInput>) {
-  const score = entry.synergy?.score ?? 0
-  if (Math.abs(score) < 0.5) return ''
-  return `契合 ${score > 0 ? '+' : '−'}${Math.abs(score).toFixed(1)}`
-}
 
 // ------------------------------------------------------------- 自动记录选择
 const autoPickedRounds = new Set<number>()
@@ -1815,8 +1809,15 @@ onBeforeUnmount(() => {
   width: 14px; height: 14px; flex: none; border-radius: 50%; background: #c98a2e; color: #10141c;
   font-size: 10px; font-weight: 700; line-height: 14px; text-align: center;
 }
-.mo-card-stats { display: flex; align-items: baseline; gap: 6px; margin-top: 1px; white-space: nowrap; overflow: hidden; }
+.mo-card-stats { display: flex; align-items: center; gap: 6px; margin-top: 1px; white-space: nowrap; overflow: hidden; }
 .mo-plan-alias { margin-left: 3px; font-size: 9px; opacity: 0.65; }
+.mo-tier { display: inline-flex; align-items: baseline; gap: 3px; padding: 0 6px; border-radius: 4px; font-size: 14px; font-weight: 800; line-height: 18px; flex: none; }
+.mo-tier small { font-size: 10px; font-weight: 600; }
+.mo-tier-S { color: #1a1205; background: linear-gradient(135deg, #f7d774, #e0a63a); }
+.mo-tier-A { color: #06231a; background: #5fd3a5; }
+.mo-tier-B { color: #dfe6f0; background: rgba(140, 155, 175, 0.35); }
+.mo-tier-C { color: #ffd9d9; background: rgba(200, 80, 80, 0.45); }
+.mo-card-reason { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: rgba(230, 236, 245, 0.85); }
 .mo-score { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; }
 .mo-score.mo-muted { color: var(--mo-ivory); opacity: 0.8; }
 .mo-score-unit { margin-left: 2px; font-size: 9px; font-weight: 500; opacity: 0.7; }

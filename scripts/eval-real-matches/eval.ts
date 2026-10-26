@@ -249,7 +249,8 @@ export function evaluatePlayer(inputs: EvalInputs, game: any, participant: any):
       key: plan.key, label: plan.label, route: plan.routeLabel,
       items: ids.map((id: number) => ({ id, name: iname(id) })),
       // 混搭：法强装与物理装各 ≥2 件（一件跨类装，例如攻击特效英雄的纳什，不算）
-      overlap, mixed: Math.min(freshAp, freshAd) >= 2 || ownedConflict, illegal, bootsIssue,
+      // 数据里本身就是混伤路线（例如 16.21 沃利贝尔「混伤攻击特效」）时，物法混出是该路线的真实出法，不算混搭
+      overlap, mixed: (Math.min(freshAp, freshAd) >= 2 && !/混伤/.test(plan.routeLabel ?? '')) || ownedConflict, illegal, bootsIssue,
       mr: profiles.some((p: any) => resist(p, 'MR')), armor: profiles.some((p: any) => resist(p, 'ARMOR')),
       popularBootsTop,
     }

@@ -7,7 +7,8 @@
  *        + augmentTrios 命中（真实统计：该英雄这三个海克斯组合的胜率，样本少，收缩）
  *        + 阵容（模型：缺前排时坦度卡、对面法伤高时魔抗卡、对面回复多时重伤卡…，有上限）
  *
- * 最终排序 = 收缩胜率（真实统计）+ λ × 契合（模型），λ 很小：契合只在胜率接近时改变排序。
+ * 最终排序 = 本英雄这张卡的实测提升（收缩，只扣 0.5σ 做保险）+ λ × 契合（模型，±5 个百分点封顶）。
+ * 契合足够大时会改变排序：例如对面 5 法师时魔抗/坦度卡、已选同机制海克斯的卡。
  */
 
 import { NO_DATA_LABEL, type AugmentChoiceInput, type AugmentChoiceRanking, type ChoiceRelativeLabel, type RankedAugmentChoice } from '../augment-choice-ranking.ts'
@@ -29,14 +30,14 @@ export interface CardSynergy {
 
 export const SYNERGY_PARAMS = {
   /** 每 1 分契合 ≈ 多少胜率（0.004 = 0.4 个百分点） */
-  lambda: 0.004,
-  maxAdjust: 0.02,
+  lambda: 0.009,
+  maxAdjust: 0.05,
   trioAlpha: 100,
   trioWeight: 0.25,
-  heldMechanicWeight: 0.5,
+  heldMechanicWeight: 1.2,
   archetypeWeight: 2,
-  teamWeight: 1.5,
-  teamCap: 1.5,
+  teamWeight: 2.5,
+  teamCap: 3,
 } as const
 
 const round1 = (value: number) => Math.round(value * 10) / 10
@@ -149,7 +150,51 @@ export function scoreCardSynergy(
   }
 }
 
+export type CardTier = 'S' | 'A' | 'B' | 'C'
+export const TIER_LABELS: Record<CardTier, string> = { S: '强烈推荐', A: '推荐', B: '一般', C: '不推荐' }
+
+/** 总分（百分点）→ 档位；同时保证三选一的第一名至少是 B（否则三张都差时没有可选项的提示） */
+export function tierOf(points: number | null): CardTier | null {
+  if (points == null) return null
+  if (points >= 5) return 'S'
+  if (points >= 2) return 'A'
+  if (points >= -1.2) return 'B'
+  return 'C'
+}
+
+/** 模型理由 → 玩家一眼能懂的短句 */
+export function plainSynergyReason(reason: string): string {
+  let m: RegExpExecArray | null
+  if ((m = /^当前路线.*出装 \d+% 是(.+)$/.exec(reason))) return `适合你这套${m[1]}出装`
+  if ((m = /^契合(已有|计划)「(.+?)」/.exec(reason))) return `和${m[1] === '已有' ? '你已有' : '要出'}的「${m[2]}」搭配`
+  if ((m = /^不搭(已有|计划)「(.+?)」/.exec(reason))) return `和${m[1] === '已有' ? '你已有' : '要出'}的「${m[2]}」不搭`
+  if ((m = /^与已选「(.+?)」同为(.+)$/.exec(reason))) return `与你已有的「${m[1]}」搭配（都是${m[2]}）`
+  return reason.replace(/^阵容：/, '').replace(/卡加分$/, '卡更有用')
+}
+
+/** 一句话理由：契合（阵容/已选海克斯/装备）明显时说契合，否则说本英雄的实测表现 */
+export function cardPlainReason(dataPoints: number | null, adjustPoints: number, synergy: CardSynergy | null, games: number): string {
+  const contextReason = synergy?.reasons.find((reason) => !reason.startsWith('组合数据')) ?? synergy?.reasons[0]
+  const plainContext = contextReason == null ? undefined : plainSynergyReason(contextReason)
+  if (plainContext && Math.abs(adjustPoints) >= 1 && (dataPoints == null || Math.abs(adjustPoints) >= Math.abs(dataPoints) * 0.6)) return plainContext
+  if (dataPoints == null) return plainContext ?? '暂无该英雄的数据'
+  const small = games < 300 ? '（样本少）' : ''
+  if (dataPoints >= 1.5) return `该英雄拿这张胜率偏高${small}`
+  if (dataPoints <= -1.5) return `该英雄拿这张胜率偏低${small}`
+  if (plainContext && Math.abs(adjustPoints) >= 0.5) return plainContext
+  return `该英雄拿这张表现一般${small}`
+}
+
 export interface SynergyRankedChoice<T extends AugmentChoiceInput> extends RankedAugmentChoice<T> {
+  /** 实测部分（百分点） */
+  dataPoints: number | null
+  /** 契合调整（百分点） */
+  adjustPoints: number
+  /** 总分（百分点）= 实测 + 契合 */
+  points: number | null
+  tier: CardTier | null
+  tierLabel: string | null
+  plainReason: string
   synergy: CardSynergy | null
   /** 胜率 + λ×契合 */
   combinedWinRate: number | null
@@ -169,7 +214,16 @@ export function applyCardSynergy<T extends AugmentChoiceInput>(
       : 0
     const sortBase = choice.sortWinRate ?? choice.shrunkWinRate
     const combinedWinRate = sortBase != null ? sortBase + adjust : null
-    return { ...choice, synergy, combinedWinRate, reordered: false }
+    const baseline = ranking.baselineWinRate
+    const dataPoints = sortBase != null && baseline != null ? Math.round((sortBase - baseline) * 1000) / 10 : null
+    const adjustPoints = Math.round(adjust * 1000) / 10
+    const points = dataPoints != null ? Math.round((dataPoints + adjustPoints) * 10) / 10 : null
+    const tier = tierOf(points)
+    return {
+      ...choice, synergy, combinedWinRate, reordered: false, dataPoints, adjustPoints, points, tier,
+      tierLabel: tier ? TIER_LABELS[tier] : null,
+      plainReason: cardPlainReason(dataPoints, adjustPoints, synergy, choice.games),
+    }
   })
   if (ranking.method !== 'shrunk') {
     return { ...ranking, choices: enriched }

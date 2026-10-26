@@ -115,6 +115,8 @@ export interface EngineItem {
   name: string
   score: ScoreBreakdown
   reasons: string[]
+  /** 一句大白话理由（卡片上直接展示） */
+  plainReason?: string
   owned: boolean
   isNext: boolean
   boots: boolean
@@ -239,7 +241,7 @@ export const ENGINE_PARAMS = {
   /** 每格展示的备选数量 */
   alternativesPerSlot: 3,
   /** 阵容：抗性需求 × 装备抗性占比 */
-  compResistWeight: 3,
+  compResistWeight: 4.5,
   compAntiHealWeight: 2.2,
   compAntiShieldWeight: 1.8,
   compPenetrationWeight: 3,
@@ -249,6 +251,8 @@ export const ENGINE_PARAMS = {
   compDamageWeight: 1.2,
   /** 单件装备阵容项上下限 */
   compCap: 3.5,
+  /** 需求 ≥ 此值且 6 件里没有对应克制装时，强制替换一格 */
+  compGuaranteeNeed: 0.5,
   compFloor: -2,
   /** 同一需求每多一件满足：抗性/穿透 ×0.7，补前排/补输出 ×0.85（一件就够的需求只给第一件） */
   compResistDecay: 0.7,
@@ -591,7 +595,7 @@ function compPartsFor(
     if (Math.abs(value) >= 0.05) parts.push({ need, value, reason })
   }
   // 脆皮拿抗性的收益低一些（但仍然有用）
-  const resistScale = ctx.chosenTank >= 0.3 ? 1 : 0.7
+  const resistScale = ctx.chosenTank >= 0.3 ? 1 : 0.85
   if (needs.mr > 0 && (s.MR ?? 0) > 0) push('mr', needs.mr * (s.MR ?? 0) * ENGINE_PARAMS.compResistWeight * resistScale, `对面法伤 ${pct(enemy.ap)} → 魔抗`)
   if (needs.armor > 0 && (s.ARMOR ?? 0) > 0) push('armor', needs.armor * (s.ARMOR ?? 0) * ENGINE_PARAMS.compResistWeight * resistScale, `对面物伤 ${pct(enemy.ad)} → 护甲`)
   if (needs.antiHeal > 0 && item.tags.includes('anti-heal')) {
@@ -769,6 +773,20 @@ export function summarizeEnemyItems(enemyItemIds: Array<number | string>, itemIn
     else if (adItems / total >= 0.65) dominant = 'AD'
   }
   return { apItems, adItems, healItems, dominant }
+}
+
+/** 一句话理由：阵容 > 海克斯 > 实测热度 */
+function plainItemReason(candidate: Candidate): string {
+  const comp = [...candidate.compParts].sort((a, b) => b.value - a.value)[0]
+  const synergy = [...candidate.synergyReasons].sort((a, b) => b.value - a.value)[0]
+  if (comp && comp.value >= 0.8 && (!synergy || comp.value >= synergy.value)) return comp.reason.replace(' → ', '，优先')
+  if (synergy && synergy.value >= 1) return `配合已选「${synergy.augment}」`
+  if (candidate.progressNames.length) return `已有组件 ${candidate.progressNames.join('、')}`
+  const prior = candidate.prior
+  if (prior && prior.coreIndex != null) return '本英雄这套流派的核心装'
+  if (prior && prior.share >= 0.15) return `本英雄这条路线 ${Math.round(prior.share * 100)}% 的人出`
+  if (prior && prior.delta >= 0.02) return '本英雄出这件胜率偏高'
+  return prior ? '本英雄常规出装' : '模型补位（统计里少见）'
 }
 
 interface Candidate {
@@ -1165,6 +1183,43 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
     accept(next)
   }
 
+  // 4b) 阵容保底：对面明显偏法系/物理/回复时，6 件里至少一件对应克制装（替换分最低的非核心格），理由用大白话
+  const guaranteeReasons = new Map<number, string>()
+  if (team) {
+    const apN = team.enemy.apChampions
+    const adN = team.enemy.adChampions
+    const rules: Array<{ need: keyof TeamNeeds; ok: (item: ItemProfile) => boolean; text: string }> = [
+      { need: 'mr', ok: (item) => !item.boots && (item.shares.MR ?? 0) >= 0.12, text: apN >= 3 ? `敌方 ${apN} 个法师，优先魔抗` : `对面法伤占 ${Math.round(team.enemy.ap * 100)}%，补一件魔抗` },
+      { need: 'armor', ok: (item) => !item.boots && (item.shares.ARMOR ?? 0) >= 0.12, text: adN >= 3 ? `敌方 ${adN} 个物理输出，优先护甲` : `对面物伤占 ${Math.round(team.enemy.ad * 100)}%，补一件护甲` },
+      { need: 'antiHeal', ok: (item) => item.tags.includes('anti-heal'), text: `敌方 ${team.enemy.healers || '多'} 个回复英雄，带重伤` },
+    ]
+    for (const rule of rules) {
+      if ((team.needs[rule.need] ?? 0) < ENGINE_PARAMS.compGuaranteeNeed) continue
+      if (chosenIds.some((id) => rule.ok(candidates.get(id)!.item))) continue
+      const removable = chosenIds
+        .filter((id) => !ownedSet.has(id) && !itemIndex.get(id)?.boots && !guaranteeReasons.has(id) && (candidates.get(id)!.prior?.coreIndex ?? 9) >= 2
+          // 海克斯点名/强协同的装备不动（例如「升级：无尽之刃」的无尽）
+          && !candidates.get(id)!.perAugment.some((entry) => entry.value >= 1.5))
+        .sort((a, b) => effectiveTotal(candidates.get(a)!) - effectiveTotal(candidates.get(b)!))
+      const out = removable[0]
+      if (out == null) continue
+      const passives = new Set<string>()
+      for (const id of chosenIds) if (id !== out) candidates.get(id)!.item.uniquePassives.forEach((name) => passives.add(name))
+      const pick = [...candidates.values()]
+        .filter((candidate) => !chosenIds.includes(candidate.item.id) && rule.ok(candidate.item)
+          && !candidate.item.uniquePassives.some((name) => passives.has(name))
+          && !(routeDamage && itemDamageClass(candidate.item) && itemDamageClass(candidate.item) !== routeDamage))
+        .sort((a, b) => effectiveTotal(b) - effectiveTotal(a))[0]
+      if (!pick) continue
+      chosenIds.splice(chosenIds.indexOf(out), 1, pick.item.id)
+      pick.effective = effectiveTotal(pick)
+      pick.compEffective = effectiveComp(pick)
+      guaranteeReasons.set(pick.item.id, rule.text)
+      usedPassives.clear()
+      for (const id of chosenIds) candidates.get(id)!.item.uniquePassives.forEach((name) => usedPassives.add(name))
+    }
+  }
+
   // 5) 购买顺序：已有在前；其余按「分数 + 核心位置」排，鞋子放在数据里的典型位置
   const orderKey = (id: number) => {
     const candidate = candidates.get(id)!
@@ -1255,6 +1310,8 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
   const items: EngineItem[] = order.map((id, index) => {
     const candidate = candidates.get(id)!
     const reasons = [candidate.priorReason]
+    const plainReason = guaranteeReasons.get(id) ?? plainItemReason(candidate)
+    if (guaranteeReasons.has(id)) reasons.unshift(`阵容：${guaranteeReasons.get(id)}`)
     const originalId = swappedFrom.get(id)
     if (originalId != null) reasons.unshift(`你手动换上（原推荐：${itemIndex.get(originalId)?.name ?? originalId}）`)
     const sortedSynergy = [...candidate.synergyReasons].sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
@@ -1287,6 +1344,7 @@ function runOnce(input: EngineInput, augments: AugmentProfile[], itemIndex: Map<
         total: round1(candidate.effective ?? candidate.total),
       },
       reasons,
+      plainReason,
       owned: ownedSet.has(id),
       isNext: false,
       boots: candidate.item.boots,

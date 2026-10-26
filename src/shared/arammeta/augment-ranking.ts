@@ -52,8 +52,12 @@ export function shrinkToBaseline(rawWinRate: number, games: number, baseline: nu
   return (rawWinRate * games + baseline * prior) / (games + prior)
 }
 
+/** 排序用的置信折扣：只扣 0.5σ（样本量只做保险，不再主导排序；原来用 10% 下界 ≈ 1.28σ，场次多的卡几乎永远第一） */
+export const ARAMMETA_RANK_Z = 0.5
+
 function statScore(stat: ArammetaAugmentStat, baseline: number): number {
-  return stat.score ?? stat.lcb ?? lcbLiftOf(stat.wr, stat.g, baseline)
+  // stat.wr 已向英雄基线收缩（arammeta 后验平均）
+  return stat.wr - ARAMMETA_RANK_Z * posteriorSd(stat.wr, stat.g) - baseline
 }
 
 /** 本英雄同稀有度海克斯的名次表 */
@@ -135,7 +139,7 @@ export function rankAugmentChoicesArammeta<T extends AugmentChoiceInput>(
       const lcbLift = lcbLiftOf(mean, games, base)
       return {
         card, slot, source: 'dtodo' as const, mean, raw, games, sd: posteriorSd(mean, games), base,
-        lcbLift, score: lcbLift, pick: normalizeRate(card.pickRate), rarity: null, rarityRank: null,
+        lcbLift, score: mean - ARAMMETA_RANK_Z * posteriorSd(mean, games) - base, pick: normalizeRate(card.pickRate), rarity: null, rarityRank: null,
       }
     }
     return { card, slot, source: 'none' as const, mean: null, raw: null, games: 0, sd: null, base: null, lcbLift: null, score: null, pick: normalizeRate(card.pickRate), rarity: null, rarityRank: null }
