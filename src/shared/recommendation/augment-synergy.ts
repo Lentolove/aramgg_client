@@ -4,7 +4,7 @@
  *   契合 = 与当前/计划装备的协同（同一套 海克斯×装备 模型）
  *        + 与当前路线属性的契合（当前方案所选路线的出装属性构成；已有装备锁定路线时跟着已有装备走）
  *        + 与已持有海克斯的机制重合
- *        + augmentTrios 命中（真实统计：该英雄这三个海克斯组合的胜率，样本少，收缩）
+ *        + augmentTrios 命中（真实统计，见 augment-trios.ts）：命中且样本够时**替代**上一项的规则估值
  *        + 阵容（模型：缺前排时坦度卡、对面法伤高时魔抗卡、对面回复多时重伤卡…，有上限）
  *
  * 最终排序 = 本英雄这张卡的实测提升（收缩，只扣 0.5σ 做保险）+ λ × 契合（模型，±5 个百分点封顶）。
@@ -15,6 +15,8 @@ import { NO_DATA_LABEL, type AugmentChoiceInput, type AugmentChoiceRanking, type
 import { augmentItemSynergy, type EngineContext } from './build-engine.ts'
 import { MECHANIC_LABELS, STAT_LABELS, type AugmentProfile, type StatKey, type WeightKey } from './profiles.ts'
 import { AUGMENT_TAG_LABELS, augmentTagsOf, type AugmentTag } from './augment-tags.ts'
+import { trioDetail, trioReason, trioSignal, type AugmentTrioLike, type TrioSignal } from './augment-trios.ts'
+
 
 /** 「同路线」判断用的进攻/防守标签（金币、急速这类通用标签不算路线） */
 const ROUTE_TAGS: AugmentTag[] = ['AS', 'CRIT', 'AP', 'AD', 'TANK', 'HEAL', 'SHIELD']
@@ -28,25 +30,20 @@ export function sharedRouteTags(a: AugmentProfile, b: AugmentProfile): AugmentTa
     && !(tag === 'AD' && left.includes('AP') && right.has('AP')))
 }
 
-export interface AugmentTrioLike {
-  augmentIds?: Array<number | string>
-  games?: number
-  wins?: number
-  winRate?: number
-}
-
 export interface CardSynergy {
   score: number
   parts: { items: number; archetype: number; held: number; trio: number; team: number }
   reasons: string[]
+  /** 组合真实数据命中时 */
+  trio?: TrioSignal | null
+  trioReason?: string | null
+  trioDetail?: string | null
 }
 
 export const SYNERGY_PARAMS = {
   /** 每 1 分契合 ≈ 多少胜率（0.004 = 0.4 个百分点） */
   lambda: 0.009,
   maxAdjust: 0.05,
-  trioAlpha: 100,
-  trioWeight: 0.25,
   heldMechanicWeight: 1.2,
   /** 与已选海克斯同路线（标签）每个共同标签的加分，最多算 2 个 */
   heldRouteWeight: 0.7,
@@ -62,7 +59,7 @@ export function scoreCardSynergy(
   card: AugmentProfile,
   held: AugmentProfile[],
   context: EngineContext,
-  options: { trios?: AugmentTrioLike[]; baselineWinRate?: number | null } = {},
+  options: { trios?: AugmentTrioLike[]; baselineWinRate?: number | null; liftOf?: (id: string) => number | null } = {},
 ): CardSynergy {
   const reasons: string[] = []
 
@@ -109,6 +106,7 @@ export function scoreCardSynergy(
 
   // 3) 与已持有海克斯：机制重合 或 同路线标签（取两者较大者，不重复加）
   let heldScore = 0
+  const heldReasons: string[] = []
   for (const other of held) {
     const shared = card.mechanics.filter((mechanic) => other.mechanics.includes(mechanic) && !['gold', 'stacks', 'cc'].includes(mechanic))
     const route = sharedRouteTags(card, other)
@@ -119,28 +117,22 @@ export function scoreCardSynergy(
     const label = mechanicValue >= routeValue
       ? shared.slice(0, 2).map((m) => MECHANIC_LABELS[m]).join('/')
       : route.slice(0, 2).map((tag) => AUGMENT_TAG_LABELS[tag]).join('/')
-    reasons.push(`与已选「${other.name}」同为${label}`)
+    heldReasons.push(`与已选「${other.name}」同为${label}`)
   }
   heldScore = Math.min(SYNERGY_PARAMS.heldCap, heldScore)
 
-  // 4) 三海克斯组合（真实统计）
+  // 4) 三海克斯组合（真实统计）：命中 → 替代第 3 项的规则估值；没命中 → 用规则
   let trio = 0
-  const heldIds = held.map((profile) => String(profile.id))
-  if (heldIds.length && options.trios?.length && options.baselineWinRate != null) {
-    const want = [...heldIds, String(card.id)]
-    for (const record of options.trios) {
-      const augmentIds = (record.augmentIds ?? []).map(String)
-      if (!want.every((id) => augmentIds.includes(id))) continue
-      const games = Number(record.games) || 0
-      const rate = Number(record.winRate)
-      const wins = Number(record.wins) || (Number.isFinite(rate) ? rate * games : 0)
-      if (games <= 0) continue
-      const shrunk = (wins + SYNERGY_PARAMS.trioAlpha * options.baselineWinRate) / (games + SYNERGY_PARAMS.trioAlpha)
-      const value = (shrunk - options.baselineWinRate) * 100 * SYNERGY_PARAMS.trioWeight
-      if (Math.abs(value) > Math.abs(trio)) trio = value
-      reasons.unshift(`组合数据：含此卡的三海克斯组合 ${games} 场，胜率 ${(wins / games * 100).toFixed(1)}%`)
-      break
-    }
+  const signal = trioSignal(card.id, held.map((profile) => profile.id), options.trios, options.baselineWinRate, options.liftOf)
+  let trioText: string | null = null
+  if (signal) {
+    heldScore = 0
+    trio = signal.points / (SYNERGY_PARAMS.lambda * 100)
+    const names = new Map(held.map((profile) => [String(profile.id), profile.name]))
+    trioText = trioReason(signal, (id) => names.get(id) ?? id)
+    reasons.unshift(trioText)
+  } else {
+    reasons.push(...heldReasons)
   }
 
   // 5) 阵容（模型）：用属性标签（见 augment-tags.ts），没有标签时退回权重
@@ -178,6 +170,9 @@ export function scoreCardSynergy(
     score: round1(score),
     parts: { items: round1(items), archetype: round1(archetype), held: round1(heldScore), trio: round1(trio), team: round1(teamScore) },
     reasons: reasons.slice(0, 3),
+    trio: signal,
+    trioReason: trioText,
+    trioDetail: signal ? trioDetail(signal) : null,
   }
 }
 
@@ -256,7 +251,9 @@ export function plainSynergyReason(reason: string): string {
 
 /** 一句话理由：契合（阵容/已选海克斯/装备）明显时说契合，否则说本英雄的实测表现 */
 export function cardPlainReason(dataPoints: number | null, adjustPoints: number, synergy: CardSynergy | null, games: number): string {
-  const contextReason = synergy?.reasons.find((reason) => !reason.startsWith('组合数据')) ?? synergy?.reasons[0]
+  // 组合真实数据命中且有分量时，优先说组合
+  if (synergy?.trio && synergy.trioReason && Math.abs(synergy.trio.points) >= 0.8) return synergy.trioReason
+  const contextReason = synergy?.reasons.find((reason) => reason !== synergy?.trioReason) ?? synergy?.reasons[0]
   const plainContext = contextReason == null ? undefined : plainSynergyReason(contextReason)
   if (plainContext && Math.abs(adjustPoints) >= 1 && (dataPoints == null || Math.abs(adjustPoints) >= Math.abs(dataPoints) * 0.6)) return plainContext
   if (dataPoints == null) return plainContext ?? '暂无该英雄的数据'
@@ -296,8 +293,11 @@ export function applyCardSynergy<T extends AugmentChoiceInput>(
 ): AugmentChoiceRanking<T> & { choices: SynergyRankedChoice<T>[] } {
   const enriched = ranking.choices.map((choice) => {
     const synergy = synergyOf(choice.card)
+    // 规则契合按 λ 换算并封顶 ±maxAdjust；组合真实数据单独计入（自身已封顶 ±3），不被规则部分的封顶吃掉
+    const trioAdjust = synergy?.trio ? synergy.trio.points / 100 : 0
+    const ruleScore = synergy ? synergy.score - (synergy.trio ? synergy.parts.trio : 0) : 0
     const adjust = synergy
-      ? Math.max(-SYNERGY_PARAMS.maxAdjust, Math.min(SYNERGY_PARAMS.maxAdjust, synergy.score * SYNERGY_PARAMS.lambda))
+      ? Math.max(-SYNERGY_PARAMS.maxAdjust, Math.min(SYNERGY_PARAMS.maxAdjust, ruleScore * SYNERGY_PARAMS.lambda)) + trioAdjust
       : 0
     const sortBase = choice.sortWinRate ?? choice.shrunkWinRate
     const combinedWinRate = sortBase != null ? sortBase + adjust : null

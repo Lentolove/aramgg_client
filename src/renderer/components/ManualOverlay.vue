@@ -500,7 +500,8 @@
                     <span class="mo-detail-plan-desc">{{ plan.description }}</span>
                   </div>
                 </div>
-                <div class="mo-detail-line">出装路线：{{ buildSource === 'arammeta' ? '实测·arammeta（路线 / 搭配 / 鞋子 / 两件组合）' : '实测·dtodo（arammeta 无该英雄路线）' }}</div>
+                <div class="mo-detail-line">出装路线：{{ buildSource === 'arammeta' ? '实测·arammeta 海克斯局（路线 / 搭配 / 鞋子 / 两件组合）' : 'dtodo 普通大乱斗出装（arammeta 无该英雄路线）' }}</div>
+                <div class="mo-detail-line mo-detail-note">{{ buildSource === 'arammeta' ? '按阵容与海克斯的调整为规则推荐，非实战统计' : '出装为阵容与海克斯规则推荐，非海克斯实战统计' }}</div>
                 <div v-if="tagSummary" class="mo-detail-line">海克斯偏好：{{ tagSummary }}</div>
                 <ol class="mo-detail-items">
                   <li v-for="item in engine.items" :key="`detail-${item.itemId}`">
@@ -562,6 +563,7 @@ import {
   type ItemSwap,
   resolveAugmentProfile,
   scoreCardSynergy,
+  makeLiftOf,
   STORED_ITEM_PROFILES,
   type AugmentProfile,
   type EngineItem,
@@ -946,6 +948,8 @@ function formatSigned(value: number) {
   return `${value > 0 ? '+' : value < 0 ? '−' : '±'}${Math.abs(value).toFixed(1)}`
 }
 
+const liftOf = computed(() => makeLiftOf(augmentStats.value))
+
 function rankCards(candidates: ManualOverlayCandidate[]) {
   const champion = arammetaChampion.value
   const rarity = arammetaMeta.value?.augRarity ?? {}
@@ -958,7 +962,7 @@ function rankCards(candidates: ManualOverlayCandidate[]) {
     profileOf(card),
     heldProfiles.value,
     engine.value.context,
-    { trios, baselineWinRate: base.baselineWinRate },
+    { trios, baselineWinRate: base.baselineWinRate, liftOf: liftOf.value },
   ), { profileOf: (card) => profileOf(card) })
 }
 
@@ -985,6 +989,11 @@ function cardSourceTitle(entry: CardEntry) {
 }
 
 function cardDetailText(entry: CardEntry) {
+  const trio = entry.synergy?.trioDetail ? ` · ${entry.synergy.trioDetail}` : ''
+  return cardDetailBase(entry) + trio
+}
+
+function cardDetailBase(entry: CardEntry) {
   const hide = settings.hideWinRates
   if (entry.source === 'arammeta') {
     const parts = [`实测·arammeta ${entry.games} 场`]

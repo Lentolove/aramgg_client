@@ -1,3 +1,4 @@
+import { makeLiftOf } from '../../src/shared/recommendation/augment-trios.ts'
 /** 场景构造：同一英雄在不同敌方阵容 / 已选海克斯下，海克斯排序与出装是否变化。 */
 import { playerContext } from './eval.ts'
 import { rankAugmentChoicesArammeta } from '../../src/shared/arammeta/augment-ranking.ts'
@@ -21,7 +22,7 @@ export function scenario(inputs: any, cid: number, enemyIds: number[], heldIds: 
   for (const rarity of ['kSilver', 'kGold', 'kPrismatic']) {
     const pool = (ctx.champ?.augments ?? []).filter((a: any) => (a.rarity ?? ctx.rarityOf(a.id)) === rarity && !heldIds.includes(a.id))
     const base = rankAugmentChoicesArammeta(pool.map((a: any, i: number) => ctx.toCard(a.id, i)), ctx.champ, { fallbackStats: ctx.statList, rarityOf: ctx.rarityOf })
-    const ranked: any = applyCardSynergy(base as any, (card: any) => scoreCardSynergy(ctx.profileOf(card.id), held, engineNow.context, { trios: ctx.detail.augmentTrios || [], baselineWinRate: base.baselineWinRate }), { profileOf: (card: any) => ctx.profileOf(card.id) })
+    const ranked: any = applyCardSynergy(base as any, (card: any) => scoreCardSynergy(ctx.profileOf(card.id), held, engineNow.context, { trios: ctx.detail.augmentTrios || [], baselineWinRate: base.baselineWinRate, liftOf: makeLiftOf(ctx.detail.augmentStats) }), { profileOf: (card: any) => ctx.profileOf(card.id) })
     out[rarity] = ranked.choices.slice(0, 3).map((c: any) => `${c.card.name}${c.tier ? `[${c.tier}]` : ''}`)
   }
   const plans = generateBuildPlans(ctx.engineInput(heldIds) as any)
@@ -38,7 +39,7 @@ export function trioRanking(inputs: any, cid: number, ids: number[], enemyIds: n
   const held = heldIds.map(ctx.profileOf)
   const engineNow = recommendBuild(ctx.engineInput(heldIds) as any)
   const base = rankAugmentChoicesArammeta(ids.map((id, i) => ctx.toCard(id, i)), ctx.champ, { fallbackStats: ctx.statList, rarityOf: ctx.rarityOf })
-  const ranked: any = applyCardSynergy(base as any, (card: any) => scoreCardSynergy(ctx.profileOf(card.id), held, engineNow.context, { trios: ctx.detail.augmentTrios || [], baselineWinRate: base.baselineWinRate }), { profileOf: (card: any) => ctx.profileOf(card.id) })
+  const ranked: any = applyCardSynergy(base as any, (card: any) => scoreCardSynergy(ctx.profileOf(card.id), held, engineNow.context, { trios: ctx.detail.augmentTrios || [], baselineWinRate: base.baselineWinRate, liftOf: makeLiftOf(ctx.detail.augmentStats) }), { profileOf: (card: any) => ctx.profileOf(card.id) })
   return ranked.choices as any[]
 }
 export function trio(inputs: any, cid: number, ids: number[], enemyIds: number[], heldIds: number[]) {

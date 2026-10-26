@@ -1,3 +1,4 @@
+import { makeLiftOf } from '../../src/shared/recommendation/augment-trios.ts'
 /**
  * 真实对局评测（离线、可复现）：把浮窗用的同一套共享函数跑在 docs/samples 里的 3 局真实海克斯大乱斗（queue 2400）上，
  * 对全部 30 名玩家计算「合理性」指标。被 tests/unit/real-match-regression.test.ts 与 report.ts 共用。
@@ -191,7 +192,7 @@ export function evaluatePlayer(inputs: EvalInputs, game: any, participant: any):
       const trio = [others[0], id, others[1]].filter((x) => x != null)
       const engineNow = recommendBuild({ builds: engineBuilds, itemPairs: champ.pairs, itemSingles: champ.singles, items, augments: held.map(profileOf), team } as any)
       const base = rankAugmentChoicesArammeta(trio.map(toCard), champ, { fallbackStats: statList, rarityOf })
-      const ranked = applyCardSynergy(base as any, (card: any) => scoreCardSynergy(profileOf(card.id), held.map(profileOf), engineNow.context, { trios: detail.augmentTrios || [], baselineWinRate: base.baselineWinRate }), { profileOf: (card: any) => profileOf(card.id) })
+      const ranked = applyCardSynergy(base as any, (card: any) => scoreCardSynergy(profileOf(card.id), held.map(profileOf), engineNow.context, { trios: detail.augmentTrios || [], baselineWinRate: base.baselineWinRate, liftOf: makeLiftOf(detail.augmentStats) }), { profileOf: (card: any) => profileOf(card.id) })
       for (const choice of ranked.choices as any[]) {
         trioCards += 1
         const noData = choice.sortWinRate == null && choice.shrunkWinRate == null
