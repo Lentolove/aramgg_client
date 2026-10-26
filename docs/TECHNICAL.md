@@ -145,9 +145,9 @@ npm run pack         # 打包 NSIS 安装包（会自动生成 arammeta 快照�
 
 ## 安装包体积
 
-- v0.3.5 安装包约 141MB（134.7 MiB），v0.3.6 起去掉了 onnxruntime-node 自带的 GPU 相关 DLL：`DirectML.dll`（18.5MB）、`dxcompiler.dll`（18.0MB）、`dxil.dll`（1.5MB）。
+- v0.3.5 安装包约 141MB（134.7 MiB），v0.3.7 起（v0.3.6 标签打包时被体积检查拦下，未发布）去掉了 onnxruntime-node 自带的 GPU 相关 DLL：`DirectML.dll`（18.5MB）、`dxcompiler.dll`（18.0MB）、`dxil.dll`（1.5MB）。
   OCR 只用默认 CPU 推理（`InferenceSession.create(buffer)` 不传 executionProviders），`onnxruntime.dll` 对 DirectML 是延迟加载（delay-load），不启用 DML 时不会加载；dxcompiler/dxil 只给 WebGPU EP 动态加载。以后如果要开 GPU 推理，需要把这几行 `files` 排除规则删掉。
 - 其余大头基本不能动：Electron 42 本体（`aramgg_client.exe` 226MB 未压缩，压缩后约 75–85MB，加上 Chromium 的 dll/pak）、PaddleOCR 模型（det 4.8MB + rec 16.6MB，几乎不可压缩）、onnxruntime.dll（25MB）、sharp 的 libvips（19MB）。
 - 已有的瘦身：只打 win32 x64 的 onnxruntime 二进制、`electronLanguages` + afterPack 只保留 zh-CN/en-US 语言包、排除 sourcemap/文档/测试、NSIS `compression: maximum`。
-- CI（release-fork.yml）在打包后打印安装包大小，超过 120MB 直接失败，防止体积回涨。
+- CI（release-fork.yml）在打包后打印安装包大小，超过 130 MiB 直接失败（v0.3.7 实测约 121 MiB ≈ 127MB），防止体积回涨。
 - 进一步选项（未做）：模型首次运行再下载、模型 int8 量化（需先验证识别准确率）、国内镜像（Gitee 等）。软件内更新走 `.blockmap` 增量下载，通常只下变化部分。
