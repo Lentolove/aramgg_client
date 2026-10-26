@@ -7,6 +7,8 @@
  *   而不是测得的胜率。
  */
 
+import { deriveAugmentTags, type AugmentTag } from './augment-tags.ts'
+
 export const STAT_KEYS = [
   'AP', 'AD', 'AS', 'CRIT', 'LETHALITY', 'ARMOR_PEN', 'MAGIC_PEN', 'HASTE', 'HP', 'ARMOR', 'MR',
   'HSP', 'OMNIVAMP', 'LIFESTEAL', 'MS', 'MANA',
@@ -96,6 +98,8 @@ export interface AugmentProfile {
   notes?: string
   /** 解析依据（便于审阅） */
   evidence?: string[]
+  /** 属性标签（魔抗/护甲/重伤…），阵容契合用；见 augment-tags.ts */
+  tags?: AugmentTag[]
 }
 
 export interface ItemProfile {
@@ -474,10 +478,12 @@ export function parseAugmentProfile(augment: RawAugmentLike, items: ItemNameEntr
   const signal = Object.keys(weights).length + mechanics.size + itemIds.length
   const confidence = round2(Math.min(0.7, 0.25 + signal * 0.07))
 
+  const tags = deriveAugmentTags({ weights, grants, mechanics: [...mechanics] }, text)
   return {
     id: Number(augment.id),
     key: augment.key ?? null,
     name,
+    tags,
     rarity: augment.rarityName ?? null,
     weights,
     grants,
@@ -503,6 +509,9 @@ export interface AugmentProfileOverride {
   itemBoost?: number
   antiMechanics?: Mechanic[]
   notes?: string
+  /** 人工补充 / 删除的属性标签 */
+  tags?: AugmentTag[]
+  removeTags?: AugmentTag[]
 }
 
 export function applyAugmentOverride(
@@ -510,6 +519,11 @@ export function applyAugmentOverride(
   override: AugmentProfileOverride,
   items: ItemNameEntry[] = [],
 ): AugmentProfile {
+  const mergedTags = profile.tags || override.tags || override.removeTags
+    ? [...new Set([...(profile.tags ?? []), ...(override.tags ?? [])])].filter((tag) => !(override.removeTags ?? []).includes(tag))
+    : undefined
+  // 只复核了标签：不改权重/来源/置信度
+  if (Object.keys(override).every((key) => key === 'tags' || key === 'removeTags')) return { ...profile, tags: mergedTags }
   const weights: WeightMap = override.replaceWeights ? {} : { ...profile.weights }
   for (const [key, value] of Object.entries(override.weights ?? {}) as Array<[WeightKey, number]>) {
     if (value === 0) delete weights[key]
@@ -534,5 +548,6 @@ export function applyAugmentOverride(
     source: 'reviewed',
     confidence: 0.9,
     notes: override.notes ?? profile.notes,
+    tags: mergedTags,
   }
 }

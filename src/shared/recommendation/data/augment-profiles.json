@@ -14,6 +14,13 @@
    "id": 1001,
    "key": "ARAM_ImTheJuggernaut",
    "name": "泰坦的坚决",
+   "tags": [
+    "MR",
+    "ARMOR",
+    "TANK",
+    "AP",
+    "AD"
+   ],
    "rarity": "prismatic",
    "weights": {
     "ADAPTIVE": 0.1,
@@ -59,6 +66,9 @@
    "id": 1002,
    "key": "ARAM_ApexInventor",
    "name": "尖端发明家",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -87,6 +97,11 @@
    "id": 1004,
    "key": "ARAM_BacktoBasics",
    "name": "回归基本功",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": -0.2,
@@ -134,6 +149,12 @@
    "id": 1005,
    "key": "ARAM_WeeWooWeeWoo",
    "name": "喂呜喂呜",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK",
+    "MS"
+   ],
    "rarity": "gold",
    "weights": {
     "MS": 0.1,
@@ -170,6 +191,9 @@
    "id": 1006,
    "key": "ARAM_BladeWaltz",
    "name": "利刃华尔兹",
+   "tags": [
+    "SURVIVE"
+   ],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -199,6 +223,9 @@
    "id": 1007,
    "key": "ARAM_BluntForce",
    "name": "大力",
+   "tags": [
+    "AD"
+   ],
    "rarity": "silver",
    "weights": {
     "AD": 1
@@ -234,6 +261,10 @@
    "id": 1011,
    "key": "ARAM_CantTouchThis",
    "name": "你摸不到",
+   "tags": [
+    "SURVIVE",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.4
@@ -264,6 +295,9 @@
    "id": 1013,
    "key": "ARAM_CelestialBody",
    "name": "星界躯体",
+   "tags": [
+    "TANK"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.3,
@@ -302,6 +336,11 @@
    "id": 1015,
    "key": "ARAM_CircleofDeath",
    "name": "死亡之环",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HSP": 0.5
@@ -337,6 +376,11 @@
    "id": 1018,
    "key": "ARAM_CourageoftheColossus",
    "name": "巨像的勇气",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "CC"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.8,
@@ -371,6 +415,9 @@
    "id": 1019,
    "key": "ARAM_Dashing",
    "name": "全凭身法",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.1
@@ -407,6 +454,11 @@
    "id": 1020,
    "key": "ARAM_DawnbringersResolve",
    "name": "黎明使者的坚决",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "SURVIVE"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 1.5
@@ -440,6 +492,9 @@
    "id": 1022,
    "key": "ARAM_Deft",
    "name": "灵巧",
+   "tags": [
+    "AS"
+   ],
    "rarity": "silver",
    "weights": {
     "AS": -0.3,
@@ -480,6 +535,9 @@
    "id": 1025,
    "key": "ARAM_DiveBomber",
    "name": "俯冲轰炸",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -511,6 +569,10 @@
    "id": 1026,
    "key": "ARAM_DontBlink",
    "name": "唯快不破",
+   "tags": [
+    "MS",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "MS": 0.1
@@ -544,6 +606,11 @@
    "id": 1027,
    "key": "ARAM_Earthwake",
    "name": "大地苏醒",
+   "tags": [
+    "AP",
+    "AD",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AP": 0.8,
@@ -578,6 +645,9 @@
    "id": 1028,
    "key": "ARAM_Erosion",
    "name": "侵蚀",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "ARMOR": 0.9,
@@ -619,6 +689,10 @@
    "id": 1029,
    "key": "ARAM_EtherealWeapon",
    "name": "虚幻武器",
+   "tags": [
+    "AS",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "AP": 0.2,
@@ -652,6 +726,10 @@
    "id": 1030,
    "key": "ARAM_Eureka",
    "name": "尤里卡",
+   "tags": [
+    "AP",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AP": 0.7,
@@ -691,6 +769,10 @@
    "id": 1034,
    "key": "VeilOfWarding",
    "name": "防护面纱",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "silver",
    "weights": {
     "HSP": 0.5
@@ -721,6 +803,11 @@
    "id": 1036,
    "key": "ARAM_Firebrand",
    "name": "火上浇油",
+   "tags": [
+    "TANK",
+    "AS",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.9,
@@ -758,6 +845,10 @@
    "id": 1037,
    "key": "ARAM_FirstAidKit",
    "name": "急救用具",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "silver",
    "weights": {
     "HSP": 0.8
@@ -794,6 +885,12 @@
    "id": 1038,
    "key": "ARAM_FromBeginningToEnd",
    "name": "有始有终",
+   "tags": [
+    "TANK",
+    "AP",
+    "AD",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "ADAPTIVE": 0.1
@@ -828,6 +925,11 @@
    "id": 1041,
    "key": "ARAM_Goliath",
    "name": "歌利亚巨人",
+   "tags": [
+    "TANK",
+    "AP",
+    "AD"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.8,
@@ -869,6 +971,10 @@
    "id": 1044,
    "key": "ARAM_IceCold",
    "name": "冰寒",
+   "tags": [
+    "CC",
+    "MS"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {
@@ -903,6 +1009,10 @@
    "id": 1045,
    "key": "ARAM_InfernalConduit",
    "name": "炼狱导管",
+   "tags": [
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AP": 0.4,
@@ -937,6 +1047,9 @@
    "id": 1046,
    "key": "ARAM_InfernalSoul",
    "name": "炼狱龙魂",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "AS": 0.4,
@@ -968,6 +1081,9 @@
    "id": 1047,
    "key": "ARAM_ItsCritical",
    "name": "关键暴击",
+   "tags": [
+    "CRIT"
+   ],
    "rarity": "gold",
    "weights": {
     "CRIT": 0.7,
@@ -1005,6 +1121,10 @@
    "id": 1048,
    "key": "ARAM_JeweledGauntlet",
    "name": "珠光护手",
+   "tags": [
+    "CRIT",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "CRIT": 1.2,
@@ -1049,6 +1169,10 @@
    "id": 1051,
    "key": "ARAM_LightemUp",
    "name": "点亮他们！",
+   "tags": [
+    "AS",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "AS": 0.6
@@ -1079,6 +1203,13 @@
    "id": 1053,
    "key": "ARAM_MadScientist",
    "name": "科学狂人",
+   "tags": [
+    "TANK",
+    "AP",
+    "AD",
+    "MS",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "ADAPTIVE": 0.4,
@@ -1127,6 +1258,10 @@
    "id": 1054,
    "key": "ARAM_MasterofDuality",
    "name": "物法皆修",
+   "tags": [
+    "AP",
+    "AD"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AP": 0.1,
@@ -1168,6 +1303,9 @@
    "id": 1056,
    "key": "ARAM_MindtoMatter",
    "name": "由心及物",
+   "tags": [
+    "TANK"
+   ],
    "rarity": "silver",
    "weights": {
     "HP": 0.1,
@@ -1204,6 +1342,10 @@
    "id": 1057,
    "key": "ARAM_MountainSoul",
    "name": "山脉龙魂",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "silver",
    "weights": {
     "HSP": 0.5
@@ -1234,6 +1376,10 @@
    "id": 1058,
    "key": "ARAM_MysticPunch",
    "name": "秘术冲拳",
+   "tags": [
+    "AS",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AS": 0.7,
@@ -1268,6 +1414,10 @@
    "id": 1060,
    "key": "ARAM_OceanSoul",
    "name": "海洋龙魂",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "silver",
    "weights": {
     "HSP": 0.5,
@@ -1306,6 +1456,9 @@
    "id": 1061,
    "key": "ARAM_OkBoomerang",
    "name": "回力OK镖",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -1332,6 +1485,11 @@
    "id": 1062,
    "key": "ARAM_OmniSoul",
    "name": "全能龙魂",
+   "tags": [
+    "TANK",
+    "DAMAGE",
+    "HEAL"
+   ],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -1358,6 +1516,11 @@
    "id": 1063,
    "key": "ARAM_OutlawsGrit",
    "name": "狂徒豪气",
+   "tags": [
+    "MR",
+    "ARMOR",
+    "TANK"
+   ],
    "rarity": "gold",
    "weights": {
     "MR": 0.2,
@@ -1401,6 +1564,13 @@
    "id": 1067,
    "key": "ARAM_RabbleRousing",
    "name": "活力焕发",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "AP",
+    "AD",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.8,
@@ -1443,6 +1613,9 @@
    "id": 1068,
    "key": "ARAM_Recursion",
    "name": "循环往复",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": -0.2
@@ -1478,6 +1651,7 @@
    "id": 1071,
    "key": "ARAM_ScopierWeapons",
    "name": "更万用的瞄准镜",
+   "tags": [],
    "rarity": "gold",
    "weights": {
     "AS": 0.3,
@@ -1511,6 +1685,10 @@
    "id": 1072,
    "key": "ARAM_SearingDawn",
    "name": "炽烈黎明",
+   "tags": [
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.5,
@@ -1542,6 +1720,9 @@
    "id": 1073,
    "key": "ARAM_ShadowRunner",
    "name": "暗影疾奔",
+   "tags": [
+    "MS"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {
@@ -1576,6 +1757,9 @@
    "id": 1074,
    "key": "ARAM_ShrinkRay",
    "name": "缩小射线",
+   "tags": [
+    "AS"
+   ],
    "rarity": "gold",
    "weights": {
     "AS": 0.6,
@@ -1608,6 +1792,13 @@
    "id": 1076,
    "key": "ARAM_SonicBoom",
    "name": "天音爆",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "CC",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "HSP": 0.5
@@ -1647,6 +1838,11 @@
    "id": 1077,
    "key": "ARAM_SoulSiphon",
    "name": "灵魂虹吸",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "CRIT"
+   ],
    "rarity": "gold",
    "weights": {
     "CRIT": 0.8,
@@ -1692,6 +1888,14 @@
    "id": 1079,
    "key": "ARAM_SymphonyofWar",
    "name": "战争交响乐",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "AS",
+    "AP",
+    "AD",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "ADAPTIVE": 0.8,
@@ -1736,6 +1940,9 @@
    "id": 1080,
    "key": "ARAM_TankItOrLeaveIt",
    "name": "会心防御",
+   "tags": [
+    "CRIT"
+   ],
    "rarity": "silver",
    "weights": {
     "CRIT": 0.7,
@@ -1775,6 +1982,10 @@
    "id": 1081,
    "key": "ARAM_TapDancer",
    "name": "踢踏舞",
+   "tags": [
+    "AS",
+    "MS"
+   ],
    "rarity": "prismatic",
    "weights": {
     "MS": 0.9,
@@ -1818,6 +2029,11 @@
    "id": 1084,
    "key": "ARAM_ThreadtheNeedle",
    "name": "穿针引线",
+   "tags": [
+    "DAMAGE",
+    "AP",
+    "AD"
+   ],
    "rarity": "gold",
    "weights": {
     "ARMOR_PEN": -0.3,
@@ -1859,6 +2075,10 @@
    "id": 1087,
    "key": "ARAM_Typhoon",
    "name": "台风",
+   "tags": [
+    "AS",
+    "AD"
+   ],
    "rarity": "silver",
    "weights": {
     "AD": 0.8,
@@ -1893,6 +2113,9 @@
    "id": 1088,
    "key": "ARAM_UltimateRevolution",
    "name": "终极刷新",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.5,
@@ -1925,6 +2148,10 @@
    "id": 1092,
    "key": "ARAM_Vulnerability",
    "name": "易损",
+   "tags": [
+    "CRIT",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "CRIT": 0.5
@@ -1967,6 +2194,13 @@
    "id": 1095,
    "key": "ARAM_WindspeakersBlessing",
    "name": "风语者的祝福",
+   "tags": [
+    "MR",
+    "ARMOR",
+    "HEAL",
+    "SHIELD",
+    "TANK"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HSP": 0.5,
@@ -2013,6 +2247,9 @@
    "id": 1097,
    "key": "ARAM_WitchfulThinking",
    "name": "巫师式思考",
+   "tags": [
+    "AP"
+   ],
    "rarity": "silver",
    "weights": {
     "AP": 0.3
@@ -2047,6 +2284,10 @@
    "id": 1098,
    "key": "ARAM_WithHaste",
    "name": "急急小子",
+   "tags": [
+    "MS",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.9,
@@ -2082,6 +2323,9 @@
    "id": 1103,
    "key": "ARAM_BreadAndButter",
    "name": "面包和黄油",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": -0.1
@@ -2118,6 +2362,9 @@
    "id": 1104,
    "key": "ARAM_Minionmancer",
    "name": "仆从大师",
+   "tags": [
+    "TANK"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.1
@@ -2151,6 +2398,9 @@
    "id": 1105,
    "key": "ARAM_Homeguard",
    "name": "家园卫士",
+   "tags": [
+    "MS"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {
@@ -2183,6 +2433,9 @@
    "id": 1112,
    "key": "ARAM_UltimateUnstoppable",
    "name": "终极不可阻挡",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {
     "HASTE": 0.5,
@@ -2215,6 +2468,9 @@
    "id": 1113,
    "key": "ARAM_SkilledSniper",
    "name": "老练狙神",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.2
@@ -2247,6 +2503,7 @@
    "id": 1115,
    "key": "ARAM_ScopiestWeapons",
    "name": "最万用的瞄准镜",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {
     "AS": 0.4,
@@ -2278,6 +2535,7 @@
    "id": 1116,
    "key": "ARAM_Flashy",
    "name": "闪现向前",
+   "tags": [],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -2306,6 +2564,11 @@
    "id": 1118,
    "key": "ARAM_CriticalHealing",
    "name": "会心治疗",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "CRIT"
+   ],
    "rarity": "gold",
    "weights": {
     "CRIT": 0.7,
@@ -2347,6 +2610,10 @@
    "id": 1129,
    "key": "ARAM_Marksmage",
    "name": "神射法师",
+   "tags": [
+    "AP",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "AP": 0.9,
@@ -2382,6 +2649,10 @@
    "id": 1133,
    "key": "ARAM_MagicMissile",
    "name": "魔法飞弹",
+   "tags": [
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.4
@@ -2420,6 +2691,13 @@
    "id": 1134,
    "key": "ARAM_DrawYourSword",
    "name": "亮出你的剑",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "AS",
+    "AD",
+    "MS"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.9,
@@ -2474,6 +2752,11 @@
    "id": 1136,
    "key": "ARAM_SlapAround",
    "name": "扇巴掌",
+   "tags": [
+    "AP",
+    "AD",
+    "CC"
+   ],
    "rarity": "silver",
    "weights": {
     "ADAPTIVE": 0.8
@@ -2511,6 +2794,9 @@
    "id": 1138,
    "key": "ARAM_Goredrink",
    "name": "渴血",
+   "tags": [
+    "HEAL"
+   ],
    "rarity": "silver",
    "weights": {
     "OMNIVAMP": -0.4,
@@ -2547,6 +2833,10 @@
    "id": 1141,
    "key": "ARAM_AllForYou",
    "name": "全心为你",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "gold",
    "weights": {
     "HSP": 0.8
@@ -2579,6 +2869,10 @@
    "id": 1149,
    "key": "ARAM_Impassable",
    "name": "不动如山",
+   "tags": [
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.8,
@@ -2613,6 +2907,9 @@
    "id": 1150,
    "key": "ARAM_BreadAndJam",
    "name": "面包和果酱",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.1
@@ -2646,6 +2943,9 @@
    "id": 1151,
    "key": "ARAM_BreadAndCheese",
    "name": "面包和奶酪",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": -0.1
@@ -2682,6 +2982,9 @@
    "id": 1152,
    "key": "ARAM_Quest_SteelYourHeart",
    "name": "钢化你心",
+   "tags": [
+    "TANK"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.6
@@ -2716,6 +3019,7 @@
    "id": 1154,
    "key": "ARAM_Quest_UrfsChampion",
    "name": "海牛阿福的勇士",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -2742,6 +3046,7 @@
    "id": 1156,
    "key": "ARAM_Quest_WoogletsWitchcap",
    "name": "沃格勒特的巫师帽",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -2772,6 +3077,7 @@
    "id": 1170,
    "key": "ARAM_ScopedWeapons",
    "name": "万用瞄准镜",
+   "tags": [],
    "rarity": "silver",
    "weights": {
     "AS": 0.4,
@@ -2803,6 +3109,11 @@
    "id": 1180,
    "key": "ARAM_BigBrain",
    "name": "超强大脑",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "AP"
+   ],
    "rarity": "gold",
    "weights": {
     "AP": 0.8,
@@ -2840,6 +3151,10 @@
    "id": 1181,
    "key": "ARAM_HeavyHitter",
    "name": "重量级打击手",
+   "tags": [
+    "TANK",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "HP": 0.8,
@@ -2875,6 +3190,10 @@
    "id": 1187,
    "key": "ARAM_Flashbang",
    "name": "闪光弹",
+   "tags": [
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -2904,6 +3223,9 @@
    "id": 1194,
    "key": "ARAM_FeyMagic",
    "name": "精怪魔法",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.4
@@ -2934,6 +3256,10 @@
    "id": 1195,
    "key": "ARAM_GiantSlayer",
    "name": "巨人杀手",
+   "tags": [
+    "MS",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {},
    "grants": {
@@ -2966,6 +3292,7 @@
    "id": 1204,
    "key": "ARAM_StackosaurusRex",
    "name": "叠角龙",
+   "tags": [],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -2994,6 +3321,10 @@
    "id": 1205,
    "key": "ARAM_ADAPt",
    "name": "物理转魔法",
+   "tags": [
+    "AP",
+    "AD"
+   ],
    "rarity": "silver",
    "weights": {
     "AD": 0.5,
@@ -3037,6 +3368,10 @@
    "id": 1206,
    "key": "ARAM_escAPADe",
    "name": "魔法转物理",
+   "tags": [
+    "AP",
+    "AD"
+   ],
    "rarity": "silver",
    "weights": {
     "AP": 0.9,
@@ -3079,6 +3414,9 @@
    "id": 1211,
    "key": "ARAM_ItsKillingTime",
    "name": "杀戮时间到了",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.5,
@@ -3111,6 +3449,10 @@
    "id": 1214,
    "key": "ARAM_SpinToWin",
    "name": "旋转至胜",
+   "tags": [
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "HASTE": 0.1
@@ -3144,6 +3486,12 @@
    "id": 1220,
    "key": "ARAM_FanTheHammer",
    "name": "连拨击锤",
+   "tags": [
+    "AS",
+    "CRIT",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "CRIT": 0.4,
@@ -3183,6 +3531,9 @@
    "id": 1225,
    "key": "ARAM_DualWield",
    "name": "双刀流",
+   "tags": [
+    "AS"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AS": 0.7
@@ -3221,6 +3572,7 @@
    "id": 1237,
    "key": "ARAM_TransmuteGold",
    "name": "质变：黄金阶",
+   "tags": [],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -3248,6 +3600,7 @@
    "id": 1238,
    "key": "ARAM_TransmutePrismatic",
    "name": "质变：棱彩阶",
+   "tags": [],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -3275,6 +3628,7 @@
    "id": 1243,
    "key": "ARAM_TransmuteChaos",
    "name": "质变：混沌",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -3302,6 +3656,9 @@
    "id": 1301,
    "key": "ARAM_DivineIntervention",
    "name": "神圣干预",
+   "tags": [
+    "SURVIVE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -3328,6 +3685,9 @@
    "id": 1305,
    "key": "ARAM_LegDay",
    "name": "练腿日",
+   "tags": [
+    "MS"
+   ],
    "rarity": "silver",
    "weights": {
     "MS": -0.2
@@ -3362,6 +3722,10 @@
    "id": 1308,
    "key": "ARAM_Firefox",
    "name": "火狐",
+   "tags": [
+    "MS",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "MS": 0.9
@@ -3395,6 +3759,12 @@
    "id": 1310,
    "key": "ARAM_ClownCollege",
    "name": "小丑学院",
+   "tags": [
+    "TANK",
+    "CRIT",
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AD": 0.2
@@ -3431,6 +3801,10 @@
    "id": 1311,
    "key": "ARAM_Overflow",
    "name": "溢流",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "gold",
    "weights": {
     "MANA": 0.9,
@@ -3473,6 +3847,13 @@
    "id": 1314,
    "key": "MightyShield",
    "name": "强力护盾",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "AP",
+    "AD",
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {
     "ADAPTIVE": 0.1,
@@ -3509,6 +3890,13 @@
    "id": 1315,
    "key": "SwiftAndSafe",
    "name": "快中求稳",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "AP",
+    "AD",
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {
     "AD": 0.8,
@@ -3545,6 +3933,11 @@
    "id": 1318,
    "key": "ARAM_Upgrade_ZH",
    "name": "升级：中娅",
+   "tags": [
+    "SURVIVE",
+    "MS",
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {
     "AP": 0.1
@@ -3585,6 +3978,7 @@
    "id": 1319,
    "key": "ARAM_Upgrade_Immolate",
    "name": "升级：献祭",
+   "tags": [],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -3617,6 +4011,7 @@
    "id": 1320,
    "key": "ARAM_Upgrade_Collector",
    "name": "升级：收集者",
+   "tags": [],
    "rarity": "silver",
    "weights": {
     "LETHALITY": 0.2
@@ -3651,6 +4046,10 @@
    "id": 1322,
    "key": "ARAM_GetExcited",
    "name": "罪恶快感",
+   "tags": [
+    "AS",
+    "MS"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {
@@ -3687,6 +4086,11 @@
    "id": 1323,
    "key": "ARAM_Cruelty",
    "name": "残忍",
+   "tags": [
+    "CC",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -3715,6 +4119,10 @@
    "id": 1324,
    "key": "ARAM_ProteinShake",
    "name": "蛋白粉奶昔",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "prismatic",
    "weights": {
     "ARMOR": 1.5,
@@ -3757,6 +4165,10 @@
    "id": 1325,
    "key": "GlassCannon",
    "name": "玻璃大炮",
+   "tags": [
+    "TANK",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 1.5
@@ -3790,6 +4202,9 @@
    "id": 1326,
    "key": "Nightstalking",
    "name": "夜狩",
+   "tags": [
+    "MS"
+   ],
    "rarity": "gold",
    "weights": {
     "MS": 0.1
@@ -3823,6 +4238,10 @@
    "id": 1328,
    "key": "CriticalRhythm",
    "name": "暴击律动",
+   "tags": [
+    "AS",
+    "CRIT"
+   ],
    "rarity": "gold",
    "weights": {
     "CRIT": 0.7,
@@ -3869,6 +4288,13 @@
    "id": 1329,
    "key": "BiggestSnowballEver",
    "name": "史上最大雪球",
+   "tags": [
+    "AP",
+    "AD",
+    "CC",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {},
    "grants": {
@@ -3906,6 +4332,11 @@
    "id": 1331,
    "key": "EmpyreanPromise",
    "name": "至高天诺言",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "AP"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HSP": 0.8,
@@ -3947,6 +4378,13 @@
    "id": 1332,
    "key": "OminousPact",
    "name": "不祥契约",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "AP",
+    "MS",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.9,
@@ -3995,6 +4433,13 @@
    "id": 1333,
    "key": "EscapePlan",
    "name": "逃跑计划",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK",
+    "MS",
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {
@@ -4031,6 +4476,13 @@
    "id": 1335,
    "key": "Goldrend",
    "name": "夺金",
+   "tags": [
+    "AP",
+    "AD",
+    "MS",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "MS": 0.1,
@@ -4070,6 +4522,9 @@
    "id": 1336,
    "key": "ARAM_Upgrade_IE",
    "name": "升级：无尽之刃",
+   "tags": [
+    "CRIT"
+   ],
    "rarity": "gold",
    "weights": {
     "CRIT": 0.5
@@ -4117,6 +4572,7 @@
    "id": 1337,
    "key": "KingMe",
    "name": "尊我为王",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -4143,6 +4599,13 @@
    "id": 1344,
    "key": "FinalForm",
    "name": "最终形态",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK",
+    "MS",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.9,
@@ -4190,6 +4653,11 @@
    "id": 1345,
    "key": "ARAM_SpiritualPurification",
    "name": "心灵净化",
+   "tags": [
+    "TANK",
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -4218,6 +4686,11 @@
    "id": 1347,
    "key": "Poltergeist",
    "name": "吵闹鬼",
+   "tags": [
+    "SHIELD",
+    "MS",
+    "SURVIVE"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -4246,6 +4719,9 @@
    "id": 1348,
    "key": "Flash2",
    "name": "闪闪现现",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -4275,6 +4751,9 @@
    "id": 1349,
    "key": "UltimateAwakening",
    "name": "终极唤醒",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.5,
@@ -4313,6 +4792,9 @@
    "id": 1353,
    "key": "ARAM_TankEngine",
    "name": "坦克引擎",
+   "tags": [
+    "TANK"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.8
@@ -4351,6 +4833,12 @@
    "id": 1356,
    "key": "CriticalMissile",
    "name": "暴击飞弹",
+   "tags": [
+    "CRIT",
+    "AP",
+    "AD",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "CRIT": 0.9,
@@ -4393,6 +4881,10 @@
    "id": 1358,
    "key": "PinballSnowball",
    "name": "弹球",
+   "tags": [
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.1
@@ -4429,6 +4921,7 @@
    "id": 1361,
    "key": "ARAM_Quest_VoidImmolation",
    "name": "艾卡西亚的陷落",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -4458,6 +4951,10 @@
    "id": 1373,
    "key": "ShrinkEngine",
    "name": "缩小引擎",
+   "tags": [
+    "MS",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": -0.1
@@ -4500,6 +4997,10 @@
    "id": 1375,
    "key": "SoulEater",
    "name": "吞噬灵魂",
+   "tags": [
+    "TANK",
+    "CC"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.1
@@ -4538,6 +5039,11 @@
    "id": 1379,
    "key": "Upgrade_SwordOfBlossom",
    "name": "升级：花晓之剑",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "AS"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AS": 0.12,
@@ -4581,6 +5087,7 @@
    "id": 1384,
    "key": "Donation",
    "name": "捐赠",
+   "tags": [],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -4610,6 +5117,9 @@
    "id": 1386,
    "key": "YouSpinMeRightRound",
    "name": "转得我眩晕了",
+   "tags": [
+    "AD"
+   ],
    "rarity": "silver",
    "weights": {
     "AD": 0.8
@@ -4642,6 +5152,9 @@
    "id": 1388,
    "key": "InfiniteRecursion",
    "name": "无限循环往复",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": -0.25
@@ -4683,6 +5196,10 @@
    "id": 1389,
    "key": "HandOfBaron",
    "name": "男爵之手",
+   "tags": [
+    "AP",
+    "AD"
+   ],
    "rarity": "prismatic",
    "weights": {
     "ADAPTIVE": 1.5
@@ -4715,6 +5232,9 @@
    "id": 1390,
    "key": "ARAM_PhenomenalEvil",
    "name": "超凡邪恶",
+   "tags": [
+    "AP"
+   ],
    "rarity": "gold",
    "weights": {
     "AP": 0.2,
@@ -4756,6 +5276,10 @@
    "id": 1392,
    "key": "GoldenSnowball",
    "name": "神圣雪球",
+   "tags": [
+    "SURVIVE",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.1
@@ -4792,6 +5316,10 @@
    "id": 1401,
    "key": "GrowthSpurt",
    "name": "生机迸发",
+   "tags": [
+    "TANK",
+    "CC"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.1
@@ -4828,6 +5356,7 @@
    "id": 1402,
    "key": "ARAM_StatsOnStatsOnStats",
    "name": "属性叠属性叠属性！",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -4854,6 +5383,7 @@
    "id": 1403,
    "key": "ARAM_StatsOnStats",
    "name": "属性叠属性！",
+   "tags": [],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -4880,6 +5410,7 @@
    "id": 1404,
    "key": "ARAM_Stats",
    "name": "属性！",
+   "tags": [],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -4906,6 +5437,11 @@
    "id": 1413,
    "key": "ARAM_StuckInHereWithMe",
    "name": "和我一起困在这里",
+   "tags": [
+    "TANK",
+    "CC",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.5,
@@ -4943,6 +5479,13 @@
    "id": 1415,
    "key": "Twinfire",
    "name": "双生火焰",
+   "tags": [
+    "CRIT",
+    "AP",
+    "AD",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "CRIT": 0.6,
@@ -4984,6 +5527,10 @@
    "id": 1416,
    "key": "HextechSoul",
    "name": "海克斯科技龙魂",
+   "tags": [
+    "CC",
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {
     "HASTE": 0.5,
@@ -5016,6 +5563,11 @@
    "id": 1420,
    "key": "Sonata",
    "name": "咏叹奏鸣",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "MS"
+   ],
    "rarity": "gold",
    "weights": {
     "MS": 0.1,
@@ -5052,6 +5604,9 @@
    "id": 1421,
    "key": "PromQueen",
    "name": "舞会女王",
+   "tags": [
+    "CC"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.4
@@ -5083,6 +5638,12 @@
    "id": 1996,
    "key": "ARAM_Upgrade_Sheen",
    "name": "升级：耀光",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.45,
@@ -5125,6 +5686,12 @@
    "id": 2004,
    "key": "ARAM_EmpoweredByTheFaithful",
    "name": "信念者的强化",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.1,
@@ -5161,6 +5728,14 @@
    "id": 2005,
    "key": "ARAM_InfernoTriggered",
    "name": "扳机炼狱",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "CRIT",
+    "MS",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "CRIT": 0.7,
@@ -5205,6 +5780,12 @@
    "id": 2006,
    "key": "ARAM_Dropkick",
    "name": "飞身踢",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {},
    "grants": {
@@ -5239,6 +5820,11 @@
    "id": 2009,
    "key": "ARAM_Zealot",
    "name": "狂热者",
+   "tags": [
+    "AS",
+    "CRIT",
+    "AP"
+   ],
    "rarity": "silver",
    "weights": {
     "AP": 0.6,
@@ -5286,6 +5872,10 @@
    "id": 2010,
    "key": "ARAM_DoubleTap",
    "name": "双发快射",
+   "tags": [
+    "AS",
+    "CRIT"
+   ],
    "rarity": "prismatic",
    "weights": {
     "CRIT": 0.7,
@@ -5325,6 +5915,11 @@
    "id": 2016,
    "key": "ARAM_Juiced",
    "name": "注魔",
+   "tags": [
+    "AS",
+    "CRIT",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "CRIT": 0.7,
@@ -5368,6 +5963,10 @@
    "id": 2018,
    "key": "ARAM_Purist_Caster",
    "name": "纯粹主义者 - 术师",
+   "tags": [
+    "AS",
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {
     "AS": 0.4,
@@ -5413,6 +6012,10 @@
    "id": 2024,
    "key": "CritNCast",
    "name": "由暴生急",
+   "tags": [
+    "CRIT",
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {
     "CRIT": 0.9,
@@ -5452,6 +6055,10 @@
    "id": 2026,
    "key": "KillSecured",
    "name": "杀意翻涌",
+   "tags": [
+    "TANK",
+    "MS"
+   ],
    "rarity": "silver",
    "weights": {
     "HP": 0.9,
@@ -5487,6 +6094,9 @@
    "id": 2031,
    "key": "ARAM_DropBear",
    "name": "空投熊",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "MAGIC_PEN": 0.8
@@ -5518,6 +6128,11 @@
    "id": 2032,
    "key": "FishBait",
    "name": "鲨鱼诱饵",
+   "tags": [
+    "TANK",
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -5546,6 +6161,10 @@
    "id": 2034,
    "key": "SharkTempest",
    "name": "鲨鱼暴风",
+   "tags": [
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -5574,6 +6193,9 @@
    "id": 2042,
    "key": "BrushPower",
    "name": "藏身草丛",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -5600,6 +6222,11 @@
    "id": 2043,
    "key": "NatureIsHealing",
    "name": "自然即是治愈",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.1,
@@ -5635,6 +6262,10 @@
    "id": 2046,
    "key": "PoroCharge_Active",
    "name": "魄罗蛮冲",
+   "tags": [
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -5665,6 +6296,9 @@
    "id": 2054,
    "key": "SpellVolley",
    "name": "三重射击",
+   "tags": [
+    "TANK"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.3,
@@ -5697,6 +6331,9 @@
    "id": 2055,
    "key": "ARAM_Multishot",
    "name": "多重射击",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.5,
@@ -5728,6 +6365,7 @@
    "id": 2062,
    "key": "Ability_SelfAOE_DoubleCast",
    "name": "回响施放",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -5754,6 +6392,11 @@
    "id": 2063,
    "key": "DimensionShift_Active",
    "name": "位面转移",
+   "tags": [
+    "TANK",
+    "AP",
+    "AD"
+   ],
    "rarity": "prismatic",
    "weights": {
     "AP": 0.1,
@@ -5794,6 +6437,9 @@
    "id": 2064,
    "key": "ARAM_Quickstep",
    "name": "快步",
+   "tags": [
+    "MS"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -5822,6 +6468,9 @@
    "id": 2065,
    "key": "ARAM_Terror",
    "name": "惊惧",
+   "tags": [
+    "CC"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -5850,6 +6499,10 @@
    "id": 2072,
    "key": "Missile_Split",
    "name": "咒语裂变",
+   "tags": [
+    "TANK",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.5,
@@ -5885,6 +6538,11 @@
    "id": 2073,
    "key": "ARAM_SustainingStrike",
    "name": "虹吸",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "HASTE"
+   ],
    "rarity": "silver",
    "weights": {
     "HP": 0.1,
@@ -5925,6 +6583,11 @@
    "id": 2076,
    "key": "TitansPulse",
    "name": "保持坚定",
+   "tags": [
+    "MR",
+    "ARMOR",
+    "TANK"
+   ],
    "rarity": "silver",
    "weights": {
     "MR": 0.2,
@@ -5970,6 +6633,15 @@
    "id": 2077,
    "key": "DarkWind",
    "name": "贪欲束缚",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK",
+    "AP",
+    "CC",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HSP": 0.5,
@@ -6011,6 +6683,11 @@
    "id": 2078,
    "key": "ChainReaction",
    "name": "连锁反应",
+   "tags": [
+    "CC",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.4
@@ -6042,6 +6719,10 @@
    "id": 2080,
    "key": "Snowbomb",
    "name": "冰雪爆裂",
+   "tags": [
+    "CC",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.1
@@ -6077,6 +6758,10 @@
    "id": 2082,
    "key": "Equilibrium",
    "name": "我们的治疗",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "gold",
    "weights": {
     "HSP": 1.5
@@ -6114,6 +6799,10 @@
    "id": 2083,
    "key": "BurstingTeeth",
    "name": "牙仙子",
+   "tags": [
+    "TANK",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "LETHALITY": -0.1,
@@ -6156,6 +6845,9 @@
    "id": 2087,
    "key": "ARAM_Archmage",
    "name": "大法师",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.4
@@ -6187,6 +6879,10 @@
    "id": 2088,
    "key": "ARAM_Snowday",
    "name": "下雪天",
+   "tags": [
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {
     "HASTE": 0.1
@@ -6221,6 +6917,7 @@
    "id": 2089,
    "key": "ARAM_YowchMyCoins",
    "name": "哎哟，我的硬币！",
+   "tags": [],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -6249,6 +6946,12 @@
    "id": 2091,
    "key": "EndlessDecimation",
    "name": "无尽大杀四方",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "AD": 0.5,
@@ -6281,6 +6984,7 @@
    "id": 2095,
    "key": "ARAM_HighRoller",
    "name": "掷骰狂人",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -6307,6 +7011,9 @@
    "id": 2096,
    "key": "LittleExtraHelp",
    "name": "小小的额外帮助",
+   "tags": [
+    "AS"
+   ],
    "rarity": "gold",
    "weights": {
     "AS": 0.4,
@@ -6343,6 +7050,13 @@
    "id": 2098,
    "key": "ARAM_EndlessHunt",
    "name": "吃过路兵",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "MS",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.9,
@@ -6387,6 +7101,13 @@
    "id": 2099,
    "key": "ARAM_DivineDomain",
    "name": "飞升仪式",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "SURVIVE",
+    "MS",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.1,
@@ -6426,6 +7147,9 @@
    "id": 2100,
    "key": "ARAM_SpecializedRecursion",
    "name": "急速之追求",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HASTE": 0.3
@@ -6462,6 +7186,10 @@
    "id": 2102,
    "key": "PressureCooker",
    "name": "高压锅",
+   "tags": [
+    "TANK",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.1
@@ -6497,6 +7225,9 @@
    "id": 2103,
    "key": "ARAM_BangBang",
    "name": "狙神飞星",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -6523,6 +7254,11 @@
    "id": 2104,
    "key": "ARAM_SpiritBomb",
    "name": "灵魄炸弹",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HP": 0.1,
@@ -6559,6 +7295,15 @@
    "id": 2107,
    "key": "ARAM_Hellbent",
    "name": "濒死悟道",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "AP",
+    "AD",
+    "SURVIVE",
+    "MS",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "ADAPTIVE": 0.2,
@@ -6604,6 +7349,9 @@
    "id": 2111,
    "key": "Bonk",
    "name": "邦！",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -6630,6 +7378,12 @@
    "id": 2115,
    "key": "SquishySlappyGrab",
    "name": "软弹啪叽抓",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "HASTE",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HSP": 0.5
@@ -6660,6 +7414,9 @@
    "id": 2116,
    "key": "SpecializedEmpowerment",
    "name": "威能之追求",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "ADAPTIVE": 0.3
@@ -6692,6 +7449,9 @@
    "id": 2118,
    "key": "SkipTheBasics",
    "name": "大招工具人",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.4
@@ -6730,6 +7490,7 @@
    "id": 2119,
    "key": "Overextender",
    "name": "过量延伸者",
+   "tags": [],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -6756,6 +7517,9 @@
    "id": 2123,
    "key": "Overloaded",
    "name": "超负荷",
+   "tags": [
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -6782,6 +7546,9 @@
    "id": 2125,
    "key": "ItsGoTime",
    "name": "前进时间到",
+   "tags": [
+    "MS"
+   ],
    "rarity": "silver",
    "weights": {
     "MS": 0.1
@@ -6815,6 +7582,9 @@
    "id": 2127,
    "key": "ForgedByTheMaster",
    "name": "大师铸就",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -6845,6 +7615,9 @@
    "id": 2128,
    "key": "BloodMoneyBurn",
    "name": "炽燃利息",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -6875,6 +7648,10 @@
    "id": 2129,
    "key": "Terraind",
    "name": "地形专家",
+   "tags": [
+    "AP",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "AP": 0.8,
@@ -6908,6 +7685,10 @@
    "id": 2131,
    "key": "DontChangeTheChannel",
    "name": "别停止引导",
+   "tags": [
+    "HEAL",
+    "SHIELD"
+   ],
    "rarity": "silver",
    "weights": {
     "HSP": 0.5
@@ -6938,6 +7719,9 @@
    "id": 2132,
    "key": "WarlockJuicebox",
    "name": "术士果汁盒",
+   "tags": [
+    "HEAL"
+   ],
    "rarity": "gold",
    "weights": {
     "OMNIVAMP": -0.3,
@@ -6973,6 +7757,13 @@
    "id": 2133,
    "key": "MercysStrike",
    "name": "仁慈打击",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK",
+    "AS",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {
     "HP": 0.9,
@@ -7016,6 +7807,10 @@
    "id": 2134,
    "key": "SurgeField",
    "name": "电涌力场",
+   "tags": [
+    "MS",
+    "HASTE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "HASTE": 0.4,
@@ -7055,6 +7850,11 @@
    "id": 2135,
    "key": "Overkill",
    "name": "针插垫",
+   "tags": [
+    "AS",
+    "MS",
+    "DAMAGE"
+   ],
    "rarity": "prismatic",
    "weights": {
     "MS": 0.1,
@@ -7094,6 +7894,9 @@
    "id": 2136,
    "key": "TrustyWeapon",
    "name": "可靠武器",
+   "tags": [
+    "DAMAGE"
+   ],
    "rarity": "silver",
    "weights": {},
    "grants": {},
@@ -7122,6 +7925,12 @@
    "id": 2137,
    "key": "PatOnTheBack",
    "name": "轻拍背部",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "MS",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "MS": 0.1,
@@ -7159,6 +7968,11 @@
    "id": 2138,
    "key": "WardingWeapon",
    "name": "自适应防护",
+   "tags": [
+    "MR",
+    "ARMOR",
+    "TANK"
+   ],
    "rarity": "silver",
    "weights": {
     "MR": 0.1,
@@ -7198,6 +8012,10 @@
    "id": 2139,
    "key": "PinCushion",
    "name": "豪猪",
+   "tags": [
+    "CC",
+    "DAMAGE"
+   ],
    "rarity": "gold",
    "weights": {},
    "grants": {},
@@ -7226,6 +8044,9 @@
    "id": 2140,
    "key": "Upgrade_Ravenous",
    "name": "升级：贪欲九头蛇",
+   "tags": [
+    "HEAL"
+   ],
    "rarity": "gold",
    "weights": {
     "LIFESTEAL": 0.03,
@@ -7267,6 +8088,7 @@
    "id": 2141,
    "key": "Quest_UltraHydra",
    "name": "终极九头蛇",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},
@@ -7298,6 +8120,11 @@
    "id": 2143,
    "key": "Upgrade_SunderedSky",
    "name": "升级：焚天",
+   "tags": [
+    "HEAL",
+    "TANK",
+    "HASTE"
+   ],
    "rarity": "gold",
    "weights": {
     "HSP": 0.15
@@ -7332,6 +8159,11 @@
    "id": 2144,
    "key": "DoubleDefense",
    "name": "加固护盾",
+   "tags": [
+    "HEAL",
+    "SHIELD",
+    "TANK"
+   ],
    "rarity": "silver",
    "weights": {
     "HP": 0.9,
@@ -7365,6 +8197,10 @@
    "id": 2157,
    "key": "Upgrade_DeathDance",
    "name": "升级：死亡之舞",
+   "tags": [
+    "HEAL",
+    "TANK"
+   ],
    "rarity": "silver",
    "weights": {
     "AD": 0.2
@@ -7404,6 +8240,7 @@
    "id": 12317,
    "key": "ARAM_PandorasBox",
    "name": "潘朵拉的盒子",
+   "tags": [],
    "rarity": "prismatic",
    "weights": {},
    "grants": {},

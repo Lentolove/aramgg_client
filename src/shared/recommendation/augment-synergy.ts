@@ -14,6 +14,19 @@
 import { NO_DATA_LABEL, type AugmentChoiceInput, type AugmentChoiceRanking, type ChoiceRelativeLabel, type RankedAugmentChoice } from '../augment-choice-ranking.ts'
 import { augmentItemSynergy, type EngineContext } from './build-engine.ts'
 import { MECHANIC_LABELS, STAT_LABELS, type AugmentProfile, type StatKey, type WeightKey } from './profiles.ts'
+import { AUGMENT_TAG_LABELS, augmentTagsOf, type AugmentTag } from './augment-tags.ts'
+
+/** 「同路线」判断用的进攻/防守标签（金币、急速这类通用标签不算路线） */
+const ROUTE_TAGS: AugmentTag[] = ['AS', 'CRIT', 'AP', 'AD', 'TANK', 'HEAL', 'SHIELD']
+
+/** 两张海克斯共同的路线标签（只看「给什么」，不看描述里的伤害词） */
+export function sharedRouteTags(a: AugmentProfile, b: AugmentProfile): AugmentTag[] {
+  const right = new Set(augmentTagsOf(b))
+  const left = augmentTagsOf(a)
+  // 适应之力同时带 AP/AD：两张都是适应之力时只算一次
+  return ROUTE_TAGS.filter((tag) => left.includes(tag) && right.has(tag)
+    && !(tag === 'AD' && left.includes('AP') && right.has('AP')))
+}
 
 export interface AugmentTrioLike {
   augmentIds?: Array<number | string>
@@ -35,6 +48,9 @@ export const SYNERGY_PARAMS = {
   trioAlpha: 100,
   trioWeight: 0.25,
   heldMechanicWeight: 1.2,
+  /** 与已选海克斯同路线（标签）每个共同标签的加分，最多算 2 个 */
+  heldRouteWeight: 0.7,
+  heldCap: 3,
   archetypeWeight: 2,
   teamWeight: 2.5,
   teamCap: 3,
@@ -91,15 +107,21 @@ export function scoreCardSynergy(
     reasons.push(`当前路线${context.routeLabel ? `「${context.routeLabel}」` : ''}出装 ${Math.round((context.archetypeVector[topStat.key] ?? 0) * 100)}% 是${STAT_LABELS[topStat.key]}`)
   }
 
-  // 3) 与已持有海克斯的机制重合
+  // 3) 与已持有海克斯：机制重合 或 同路线标签（取两者较大者，不重复加）
   let heldScore = 0
   for (const other of held) {
     const shared = card.mechanics.filter((mechanic) => other.mechanics.includes(mechanic) && !['gold', 'stacks', 'cc'].includes(mechanic))
-    if (shared.length) {
-      heldScore += shared.length * SYNERGY_PARAMS.heldMechanicWeight
-      reasons.push(`与已选「${other.name}」同为${shared.slice(0, 2).map((m) => MECHANIC_LABELS[m]).join('/')}`)
-    }
+    const route = sharedRouteTags(card, other)
+    const mechanicValue = shared.length * SYNERGY_PARAMS.heldMechanicWeight
+    const routeValue = Math.min(2, route.length) * SYNERGY_PARAMS.heldRouteWeight
+    if (mechanicValue <= 0 && routeValue <= 0) continue
+    heldScore += Math.max(mechanicValue, routeValue)
+    const label = mechanicValue >= routeValue
+      ? shared.slice(0, 2).map((m) => MECHANIC_LABELS[m]).join('/')
+      : route.slice(0, 2).map((tag) => AUGMENT_TAG_LABELS[tag]).join('/')
+    reasons.push(`与已选「${other.name}」同为${label}`)
   }
+  heldScore = Math.min(SYNERGY_PARAMS.heldCap, heldScore)
 
   // 4) 三海克斯组合（真实统计）
   let trio = 0
@@ -121,21 +143,30 @@ export function scoreCardSynergy(
     }
   }
 
-  // 5) 阵容（模型）
+  // 5) 阵容（模型）：用属性标签（见 augment-tags.ts），没有标签时退回权重
   let teamScore = 0
   const team = context.team
   if (team) {
     const w = card.weights
+    const tags = new Set(augmentTagsOf(card))
+    const has = (tag: AugmentTag) => tags.has(tag)
     const parts: Array<[number, string]> = []
-    const tankWeight = (w.HP ?? 0) + (w.ARMOR ?? 0) + (w.MR ?? 0) + (card.mechanics.includes('tank') ? 0.5 : 0)
-    if (team.canTank && team.needs.frontline > 0 && tankWeight > 0) parts.push([team.needs.frontline * Math.min(1, tankWeight), '我方缺前排，坦度卡加分'])
-    if (team.needs.mr > 0 && (w.MR ?? 0) > 0) parts.push([team.needs.mr * Math.min(1, w.MR ?? 0), '对面法伤高，魔抗卡加分'])
-    if (team.needs.armor > 0 && (w.ARMOR ?? 0) > 0) parts.push([team.needs.armor * Math.min(1, w.ARMOR ?? 0), '对面物伤高，护甲卡加分'])
-    if (team.needs.antiHeal > 0 && card.mechanics.includes('anti-heal')) parts.push([team.needs.antiHeal, '对面回复多，重伤卡加分'])
-    if (team.needs.stasis > 0 && card.mechanics.includes('stasis')) parts.push([team.needs.stasis, '对面爆发高，保命卡加分'])
+    const tankWeight = has('TANK') || card.mechanics.includes('tank') ? 1 : Math.min(1, (w.HP ?? 0) + (w.ARMOR ?? 0) + (w.MR ?? 0))
+    if (team.canTank && team.needs.frontline > 0 && tankWeight > 0) parts.push([team.needs.frontline * tankWeight, '我方缺前排，坦度卡加分'])
+    if (team.needs.mr > 0) {
+      if (has('MR')) parts.push([team.needs.mr * 1.2, '对面法伤高，魔抗卡加分'])
+      else if (has('TANK') || has('SHIELD')) parts.push([team.needs.mr * 0.45, '对面法伤高，肉/护盾卡加分'])
+    }
+    if (team.needs.armor > 0) {
+      if (has('ARMOR')) parts.push([team.needs.armor * 1.2, '对面物伤高，护甲卡加分'])
+      else if (has('TANK') || has('SHIELD')) parts.push([team.needs.armor * 0.45, '对面物伤高，肉/护盾卡加分'])
+    }
+    if (team.needs.antiHeal > 0 && (has('ANTI_HEAL') || card.mechanics.includes('anti-heal'))) parts.push([team.needs.antiHeal, '对面回复多，重伤卡加分'])
+    if (team.needs.stasis > 0 && (has('SURVIVE') || card.mechanics.includes('stasis'))) parts.push([team.needs.stasis, '对面爆发高，保命卡加分'])
+    else if (team.needs.stasis > 0 && has('SHIELD')) parts.push([team.needs.stasis * 0.5, '对面爆发高，护盾卡加分'])
     if (team.canDamage && team.needs.damage > 0) {
-      const dmg = (w[context.damageType] ?? 0) + (w.ADAPTIVE ?? 0)
-      if (dmg > 0) parts.push([team.needs.damage * Math.min(1, dmg), '我方缺输出，输出卡加分'])
+      const dmg = has(context.damageType) ? 1 : Math.min(1, (w[context.damageType] ?? 0) + (w.ADAPTIVE ?? 0))
+      if (dmg > 0) parts.push([team.needs.damage * dmg, '我方缺输出，输出卡加分'])
     }
     teamScore = Math.min(SYNERGY_PARAMS.teamCap, parts.reduce((sum, [value]) => sum + value, 0) * SYNERGY_PARAMS.teamWeight)
     const best = parts.sort((a, b) => b[0] - a[0])[0]
@@ -160,6 +191,57 @@ export function tierOf(points: number | null): CardTier | null {
   if (points >= 2) return 'A'
   if (points >= -1.2) return 'B'
   return 'C'
+}
+
+const TIER_ORDER: CardTier[] = ['S', 'A', 'B', 'C']
+
+export const RELATIVE_TIER_PARAMS = {
+  /** 第一名领先第二名多少分算「明显更好」→ 比绝对档高一档 */
+  leadForUpgrade: 1.5,
+  /** 与第一名差多少分降一档 / 降两档 */
+  gapOneStep: 1.5,
+  gapTwoSteps: 4.5,
+  /** 绝对下限/上限：S 至少要这么多分；C 最多这么多分（三张都差不会全 S，三张都好不会出现 C） */
+  minPointsForS: 1.5,
+  maxPointsForC: 0.5,
+} as const
+
+/**
+ * 按「这一轮三张卡之间的差距」定档，再用绝对分夹住（最多偏离绝对档一档）。
+ * 输入顺序任意；返回与输入同序的档位，null 分数返回 null。
+ */
+export function relativeTiers(points: Array<number | null>): Array<CardTier | null> {
+  const valid = points.filter((value): value is number => value != null)
+  if (!valid.length) return points.map(() => null)
+  const sorted = [...valid].sort((a, b) => b - a)
+  const top = sorted[0]
+  const second = sorted[1]
+  const p = RELATIVE_TIER_PARAMS
+  const absTop = TIER_ORDER.indexOf(tierOf(top)!)
+  // 第一名的相对档：明显领先 → 比绝对档高一档；否则跟绝对档
+  const topRel = second != null && top - second >= p.leadForUpgrade ? Math.max(0, absTop - 1) : absTop
+  let topSeen = false
+  return points.map((value) => {
+    if (value == null) return null
+    const abs = TIER_ORDER.indexOf(tierOf(value)!)
+    const gap = top - value
+    let rank: number
+    if (!topSeen && gap < 1e-9) {
+      topSeen = true
+      rank = topRel
+    } else if (gap < p.gapOneStep) {
+      // 和第一名差不多：可以跟第一名同档（最多比自己的绝对档高一档）
+      rank = Math.max(topRel, abs - 1)
+    } else {
+      // 明显落后：按差距降档，但不会比自己的绝对档更高、最多比绝对档低一档
+      const steps = gap < p.gapTwoSteps ? 1 : 2
+      rank = Math.min(abs + 1, Math.max(abs, topRel + steps))
+    }
+    rank = Math.max(rank, gap < 1e-9 ? 0 : topRel)
+    if (rank === 0 && value < p.minPointsForS) rank = 1
+    if (rank === 3 && value > p.maxPointsForC) rank = 2
+    return TIER_ORDER[Math.min(3, rank)]
+  })
 }
 
 /** 模型理由 → 玩家一眼能懂的短句 */
@@ -200,12 +282,17 @@ export interface SynergyRankedChoice<T extends AugmentChoiceInput> extends Ranke
   combinedWinRate: number | null
   /** 排序因为契合度发生了变化 */
   reordered: boolean
+  /** 绝对分档（不看同轮其它卡） */
+  absoluteTier?: CardTier | null
+  /** 与同轮另一张备选同路线的提示（只提示，不加分） */
+  rollNote?: string | null
 }
 
 /** 在胜率排序上叠加契合度并重新排序 */
 export function applyCardSynergy<T extends AugmentChoiceInput>(
   ranking: AugmentChoiceRanking<T>,
   synergyOf: (card: T) => CardSynergy | null,
+  options: { profileOf?: (card: T) => AugmentProfile | null; relativeTiers?: boolean } = {},
 ): AugmentChoiceRanking<T> & { choices: SynergyRankedChoice<T>[] } {
   const enriched = ranking.choices.map((choice) => {
     const synergy = synergyOf(choice.card)
@@ -236,12 +323,33 @@ export function applyCardSynergy<T extends AugmentChoiceInput>(
   const topTie = withData.length >= 2
     && Math.abs(withData[0].combinedWinRate! - withData[1].combinedWinRate!)
       <= Math.hypot(withData[0].standardError ?? 0, withData[1].standardError ?? 0)
-  const choices = sorted.map((choice, order) => ({
-    ...choice,
-    reordered: order !== choice.order,
-    order,
-    relativeLabel: (choice.combinedWinRate == null ? NO_DATA_LABEL : topTie && order < 2 ? '差不多' : labels[order] ?? '末选') as ChoiceRelativeLabel,
-  }))
+  // 档位：按这一轮三张卡的相对差距（绝对分夹住）；只有一张有数据时就是绝对档
+  const tiers = options.relativeTiers === false ? sorted.map((choice) => choice.tier) : relativeTiers(sorted.map((choice) => choice.points))
+  const profiles = options.profileOf ? sorted.map((choice) => options.profileOf!(choice.card)) : []
+  const choices = sorted.map((choice, order) => {
+    const tier = tiers[order] ?? null
+    let rollNote: string | null = null
+    const mine = profiles[order]
+    if (mine) {
+      // 只在「恰好两张同路线」时提示：三张都同路线时这句话没有信息量
+      const mates = profiles
+        .map((other, otherIndex) => (otherIndex !== order && other ? { other, shared: sharedRouteTags(mine, other) } : null))
+        .filter((mate): mate is { other: AugmentProfile; shared: AugmentTag[] } => !!mate && mate.shared.length > 0)
+      if (mates.length === 1 && profiles.filter(Boolean).length >= 3) {
+        rollNote = `和「${mates[0].other.name}」同路线（${mates[0].shared.slice(0, 2).map((tag) => AUGMENT_TAG_LABELS[tag]).join('/')}），二选一`
+      }
+    }
+    return {
+      ...choice,
+      reordered: order !== choice.order,
+      order,
+      absoluteTier: choice.tier,
+      tier,
+      tierLabel: tier ? TIER_LABELS[tier] : null,
+      rollNote,
+      relativeLabel: (choice.combinedWinRate == null ? NO_DATA_LABEL : topTie && order < 2 ? '差不多' : labels[order] ?? '末选') as ChoiceRelativeLabel,
+    }
+  })
   const summary = topTie
     ? '前两张差距在噪声范围内，差不多'
     : `首选「${choices[0]?.card?.name || choices[0]?.card?.id || '?'}」${choices[0]?.reordered ? '（契合度改变了排序）' : ''}`

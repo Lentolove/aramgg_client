@@ -260,8 +260,9 @@ function countSources(candidates: ManualOverlayCandidate[]): Record<string, numb
   return counts
 }
 
-function parseLiveTiming(data: any): { gameTime: number | null; level: number | null; isDead: boolean | null; respawnTimer: number | null } {
+function parseLiveTiming(data: any): { gameTime: number | null; level: number | null; isDead: boolean | null; respawnTimer: number | null; currentGold: number | null } {
   const gameTime = Number(data?.gameData?.gameTime)
+  const currentGold = Number(data?.activePlayer?.currentGold)
   const level = Number(data?.activePlayer?.level)
   const activeName = String(data?.activePlayer?.riotId ?? data?.activePlayer?.summonerName ?? '')
   const players = Array.isArray(data?.allPlayers) ? data.allPlayers : []
@@ -272,6 +273,7 @@ function parseLiveTiming(data: any): { gameTime: number | null; level: number | 
     level: Number.isFinite(level) && level > 0 ? level : (Number.isFinite(Number(self?.level)) ? Number(self.level) : null),
     isDead: typeof self?.isDead === 'boolean' ? self.isDead : null,
     respawnTimer: Number.isFinite(Number(self?.respawnTimer)) ? Math.round(Number(self.respawnTimer) * 10) / 10 : null,
+    currentGold: data?.activePlayer?.currentGold != null && Number.isFinite(currentGold) ? Math.floor(currentGold) : null,
   }
 }
 

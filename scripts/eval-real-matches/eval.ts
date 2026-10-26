@@ -191,7 +191,7 @@ export function evaluatePlayer(inputs: EvalInputs, game: any, participant: any):
       const trio = [others[0], id, others[1]].filter((x) => x != null)
       const engineNow = recommendBuild({ builds: engineBuilds, itemPairs: champ.pairs, itemSingles: champ.singles, items, augments: held.map(profileOf), team } as any)
       const base = rankAugmentChoicesArammeta(trio.map(toCard), champ, { fallbackStats: statList, rarityOf })
-      const ranked = applyCardSynergy(base as any, (card: any) => scoreCardSynergy(profileOf(card.id), held.map(profileOf), engineNow.context, { trios: detail.augmentTrios || [], baselineWinRate: base.baselineWinRate }))
+      const ranked = applyCardSynergy(base as any, (card: any) => scoreCardSynergy(profileOf(card.id), held.map(profileOf), engineNow.context, { trios: detail.augmentTrios || [], baselineWinRate: base.baselineWinRate }), { profileOf: (card: any) => profileOf(card.id) })
       for (const choice of ranked.choices as any[]) {
         trioCards += 1
         const noData = choice.sortWinRate == null && choice.shrunkWinRate == null

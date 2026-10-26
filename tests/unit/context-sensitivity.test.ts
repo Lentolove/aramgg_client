@@ -10,15 +10,17 @@ const inputs = loadEvalInputs()
 const names = (choices: any[]) => choices.map((c) => c.card.id)
 
 describe('推荐随阵容与已选海克斯变化', () => {
-  it('敌方全物理时护甲向海克斯（狂徒豪气）明显加分、排名不降，并说明原因', () => {
+  it('双抗海克斯（狂徒豪气：护甲+魔抗）对物理/法系阵容都明显加分，理由跟着阵容说护甲或魔抗', () => {
     const trio = [1098, 1063, 1038]
     const vsAp = trioRanking(inputs, 141, trio, LINEUPS['AP重'], [])
     const vsAd = trioRanking(inputs, 141, trio, LINEUPS['AD重'], [])
+    const neutral = trioRanking(inputs, 141, trio, [], [])
     const card = (list: any[]) => list.find((c) => c.card.id === 1063)!
-    expect(names(vsAd).indexOf(1063)).toBeLessThanOrEqual(names(vsAp).indexOf(1063))
-    expect(card(vsAd).adjustPoints - card(vsAp).adjustPoints).toBeGreaterThanOrEqual(1)
-    expect(card(vsAd).points).toBeGreaterThan(card(vsAp).points)
+    expect(names(vsAd).indexOf(1063)).toBeLessThanOrEqual(names(neutral).indexOf(1063))
+    expect(card(vsAd).adjustPoints - card(neutral).adjustPoints).toBeGreaterThanOrEqual(1)
+    expect(card(vsAp).adjustPoints - card(neutral).adjustPoints).toBeGreaterThanOrEqual(1)
     expect(card(vsAd).plainReason).toContain('护甲')
+    expect(card(vsAp).plainReason).toContain('魔抗')
   })
 
   it('已选海克斯改变三选一（墨菲特持有「和我一起困在这里」后坦度卡明显加分）', () => {

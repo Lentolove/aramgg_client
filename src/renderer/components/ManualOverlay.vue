@@ -14,13 +14,13 @@
         :title="championLabel"
         alt=""
       >
-      <div class="mo-bar-next" :title="nextItem ? `下一件：${nextItem.name}` : '暂无出装'">
-        <img v-if="nextItem" :src="getItemIconUrl(nextItem.itemId)" alt="">
+      <div class="mo-bar-next" :title="nextPurchase?.text || (nextItem ? `下一件：${nextItem.name}` : '暂无出装')">
+        <img v-if="nextItem" :src="getItemIconUrl(barBuyId ?? nextItem.itemId)" alt="">
         <span v-else class="mo-bar-empty">?</span>
       </div>
       <div class="mo-bar-text">
-        <span class="mo-bar-label">下一件</span>
-        <span class="mo-bar-name">{{ nextItem?.name || '—' }}</span>
+        <span class="mo-bar-label">{{ barBuyId != null && barBuyId !== nextItem?.itemId ? '先买' : '下一件' }}</span>
+        <span class="mo-bar-name">{{ barBuyId != null ? itemName(barBuyId) : nextItem?.name || '—' }}</span>
       </div>
       <span v-if="state.candidates.length" class="mo-bar-dot" title="有三选一待处理，展开查看" />
       <button
@@ -209,6 +209,7 @@
                     <span v-else class="mo-muted">{{ entry.note }}</span>
                   </div>
                   <div v-if="entry.method === 'shrunk'" class="mo-card-sub" :title="cardSourceTitle(entry)">
+                    <span v-if="entry.rollNote" class="mo-card-roll" :title="entry.rollNote">同路线</span>
                     <span v-if="cardRarityText(entry)">{{ cardRarityText(entry) }}</span>
                     <span class="mo-card-n">n={{ cardSampleText(entry) }}</span>
                   </div>
@@ -482,6 +483,7 @@
                     class="mo-synergy mo-synergy-comp"
                   >{{ focusItem.score.comp > 0 ? '阵容需要' : '阵容不需要' }}</span>
                 </div>
+                <div v-if="focusItem.isNext && nextPurchase" class="mo-focus-buy">{{ nextPurchase.text }}</div>
                 <div
                   v-for="(reason, index) in focusReasons"
                   :key="index"
@@ -540,6 +542,7 @@ import { rankAugmentChoicesArammeta, type ArammetaRankedChoice } from '../../sha
 import { arammetaToBuilds } from '../../shared/arammeta/builds.ts'
 import { frontlineSignal, measuredDamageSplit } from '../../shared/arammeta/composition.ts'
 import { COMP_REASON_PREFIX } from '../../shared/recommendation/build-engine.ts'
+import { planNextPurchase } from '../../shared/recommendation/next-purchase.ts'
 import {
   ADAPTED_LABEL,
   adviseTeamComp,
@@ -956,7 +959,7 @@ function rankCards(candidates: ManualOverlayCandidate[]) {
     heldProfiles.value,
     engine.value.context,
     { trios, baselineWinRate: base.baselineWinRate },
-  ))
+  ), { profileOf: (card) => profileOf(card) })
 }
 
 const ranking = computed(() => rankCards(state.value.candidates))
@@ -1099,6 +1102,14 @@ async function setCollapsed(value: boolean) {
 }
 
 const nextItem = computed(() => engine.value.items.find((item) => item.isNext) ?? engine.value.items[0] ?? null)
+/** 按已有散件 + 当前金币，把下一件拆成「现在能买的那一步」 */
+const nextPurchase = computed(() => {
+  const item = nextItem.value
+  if (!item || item.owned) return null
+  return planNextPurchase(item.itemId, engineItemIndex.value, live.value?.found ? live.value.ownedItemIds : [], live.value?.found ? live.value.currentGold ?? null : null)
+})
+const barBuyId = computed(() => (nextPurchase.value?.gold != null ? nextPurchase.value.buyId : null))
+const itemName = (id: number) => engineItemIndex.value.get(id)?.name ?? String(id)
 const focusItem = computed(() => {
   const id = hoverItemId.value ?? slotMenuItemId.value
   return engine.value.items.find((item) => item.itemId === id) ?? nextItem.value
@@ -1131,6 +1142,7 @@ function cardTooltip(entry: SynergyRankedChoice<CardInput>) {
   if (entry.method === 'shrunk') {
     const e = entry as CardEntry
     if (e.tier) lines.push(`${e.tier} · ${e.tierLabel}：${e.plainReason}`)
+    if (e.rollNote) lines.push(e.rollNote)
     if (!settings.hideWinRates) lines.push(`收缩胜率 ${formatPercent(entry.shrunkWinRate)}（相对基准 ${formatDelta(entry.delta)}）`)
     lines.push(cardDetailText(entry as CardEntry))
   }
@@ -1620,6 +1632,7 @@ onBeforeUnmount(() => {
   background: #0b1220;
 }
 .mo-bar-next img { width: 100%; height: 100%; display: block; }
+.mo-focus-buy { margin: 2px 0 4px; padding: 3px 6px; border-radius: 4px; background: rgba(240, 200, 90, 0.14); color: #f0c85a; font-size: 12px; font-weight: 600; }
 .mo-bar-empty { display: flex; height: 100%; align-items: center; justify-content: center; color: var(--mo-muted); }
 .mo-bar-text { display: flex; flex-direction: column; min-width: 0; max-width: 104px; }
 .mo-bar-label { font-size: 10px; color: var(--mo-gold); letter-spacing: 0.5px; }
@@ -1817,6 +1830,7 @@ onBeforeUnmount(() => {
 .mo-tier-A { color: #06231a; background: #5fd3a5; }
 .mo-tier-B { color: #dfe6f0; background: rgba(140, 155, 175, 0.35); }
 .mo-tier-C { color: #ffd9d9; background: rgba(200, 80, 80, 0.45); }
+.mo-card-roll { padding: 0 4px; border-radius: 3px; background: rgba(120, 170, 255, 0.16); color: #9cc3ff; }
 .mo-card-reason { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: rgba(230, 236, 245, 0.85); }
 .mo-score { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; }
 .mo-score.mo-muted { color: var(--mo-ivory); opacity: 0.8; }

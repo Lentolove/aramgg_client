@@ -510,6 +510,8 @@ export interface ManualOverlayLiveData {
   level?: number | null
   isDead?: boolean | null
   respawnTimer?: number | null
+  /** 2999 activePlayer.currentGold（下一件该买哪一步） */
+  currentGold?: number | null
   reminder?: ManualOverlayReminder | null
   /** 2999 返回的已持有海克斯 id（如果接口提供；未验证游戏是否提供该字段） */
   heldAugmentIds?: number[]
